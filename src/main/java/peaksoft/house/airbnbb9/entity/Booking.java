@@ -1,10 +1,13 @@
 package peaksoft.house.airbnbb9.entity;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.ZonedDateTime;
 import java.util.List;
+
 @Entity
 @Table(name = "bookings")
 @Setter
@@ -18,16 +21,17 @@ public class Booking {
     private ZonedDateTime checkOut;
     private ZonedDateTime checkIn;
     private ZonedDateTime date;
-    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE})
-    private User user;
-    @OneToMany(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.MERGE},mappedBy = "booking")
-    private List<Announcement>announcements;
 
-    public Booking(ZonedDateTime checkOut, ZonedDateTime checkIn, ZonedDateTime date, User user, List<Announcement> announcements) {
-        this.checkOut = checkOut;
-        this.checkIn = checkIn;
-        this.date = date;
-        this.user = user;
-        this.announcements = announcements;
+    @ManyToOne(cascade = {
+            CascadeType.DETACH,
+            CascadeType.REFRESH,
+            CascadeType.MERGE})
+    private User user;
+
+    @OneToMany(cascade = {
+            CascadeType.DETACH,
+            CascadeType.REFRESH,
+            CascadeType.MERGE},
+            mappedBy = "booking")
+    private List<Announcement> announcements;
     }
-}
