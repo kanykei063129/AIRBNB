@@ -19,6 +19,7 @@ public class Feedback {
     @SequenceGenerator(name = "feedback_gen",sequenceName = "feedback_seq",allocationSize = 1)
     private Long id;
     private String comment;
+
     @ElementCollection
     private List<String> images;
     private int rating;

@@ -22,15 +22,19 @@ public class Announcement {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_gen")
     @SequenceGenerator(name = "announcement_gen", sequenceName = "announcement_seq", allocationSize = 1)
     private Long id;
+
     @Enumerated(EnumType.STRING)
     private HouseType houseType;
+
     @ElementCollection
     private List<String> images;
     private int price;
+
     @Enumerated(EnumType.STRING)
     private Region region;
     private String address;
     private String description;
+
     @Enumerated(EnumType.STRING)
     private Status status;
     private String title;
