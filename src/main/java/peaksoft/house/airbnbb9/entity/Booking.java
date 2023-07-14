@@ -28,10 +28,9 @@ public class Booking {
             CascadeType.MERGE})
     private User user;
 
-    @OneToMany(cascade = {
+    @ManyToOne(cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
-            CascadeType.MERGE},
-            mappedBy = "booking")
-    private List<Announcement> announcements;
+            CascadeType.MERGE})
+    private Announcement announcement;
     }
