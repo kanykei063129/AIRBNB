@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.InvalidMimeTypeException;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Service
 public class S3FileService {
-    
+
     @Value("${application.bucket.name}")
     private String bucketName;
     private AmazonS3 s3Client;
