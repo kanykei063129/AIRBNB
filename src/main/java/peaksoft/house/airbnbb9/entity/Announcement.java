@@ -63,10 +63,10 @@ public class Announcement {
             mappedBy = "announcement")
     private List<Favorite> favorites;
 
-    @ManyToOne(cascade = {
+    @OneToMany(cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
             CascadeType.MERGE,
-            CascadeType.REMOVE})
-    private Booking booking;
+            CascadeType.REMOVE},mappedBy = "announcement")
+    private List<Booking> bookings;
 }
