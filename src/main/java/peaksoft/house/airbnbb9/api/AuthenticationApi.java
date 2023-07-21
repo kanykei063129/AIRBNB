@@ -10,7 +10,7 @@ import peaksoft.house.airbnbb9.service.AuthenticationService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthenticationApi {
     private final AuthenticationService authenticationService;
     @Operation(summary = "Google authentication", description = "Any user can authenticate with Google")

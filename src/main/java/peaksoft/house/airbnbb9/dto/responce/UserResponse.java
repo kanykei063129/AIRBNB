@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import peaksoft.house.airbnbb9.enums.Role;
 
-
-
 @Data
 @NoArgsConstructor
 public class UserResponse {
@@ -18,5 +16,4 @@ public class UserResponse {
     @Enumerated(EnumType.STRING)
     private Role role;
     private String token;
-
 }

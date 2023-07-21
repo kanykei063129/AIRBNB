@@ -26,19 +26,28 @@ import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.service.AuthenticationService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     @PostConstruct
     public void init() throws IOException {
+        User user = User.
+                builder().
+                fullName("Adilet Islambek Uulu")
+                .role(Role.ADMIN)
+                .email("adilet@gmail.com")
+                .password(passwordEncoder.encode("adi123"))
+                .build();
+        userRepository.save(user);
+
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
                 new ClassPathResource("package.json").getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
@@ -46,38 +55,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         FirebaseApp.initializeApp(firebaseOptions);
     }
 
-
     @Override
-    public AuthenticationResponse signInWithGoogle(String tokenId ) throws FirebaseAuthException {
-            FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
-            User user;
-            if (!userRepository.existsByEmail(firebaseToken.getEmail())) {
-                if (firebaseToken.getName().matches(" ")) {
-                    String [] name = firebaseToken.getName().split(" ");
-                    user = new User();
-                    user.setFullName(name[0]);
-                } else {
-                    user = new User();
-                    user.setFullName(firebaseToken.getName());
-                }
-                user.setEmail(firebaseToken.getEmail());
-                user.setPassword(firebaseToken.getEmail());
-                user.setRole(Role.USER);
-                userRepository.save(user);
-            }
-            user = userRepository.findUserByEmail(firebaseToken.getEmail()).orElseThrow(
-                    () -> {
-                        log.error("User with this email not found!");
-                        return new NotFoundException("User with this email not found!");
-                    }
-            );
-            String token = jwtService.generateToken(user);
-            return AuthenticationResponse.builder()
-                    .email(user.getEmail())
-                    .role(user.getRole())
-                    .token(token)
-                    .build();
+    public AuthenticationResponse signInWithGoogle(String tokenId) throws FirebaseAuthException {
+        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+        User user;
+        if (!userRepository.existsByEmail(firebaseToken.getEmail())) {
+            user = new User();
+            user.setFullName(firebaseToken.getName());
+            user.setEmail(firebaseToken.getEmail());
+            user.setPassword(firebaseToken.getEmail());
+            user.setRole(Role.USER);
+            userRepository.save(user);
         }
+        user = userRepository.findUserByEmail(firebaseToken.getEmail()).orElseThrow(
+                () -> {
+                    log.error("User with this email not found!");
+                    return new NotFoundException("User with this email not found!");
+                }
+        );
+        String token = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .email(user.getEmail())
+                .role(user.getRole())
+                .token(token)
+                .build();
+    }
+
     @Override
     public AuthenticationResponse signIn(SignInRequest signInRequest) {
         if (signInRequest.getEmail().isBlank()) {

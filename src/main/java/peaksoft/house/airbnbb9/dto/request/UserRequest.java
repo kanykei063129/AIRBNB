@@ -1,11 +1,11 @@
 package peaksoft.house.airbnbb9.dto.request;
 
-
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 @Data
-@NoArgsConstructor
+@Builder
 public class
 UserRequest {
     private String fullName;
