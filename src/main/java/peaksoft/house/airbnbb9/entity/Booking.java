@@ -16,7 +16,7 @@ import java.util.List;
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "booking_gen")
-    @SequenceGenerator(name = "booking_gen",sequenceName = "booking_seq",allocationSize = 1)
+    @SequenceGenerator(name = "booking_gen",sequenceName = "booking_seq",allocationSize = 1, initialValue = 6)
     private Long id;
     private ZonedDateTime checkOut;
     private ZonedDateTime checkIn;
@@ -28,10 +28,9 @@ public class Booking {
             CascadeType.MERGE})
     private User user;
 
-    @OneToMany(cascade = {
+    @ManyToOne(cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
-            CascadeType.MERGE},
-            mappedBy = "booking")
-    private List<Announcement> announcements;
+            CascadeType.MERGE})
+    private Announcement announcement;
     }

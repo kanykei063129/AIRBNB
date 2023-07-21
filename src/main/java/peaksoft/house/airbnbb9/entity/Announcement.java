@@ -20,7 +20,7 @@ import java.util.List;
 public class Announcement {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_gen")
-    @SequenceGenerator(name = "announcement_gen", sequenceName = "announcement_seq", allocationSize = 1)
+    @SequenceGenerator(name = "announcement_gen", sequenceName = "announcement_seq", allocationSize = 1, initialValue = 6)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -63,10 +63,10 @@ public class Announcement {
             mappedBy = "announcement")
     private List<Favorite> favorites;
 
-    @ManyToOne(cascade = {
+    @OneToMany(cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
             CascadeType.MERGE,
-            CascadeType.REMOVE})
-    private Booking booking;
+            CascadeType.REMOVE},mappedBy = "announcement")
+    private List<Booking> bookings;
 }
