@@ -13,7 +13,7 @@ import lombok.Setter;
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "like_gen")
-    @SequenceGenerator(name = "like_gen",sequenceName = "like_seq",allocationSize = 1)
+    @SequenceGenerator(name = "like_gen",sequenceName = "like_seq",allocationSize = 1, initialValue = 6)
     private Long id;
     private Boolean isLiked;
 
