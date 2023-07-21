@@ -20,6 +20,7 @@ public class GlobalException {
                 e.getMessage()
         );
     }
+
     @ExceptionHandler(BadCredentialException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ExceptionResponse handlerNotFoundException(BadCredentialException e) {
@@ -34,20 +35,9 @@ public class GlobalException {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionResponse handlerNotFoundException(BadRequestException e) {
-
         return new ExceptionResponse(
                 HttpStatus.BAD_REQUEST,
                 e.getClass().getSimpleName(),
-                e.getMessage()
-        );
-    }
-    @ExceptionHandler(IllegalArgumentExceptionn.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionResponse exceptionResponse(IllegalArgumentExceptionn e){
-        return new ExceptionResponse(
-                HttpStatus.BAD_REQUEST,
-                e.getClass().getSimpleName(),
-                e.getMessage()
-        );
+                e.getMessage());
     }
 }

@@ -89,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.getUserByEmail(signInRequest.getEmail())
                 .orElseThrow(() -> {
                     log.error(String.format("User with email : %s not found !", signInRequest.getEmail()));
-                    return new EntityExistsException(String.format("User with email : %s not found !", signInRequest.getEmail()));
+                    return new NotFoundException(String.format("User with email : %s not found !", signInRequest.getEmail()));
                 });
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
             log.error("Incorrect password !");
