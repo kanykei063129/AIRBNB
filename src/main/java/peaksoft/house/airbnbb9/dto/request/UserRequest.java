@@ -1,4 +1,8 @@
 package peaksoft.house.airbnbb9.dto.request;
 
-public class UserRequest {
+import lombok.Builder;
+
+@Builder
+public record UserRequest(){
+
 }
