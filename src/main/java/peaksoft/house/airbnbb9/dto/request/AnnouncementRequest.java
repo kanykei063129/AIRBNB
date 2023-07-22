@@ -16,7 +16,7 @@ public record AnnouncementRequest(
         @NotNull(message = "Images must not be empty!")
         List<String> images,
         @NotNull(message = "Price must not be null!")
-        @Positive(message ="Price must be a positive number!")
+        @Positive(message = "Price must be a positive number!")
         int price,
         @NotNull(message = "Region must not be null!")
         Region region,

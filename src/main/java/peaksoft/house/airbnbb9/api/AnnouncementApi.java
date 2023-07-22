@@ -17,24 +17,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
-    @PreAuthorize("hasAuthority('ADMIN')")
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/getById/{id}")
-    public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long userId){
+    public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long userId) {
         return announcementService.getByIdUser(userId);
     }
-    @PreAuthorize("hasAuthority('ADMIN')")
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAll")
-        public List<AnnouncementResponse> getAllAnnouncement(){
+    public List<AnnouncementResponse> getAllAnnouncement() {
         return announcementService.getAllAnnouncements();
     }
+
     @PermitAll
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public AnnouncementResponse update(@PathVariable Long announcementId, @RequestBody @Valid AnnouncementRequest announcementRequest){
-    return announcementService.updateAnnouncement(announcementId,announcementRequest);
+
+    public AnnouncementResponse update(@PathVariable Long announcementId, @RequestBody @Valid AnnouncementRequest announcementRequest) {
+        return announcementService.updateAnnouncement(announcementId, announcementRequest);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public SimpleResponse deleteByIdAnnouncement(@PathVariable Long id){
+    public SimpleResponse deleteByIdAnnouncement(@PathVariable Long id) {
         return announcementService.deleteByIdAnnouncement(id);
     }
 }
