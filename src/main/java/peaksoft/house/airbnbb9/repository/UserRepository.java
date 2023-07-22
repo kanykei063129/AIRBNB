@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
-    @Query("select new peaksoft.house.airbnbb9.dto.response.AnnouncementResponse(a.id,a.houseType,a.images,a.price,a.region,a.address,a.description,a.status,a.title,a.maxGuests,a.province) from Announcement a where a.user.id=:userid")
+    @Query("select new peaksoft.house.airbnbb9.dto.response.AnnouncementResponse(a.id,a.houseType,a.images,a.price,a.region,a.address,a.description,a.status,a.title,a.maxGuests,a.province) from Announcement a where a.user.id= ?1")
     Optional<List<AnnouncementResponse>>getUserById(Long userId);
+    Optional<User> getUserByEmail(String email);
+    Boolean existsByEmail(String email);
 }
