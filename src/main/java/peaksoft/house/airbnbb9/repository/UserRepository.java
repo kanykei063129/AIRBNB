@@ -1,4 +1,7 @@
 package peaksoft.house.airbnbb9.repository;
 
-public interface UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import peaksoft.house.airbnbb9.entity.User;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 }
