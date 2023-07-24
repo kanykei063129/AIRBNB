@@ -1,16 +1,14 @@
 package peaksoft.house.airbnbb9.dto.responce;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Booking;
-
+import peaksoft.house.airbnbb9.enums.Role;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
     private Long id;
@@ -18,8 +16,12 @@ public class UserResponse {
     private String email;
     private int bookings;
     private int announcements;
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    private String token;
 
-    public UserResponse(long id, String fullName, String email) {
+    public UserResponse(Long id, String fullName, String email) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
