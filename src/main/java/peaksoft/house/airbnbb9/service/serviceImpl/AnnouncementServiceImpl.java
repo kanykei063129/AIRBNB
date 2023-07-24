@@ -32,7 +32,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
     @Override
     public AllAnnouncementResponse getByIdAnnouncement(Long id) {
-            Announcement announcement = announcementRepository.findById(id).orElseThrow(() -> new NotFoundException("Announcement with id: " + id + " is no exist!"));
+            Announcement announcement = announcementRepository.findById(id).orElseThrow(() ->
+                    new NotFoundException("Announcement with id: " + id + " is no exist!"));
             List<Feedback> feedbacks = announcementRepository.getAllAnnouncementFeedback(id);
             return AllAnnouncementResponse.builder()
                     .id(announcement.getId())
@@ -51,7 +52,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
     @Override
     public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
-        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new NotFoundException(" Announcement with id: " + announcementId + " is no exist!"));
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
+                new NotFoundException(" Announcement with id: " + announcementId + " is no exist!"));
         announcement.setHouseType(announcementRequest.houseType());
         announcement.setImages(announcementRequest.images());
         announcement.setPrice(announcementRequest.price());
