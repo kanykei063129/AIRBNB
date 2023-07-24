@@ -12,8 +12,4 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
     @Query("select new peaksoft.house.airbnbb9.dto.response.AnnouncementResponse(a.id,a.houseType,a.images,a.price,a.region,a.address,a.description,a.status,a.title,a.maxGuests,a.province) from Announcement a where a.user.id=:userId")
     Optional<List<AnnouncementResponse>>getUserById(@Param("userId") Long userId);
-    @Query("select new peaksoft.house.airbnbb9.dto.response.AnnouncementResponse(a.id, a.houseType, a.images, a.price, a.region, a.address, a.description, a.status, a.title, a.maxGuests, a.province) from Announcement a")
-    List<AnnouncementResponse> getAll();
-    Optional<User> getUserByEmail(String email);
-    Boolean existsByEmail(String email);
 }
