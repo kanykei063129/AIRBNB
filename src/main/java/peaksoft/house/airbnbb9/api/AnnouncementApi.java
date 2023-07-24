@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.SimpleResponse;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
+import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 
@@ -22,6 +23,12 @@ public class AnnouncementApi {
     @GetMapping("/getById/{id}")
     public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long id) {
         return announcementService.getByIdUser(id);
+    }
+
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @GetMapping("/{id}")
+    public AllAnnouncementResponse getAnnouncementById(@PathVariable Long id) {
+        return announcementService.getByIdAnnouncement(id);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

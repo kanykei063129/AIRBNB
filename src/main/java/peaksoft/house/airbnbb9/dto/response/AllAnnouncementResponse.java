@@ -8,7 +8,7 @@ import peaksoft.house.airbnbb9.enums.Status;
 import java.util.List;
 
 @Builder
-public record AnnouncementResponse(
+public record AllAnnouncementResponse(
         Long id,
         HouseType houseType,
         List<String> images,
@@ -19,6 +19,7 @@ public record AnnouncementResponse(
         Status status,
         String title,
         int maxGuests,
-        String province
+        String province,
+        int isFavorite
 ) {
 }

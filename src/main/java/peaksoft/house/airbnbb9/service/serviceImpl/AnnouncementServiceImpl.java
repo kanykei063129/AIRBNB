@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.SimpleResponse;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
+import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
+import peaksoft.house.airbnbb9.entity.Feedback;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;
@@ -29,6 +31,26 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return userRepository.getUserById(userId).orElseThrow(() ->
                 new NotFoundException("User with id: " + userId + " is no exist!"));
     }
+
+    @Override
+    public AllAnnouncementResponse getByIdAnnouncement(Long id) {
+            Announcement announcement = announcementRepository.findById(id).orElseThrow(() -> new NotFoundException("Announcement with id: " + id + " is no exist!"));
+            List<Feedback> feedbacks = announcementRepository.getAllAnnouncementFeedback(id);
+            return AllAnnouncementResponse.builder()
+                    .id(announcement.getId())
+                    .houseType(announcement.getHouseType())
+                    .images(announcement.getImages())
+                    .price(announcement.getPrice())
+                    .region(announcement.getRegion())
+                    .address(announcement.getAddress())
+                    .description(announcement.getDescription())
+                    .status(announcement.getStatus())
+                    .title(announcement.getTitle())
+                    .maxGuests(announcement.getMaxGuests())
+                    .province(announcement.getProvince())
+                    .isFavorite(feedbacks.size())
+                    .build();
+        }
 
     @Override
     public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
@@ -74,6 +96,4 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     .build();
         } else throw new NoSuchElementException(String.format("Announcement with id:%s does not exist", id));
     }
-
-
 }
