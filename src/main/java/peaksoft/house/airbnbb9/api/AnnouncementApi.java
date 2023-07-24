@@ -24,7 +24,7 @@ public class AnnouncementApi {
         return announcementService.getByIdUser(id);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER')")
     @GetMapping("/{id}")
     public AllAnnouncementResponse getAnnouncementById(@PathVariable Long id) {
         return announcementService.getByIdAnnouncement(id);
@@ -42,7 +42,6 @@ public class AnnouncementApi {
     public AnnouncementResponse update(@PathVariable Long id, @RequestBody @Valid AnnouncementRequest announcementRequest) {
         return announcementService.updateAnnouncement(id, announcementRequest);
     }
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public SimpleResponse deleteByIdAnnouncement(@PathVariable Long id) {
