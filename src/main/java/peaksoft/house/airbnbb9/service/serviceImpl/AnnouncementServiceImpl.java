@@ -48,7 +48,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     .title(announcement.getTitle())
                     .maxGuests(announcement.getMaxGuests())
                     .province(announcement.getProvince())
-                    .isFavorite(feedbacks.size())
+                    .isFeedback(feedbacks.size())
                     .build();
         }
 

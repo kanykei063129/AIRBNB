@@ -20,6 +20,6 @@ public record AllAnnouncementResponse(
         String title,
         int maxGuests,
         String province,
-        int isFavorite
+        int isFeedback
 ) {
 }
