@@ -9,7 +9,6 @@ import peaksoft.house.airbnbb9.enums.Status;
 
 import java.util.List;
 
-@Builder
 public record AnnouncementRequest(
         @NotNull(message = "HouseType must not be null!")
         HouseType houseType,

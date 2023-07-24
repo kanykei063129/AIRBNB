@@ -1,5 +1,7 @@
 package peaksoft.house.airbnbb9.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,31 +17,31 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/announcements")
 @RequiredArgsConstructor
+@Tag(name = "Announcement Api",description = "All announcement endpoints")
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
-
+    @Operation(summary = "GetUserById",description = "Get announcements user by id ")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getById/{id}")
-    public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long id) {
-        return announcementService.getByIdUser(id);
+    @GetMapping("/getById/{userId}")
+    public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long userId) {
+        return announcementService.getByIdUser(userId);
     }
-
+    @Operation(summary = "getAnnouncements",description = "Get all announcements")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getAll")
+    @GetMapping("/getAnnouncements")
     public List<AnnouncementResponse> getAllAnnouncement() {
         return announcementService.getAllAnnouncements();
     }
-
-    @PermitAll
-    @PutMapping("/{id}")
+    @Operation(summary = "update by id",description = "Update announcement by id ")
+    @PutMapping("/update/{announcementId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public AnnouncementResponse update(@PathVariable Long id, @RequestBody @Valid AnnouncementRequest announcementRequest) {
-        return announcementService.updateAnnouncement(id, announcementRequest);
+    public AnnouncementResponse update(@PathVariable Long announcementId, @RequestBody @Valid AnnouncementRequest announcementRequest) {
+        return announcementService.updateAnnouncement(announcementId, announcementRequest);
     }
-
+    @Operation(summary = "delete Announcement By id",description = "Delete announcement by id ")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/delete/{id}")
-    public SimpleResponse deleteByIdAnnouncement(@PathVariable Long id) {
-        return announcementService.deleteByIdAnnouncement(id);
+    @DeleteMapping("/delete/{announcementId}")
+    public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
+        return announcementService.deleteByIdAnnouncement(announcementId);
     }
 }

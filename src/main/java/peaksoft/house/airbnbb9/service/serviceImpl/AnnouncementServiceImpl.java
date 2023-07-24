@@ -65,14 +65,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public SimpleResponse deleteByIdAnnouncement(Long id) {
-        if (announcementRepository.existsById(id)) {
-            announcementRepository.deleteById(id);
+    public SimpleResponse deleteByIdAnnouncement(Long announcementId) {
+        if (announcementRepository.existsById(announcementId)) {
+            announcementRepository.deleteById(announcementId);
             return SimpleResponse.builder()
                     .status(HttpStatus.OK)
                     .message("Successfully deleted...")
                     .build();
-        } else throw new NoSuchElementException(String.format("Announcement with id:%s does not exist", id));
+        } else throw new NoSuchElementException(String.format("Announcement with id:%s does not exist", announcementId));
     }
 
 

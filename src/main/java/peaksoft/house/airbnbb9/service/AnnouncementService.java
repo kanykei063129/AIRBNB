@@ -13,5 +13,5 @@ public interface AnnouncementService {
 
     AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
 
-    SimpleResponse deleteByIdAnnouncement(Long id);
+    SimpleResponse deleteByIdAnnouncement(Long announcementId);
 }
