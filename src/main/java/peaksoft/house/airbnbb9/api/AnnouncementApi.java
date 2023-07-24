@@ -18,11 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @PostMapping("/save/{userId}")
-    public SimpleResponse created(@PathVariable Long userId,@RequestBody AnnouncementRequest announcementRequest){
-        return announcementService.create(userId,announcementRequest);
-    }
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getById/{id}")
     public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long id) {
