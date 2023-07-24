@@ -1,6 +1,7 @@
 package peaksoft.house.airbnbb9.api;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.responce.AnnouncementResponse;
@@ -13,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/announcements")
 @RequiredArgsConstructor
+@Tag(name = "Announcements", description = "Controller for Announcements")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
 
