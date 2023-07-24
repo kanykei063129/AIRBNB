@@ -1,11 +1,13 @@
 package peaksoft.house.airbnbb9.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import peaksoft.house.airbnbb9.enums.Role;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -13,14 +15,18 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
-public class User {
+@Builder
+@AllArgsConstructor
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_gen")
     @SequenceGenerator(name = "user_gen",sequenceName = "user_seq",allocationSize = 1, initialValue = 6)
     private Long id;
     private String fullName;
     private String email;
+    private String password;
     private String image;
+
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -55,4 +61,39 @@ public class User {
             CascadeType.REMOVE},
             mappedBy = "user")
     private List<Booking>bookings;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password ;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
