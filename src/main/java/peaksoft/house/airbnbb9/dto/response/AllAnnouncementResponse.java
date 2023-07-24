@@ -22,4 +22,5 @@ public record AllAnnouncementResponse(
         String province,
         int isFeedback
 ) {
+
 }

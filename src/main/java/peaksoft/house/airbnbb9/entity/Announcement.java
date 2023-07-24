@@ -24,29 +24,43 @@ public class Announcement {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "house_type")
     private HouseType houseType;
 
-    @ElementCollection
+    @Lob
     private List<String> images;
+
+    @Column(name = "price")
     private int price;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "region")
     private Region region;
+
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "description")
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "max_guests")
     private int maxGuests;
+
+    @Column(name = "province")
     private String province;
 
-    @OneToMany(cascade = {
+    @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
             CascadeType.MERGE,
-            CascadeType.REMOVE},
-            mappedBy = "announcement")
+            CascadeType.REMOVE})
     private List<Feedback> feedbacks;
 
     @ManyToOne(cascade = {
@@ -55,18 +69,17 @@ public class Announcement {
             CascadeType.MERGE})
     private User user;
 
-    @OneToMany(cascade = {
+    @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
             CascadeType.MERGE,
-            CascadeType.REMOVE},
-            mappedBy = "announcement")
+            CascadeType.REMOVE})
     private List<Favorite> favorites;
 
-    @OneToMany(cascade = {
+    @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
             CascadeType.MERGE,
-            CascadeType.REMOVE},mappedBy = "announcement")
+            CascadeType.REMOVE})
     private List<Booking> bookings;
 }

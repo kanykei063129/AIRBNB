@@ -8,6 +8,7 @@ import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import java.util.List;
 
 public interface AnnouncementService {
+    SimpleResponse create(Long userId,AnnouncementRequest announcementRequest);
     List<AnnouncementResponse> getAllAnnouncements();
 
     List<AnnouncementResponse> getByIdUser(Long userId);

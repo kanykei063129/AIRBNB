@@ -1,5 +1,8 @@
 package peaksoft.house.airbnbb9.dto.request;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
@@ -14,6 +17,7 @@ public record AnnouncementRequest(
         @NotNull(message = "HouseType must not be null!")
         HouseType houseType,
         @NotNull(message = "Images must not be empty!")
+        @Lob
         List<String> images,
         @NotNull(message = "Price must not be null!")
         @Positive(message = "Price must be a positive number!")
@@ -23,6 +27,7 @@ public record AnnouncementRequest(
         @NotNull(message = "Address must not be null!")
         String address,
         String description,
+        @Enumerated(EnumType.STRING)
         Status status,
         String title,
         int maxGuests,

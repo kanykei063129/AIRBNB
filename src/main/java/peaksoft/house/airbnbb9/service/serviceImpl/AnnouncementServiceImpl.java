@@ -3,6 +3,7 @@ package peaksoft.house.airbnbb9.service.serviceImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.SimpleResponse;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
@@ -10,6 +11,7 @@ import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Feedback;
+import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;
@@ -24,6 +26,7 @@ import java.util.NoSuchElementException;
 public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final UserRepository userRepository;
+    private final JdbcTemplate jdbcTemplate;
 
 
     @Override
@@ -82,8 +85,28 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
+    public SimpleResponse create(Long userId,AnnouncementRequest announcementRequest) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("User with id:%s is not found...", userId)));
+        Announcement announcement = new Announcement();
+        announcement.setUser(user);
+        announcement.setHouseType(announcementRequest.houseType());
+        announcement.setImages(announcementRequest.images());
+        announcement.setPrice(announcementRequest.price());
+        announcement.setRegion(announcementRequest.region());
+        announcement.setAddress(announcementRequest.address());
+        announcement.setDescription(announcementRequest.description());
+        announcement.setStatus(announcementRequest.status());
+        announcement.setTitle(announcementRequest.title());
+        announcement.setMaxGuests(announcementRequest.maxGuests());
+        announcement.setProvince(announcementRequest.province());
+        announcementRepository.save(announcement);
+        return SimpleResponse.builder().status(HttpStatus.OK).message("Announcement with id: " + announcement.getId() + " is saved!").build();
+    }
+
+    @Override
     public List<AnnouncementResponse> getAllAnnouncements() {
         return announcementRepository.getAll();
+
     }
 
     @Override
