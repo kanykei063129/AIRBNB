@@ -1,4 +1,4 @@
-package peaksoft.house.airbnbb9.config;
+package peaksoft.house.airbnbb9.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
