@@ -26,7 +26,7 @@ import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.service.AuthenticationService;
 
 import java.io.IOException;
-import java.time.LocalDate;
+
 
 @Service
 @Transactional
@@ -47,7 +47,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode("adi123"))
                 .build();
         userRepository.save(user);
-
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
                 new ClassPathResource("package.json").getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
