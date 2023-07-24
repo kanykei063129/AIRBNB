@@ -1,4 +1,4 @@
-package peaksoft.house.airbnbb9.config;
+package peaksoft.house.airbnbb9.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
