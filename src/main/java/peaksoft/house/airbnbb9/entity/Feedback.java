@@ -16,7 +16,7 @@ import java.util.List;
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "feedback_gen")
-    @SequenceGenerator(name = "feedback_gen",sequenceName = "feedback_seq",allocationSize = 1)
+    @SequenceGenerator(name = "feedback_gen",sequenceName = "feedback_seq",allocationSize = 1, initialValue = 6)
     private Long id;
     private String comment;
 
