@@ -7,6 +7,10 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import peaksoft.house.airbnbb9.enums.Role;
 
 import java.util.Collection;
@@ -18,14 +22,16 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class User implements UserDetails {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_gen")
-    @SequenceGenerator(name = "user_gen",sequenceName = "user_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 6)
     private Long id;
     private String fullName;
     private String email;
-    private String image;
     private String password;
+    private String image;
+
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -43,7 +49,7 @@ public class User implements UserDetails {
             CascadeType.REFRESH,
             CascadeType.MERGE},
             mappedBy = "user")
-    private List<Announcement>announcements;
+    private List<Announcement> announcements;
 
     @OneToMany(cascade = {
             CascadeType.DETACH,
@@ -51,7 +57,7 @@ public class User implements UserDetails {
             CascadeType.MERGE,
             CascadeType.REMOVE},
             mappedBy = "user")
-    private List<Favorite>favorites;
+    private List<Favorite> favorites;
 
     @OneToMany(cascade = {
             CascadeType.DETACH,
@@ -59,7 +65,7 @@ public class User implements UserDetails {
             CascadeType.MERGE,
             CascadeType.REMOVE},
             mappedBy = "user")
-    private List<Booking>bookings;
+    private List<Booking> bookings;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -95,4 +101,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
