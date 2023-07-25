@@ -2,7 +2,6 @@ package peaksoft.house.airbnbb9.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,12 +19,6 @@ import java.util.List;
 @Tag(name = "Announcement Api",description = "All announcement endpoints")
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
-    @Operation(summary = "GetUserById",description = "Get announcements user by id ")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getById/{userId}")
-    public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long userId) {
-        return announcementService.getByIdUser(userId);
-    }
     @Operation(summary = "getAnnouncements",description = "Get all announcements")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAnnouncements")

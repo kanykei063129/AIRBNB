@@ -23,13 +23,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final UserRepository userRepository;
 
-
-    @Override
-    public List<AnnouncementResponse> getByIdUser(Long userId) {
-        return userRepository.getUserById(userId).orElseThrow(() ->
-                new NotFoundException("User with id: " + userId + " is no exist!"));
-    }
-
     @Override
     public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new NotFoundException(" Announcement with id: " + announcementId + " is no exist!"));
