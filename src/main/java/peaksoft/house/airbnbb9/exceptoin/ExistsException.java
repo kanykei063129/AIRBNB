@@ -1,7 +1,0 @@
-package peaksoft.house.airbnbb9.exceptoin;
-
-public class ExistsException extends Exception {
-    public ExistsException(String message) {
-        super(message);
-    }
-}
