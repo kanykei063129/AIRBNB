@@ -21,36 +21,31 @@ import java.util.List;
 @Tag(name = "Announcement Api",description = "All announcement endpoints")
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
-    @Operation(summary = "GetUserById",description = "Get announcements user by id ")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getById/{id}")
-    public List<AnnouncementResponse> getByIdAnnouncement(@PathVariable Long id) {
-        return announcementService.getByIdUser(id);
-    }
+
     @Operation(summary = "getAnnouncementByID",description = "Get announcement by id ")
     @PreAuthorize("hasAnyAuthority('USER')")
-    @GetMapping("/{id}")
-    public AllAnnouncementResponse getAnnouncementById(@PathVariable Long id) {
-        return announcementService.getByIdAnnouncement(id);
+    @GetMapping("/getById{announcementId}")
+    public AllAnnouncementResponse getAnnouncementById(@PathVariable Long announcementId) {
+        return announcementService.getByIdAnnouncement(announcementId);
     }
     @Operation(summary = "getAnnouncements",description = "Get all announcements")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getAll")
+    @GetMapping("/getAllAnnouncements")
     public List<AnnouncementResponse> getAllAnnouncement() {
         return announcementService.getAllAnnouncements();
     }
 
     @Operation(summary = "update By id",description = "Update announcement by id ")
     @PermitAll
-    @PutMapping("/{id}")
+    @PutMapping("/update/{announcementId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public AnnouncementResponse update(@PathVariable Long id, @RequestBody @Valid AnnouncementRequest announcementRequest) {
-        return announcementService.updateAnnouncement(id, announcementRequest);
+    public AnnouncementResponse update(@PathVariable Long announcementId, @RequestBody @Valid AnnouncementRequest announcementRequest) {
+        return announcementService.updateAnnouncement(announcementId, announcementRequest);
     }
     @Operation(summary = "delete Announcement By id",description = "Delete announcement by id ")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/delete/{id}")
-    public SimpleResponse deleteByIdAnnouncement(@PathVariable Long id) {
-        return announcementService.deleteByIdAnnouncement(id);
+    @DeleteMapping("/delete/{announcementId}")
+    public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
+        return announcementService.deleteByIdAnnouncement(announcementId);
     }
 }

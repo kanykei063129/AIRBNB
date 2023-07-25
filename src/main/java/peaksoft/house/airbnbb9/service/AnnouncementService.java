@@ -9,11 +9,9 @@ import java.util.List;
 
 public interface AnnouncementService {
     List<AnnouncementResponse> getAllAnnouncements();
-
-    List<AnnouncementResponse> getByIdUser(Long userId);
-    AllAnnouncementResponse getByIdAnnouncement(Long id);
+    AllAnnouncementResponse getByIdAnnouncement(Long announcementId);
 
     AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
 
-    SimpleResponse deleteByIdAnnouncement(Long id);
+    SimpleResponse deleteByIdAnnouncement(Long announcementId);
 }
