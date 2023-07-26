@@ -16,8 +16,6 @@ import java.util.List;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final JdbcTemplate jdbcTemplate;
-    private final UserRepository userRepository;
-
     @Override
     public List<UserResponse> getAllUsers() {
         String sql = "SELECT u.id, u.full_name, u.email,\n" +
