@@ -26,14 +26,14 @@ public class AnnouncementApi {
         return announcementService.getAllAnnouncements();
     }
     @Operation(summary = "update by id",description = "Update announcement by id ")
-    @PutMapping("/update/{announcementId}")
+    @PutMapping("/{announcementId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public AnnouncementResponse update(@PathVariable Long announcementId, @RequestBody @Valid AnnouncementRequest announcementRequest) {
         return announcementService.updateAnnouncement(announcementId, announcementRequest);
     }
     @Operation(summary = "delete Announcement By id",description = "Delete announcement by id ")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/delete/{announcementId}")
+    @DeleteMapping("/{announcementId}")
     public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
         return announcementService.deleteByIdAnnouncement(announcementId);
     }
