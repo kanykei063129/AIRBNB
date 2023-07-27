@@ -33,6 +33,7 @@ public class AnnouncementResponse {
     private Integer rating;
 
 
+
     public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status) {
         this.id = id;
         this.address = address;
@@ -42,6 +43,7 @@ public class AnnouncementResponse {
         this.title = title;
         this.status=status;
     }
+
     public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status, Integer rating) {
         this.id = id;
         this.address = address;
