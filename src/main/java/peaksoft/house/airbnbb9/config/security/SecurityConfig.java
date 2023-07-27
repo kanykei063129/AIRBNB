@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import peaksoft.house.airbnbb9.config.security.JwtFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -28,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
                                 .requestMatchers(
+                                        "/",
                                         "/api/auth/**",
                                         "/swagger-ui/**",
                                         "v3/api-docs/**",

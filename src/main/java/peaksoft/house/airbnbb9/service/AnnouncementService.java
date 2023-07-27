@@ -4,7 +4,6 @@ import peaksoft.house.airbnbb9.dto.responce.AnnouncementResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 
-
 import java.util.List;
 
 public interface AnnouncementService {
