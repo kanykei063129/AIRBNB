@@ -42,8 +42,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 builder().
                 fullName("Adilet Islambek Uulu")
                 .role(Role.ADMIN)
-                .email("adilet@gmail.com")
-                .password(passwordEncoder.encode("adi123"))
+                .email("admin@gmail.com")
+                .password(passwordEncoder.encode("Admin123"))
                 .build();
         userRepository.save(user);
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
