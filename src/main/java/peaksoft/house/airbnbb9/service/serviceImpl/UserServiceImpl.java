@@ -14,6 +14,7 @@ import java.util.List;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final JdbcTemplate jdbcTemplate;
+    private final UserRepository userRepository;
 
     @Override
     public List<UserResponse> getAllUsers() {
@@ -29,14 +30,12 @@ public class UserServiceImpl implements UserService {
             UserResponse user = new UserResponse();
             user.setId(rs.getLong("id"));
             user.setFullName(rs.getString("full_name"));
+            user.setEmail(rs.getString("email"));
             user.setBookings(rs.getInt("bookings"));
             user.setAnnouncements(rs.getInt("announcements"));
             return user;
         });
     }
 }
-
-
-
 
 
