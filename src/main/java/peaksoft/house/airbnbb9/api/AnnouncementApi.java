@@ -11,6 +11,10 @@ import peaksoft.house.airbnbb9.dto.SimpleResponse;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+
+import lombok.RequiredArgsConstructor;
+import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 
 import java.util.List;
@@ -19,6 +23,7 @@ import java.util.List;
 @RequestMapping("/api/announcements")
 @RequiredArgsConstructor
 @Tag(name = "Announcement Api",description = "All announcement endpoints")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
 
@@ -47,5 +52,43 @@ public class AnnouncementApi {
     @DeleteMapping("/delete/{announcementId}")
     public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
         return announcementService.deleteByIdAnnouncement(announcementId);
+    }
+
+    @GetMapping("/filterByStatus")
+    public List<AnnouncementResponse> getAllAnnouncementsFilterByStatus(@RequestParam(name = "FilterByStatus") Status status) {
+        if (status == null) {
+            return null;
+        } else {
+            return announcementService.getAllAnnouncementsFilterByStatus(status);
+        }
+    }
+
+    @GetMapping("sortByPopular")
+    public List<AnnouncementResponse> getAllAnnouncementsSortByRating(@RequestParam(name = "sortByRating") String popular) {
+        if (popular == null) {
+            return null;
+        } else if (popular.equals("popular")) {
+            return announcementService.getAllAnnouncementsThePopular(popular);
+        } else
+            return announcementService.getAllAnnouncementsTheLasted();
+    }
+
+    @GetMapping("/filterByHouseType")
+    public List<AnnouncementResponse> getAllAnnouncementsFilterByHouseType(@RequestParam(name = "FilterByHouseType") HouseType houseType) {
+        if (houseType == null) {
+            return null;
+        } else {
+            return announcementService.getAllAnnouncementsFilterByHomeType(houseType);
+        }
+    }
+
+    @GetMapping("filterByPrice")
+    public List<AnnouncementResponse> getAllAnnouncementsSortByPrice(@RequestParam(name = "filterByPrice") String highToLow) {
+        if (highToLow == null) {
+            return null;
+        } else if (highToLow.equals("highToLow")) {
+            return announcementService.getAllAnnouncementsFilterByPriceHighToLow(highToLow);
+        } else
+            return announcementService.getAllAnnouncementsFilterByPriceLowToHigh();
     }
 }

@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.responce.UserResponse;
-import peaksoft.house.airbnbb9.entity.User;
-import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.service.UserService;
 
 import java.util.List;
@@ -38,4 +36,4 @@ public class UserServiceImpl implements UserService {
             return user;
         });
     }
-}
+
