@@ -1,6 +1,12 @@
 package peaksoft.house.airbnbb9.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,13 +20,12 @@ import java.util.List;
 @Table(name = "users")
 @Setter
 @Getter
-@NoArgsConstructor
 @Builder
-@AllArgsConstructor
 public class User implements UserDetails {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_gen")
-    @SequenceGenerator(name = "user_gen",sequenceName = "user_seq",allocationSize = 1, initialValue = 6)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 6)
     private Long id;
     private String fullName;
     private String email;
@@ -44,7 +49,7 @@ public class User implements UserDetails {
             CascadeType.REFRESH,
             CascadeType.MERGE},
             mappedBy = "user")
-    private List<Announcement>announcements;
+    private List<Announcement> announcements;
 
     @OneToMany(cascade = {
             CascadeType.DETACH,
@@ -52,7 +57,7 @@ public class User implements UserDetails {
             CascadeType.MERGE,
             CascadeType.REMOVE},
             mappedBy = "user")
-    private List<Favorite>favorites;
+    private List<Favorite> favorites;
 
     @OneToMany(cascade = {
             CascadeType.DETACH,
@@ -60,7 +65,10 @@ public class User implements UserDetails {
             CascadeType.MERGE,
             CascadeType.REMOVE},
             mappedBy = "user")
-    private List<Booking>bookings;
+    private List<Booking> bookings;
+
+    public User() {
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,12 +77,12 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password ;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override
@@ -96,4 +104,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

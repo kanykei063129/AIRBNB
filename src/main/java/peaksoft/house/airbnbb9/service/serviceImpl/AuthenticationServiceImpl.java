@@ -65,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user.setRole(Role.USER);
             userRepository.save(user);
         }
-        user = userRepository.findUserByEmail(firebaseToken.getEmail()).orElseThrow(
+        user = userRepository.getUserByEmail(firebaseToken.getEmail()).orElseThrow(
                 () -> {
                     log.error("User with this email not found!");
                     return new NotFoundException("User with this email not found!");

@@ -7,10 +7,7 @@ import peaksoft.house.airbnbb9.entity.User;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> getUserByEmail(String email);
-
-    boolean existsByEmail(String email);
-
-    Optional<User> findUserByEmail(String email);
+    Boolean existsByEmail(String email);
 }
