@@ -1,3 +1,4 @@
+
 package peaksoft.house.airbnbb9.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
@@ -23,7 +24,6 @@ public class UserServiceImpl implements UserService {
                 "                     LEFT JOIN bookings b ON u.id = b.user_id\n" +
                 "                     LEFT JOIN announcements a ON u.id = a.user_id\n" +
                 "                     GROUP BY u.id, u.full_name";
-
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             UserResponse user = new UserResponse();
             user.setId(rs.getLong("id"));
@@ -34,6 +34,4 @@ public class UserServiceImpl implements UserService {
             return user;
         });
     }
-}
-
 

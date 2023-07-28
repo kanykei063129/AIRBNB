@@ -2,11 +2,13 @@ package peaksoft.house.airbnbb9.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+
+import jakarta.persistence.ElementCollection;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import peaksoft.house.airbnbb9.enums.HouseType;

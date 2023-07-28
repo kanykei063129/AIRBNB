@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import peaksoft.house.airbnbb9.enums.Role;
@@ -29,8 +27,8 @@ public class User implements UserDetails {
     private Long id;
     private String fullName;
     private String email;
-    private String password;
     private String image;
+    private String password;
 
 
     @Enumerated(EnumType.STRING)
@@ -66,9 +64,7 @@ public class User implements UserDetails {
             CascadeType.REMOVE},
             mappedBy = "user")
     private List<Booking> bookings;
-
-    public User() {
-    }
+}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

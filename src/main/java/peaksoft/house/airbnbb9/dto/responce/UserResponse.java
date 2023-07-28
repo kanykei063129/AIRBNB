@@ -1,9 +1,8 @@
+
 package peaksoft.house.airbnbb9.dto.responce;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import peaksoft.house.airbnbb9.entity.Announcement;
-import peaksoft.house.airbnbb9.entity.Booking;
 import peaksoft.house.airbnbb9.enums.Role;
 @Data
 @NoArgsConstructor
