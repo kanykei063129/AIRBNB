@@ -19,6 +19,8 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -29,8 +31,7 @@ public class User implements UserDetails {
     private String email;
     private String image;
     private String password;
-
-
+    
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -64,7 +65,7 @@ public class User implements UserDetails {
             CascadeType.REMOVE},
             mappedBy = "user")
     private List<Booking> bookings;
-}
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

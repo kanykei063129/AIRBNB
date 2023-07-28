@@ -29,7 +29,7 @@ public class AnnouncementRequest {
     private List<String> images;
     @NotNull(message = "Price must not be null!")
     @Positive(message = "Price must be a positive number!")
-    private int price;
+    private Integer price;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Region must not be null!")

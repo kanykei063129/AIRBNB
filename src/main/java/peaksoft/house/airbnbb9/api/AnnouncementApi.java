@@ -5,13 +5,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import peaksoft.house.airbnbb9.dto.SimpleResponse;
-import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-import peaksoft.house.airbnbb9.dto.responsce.AllAnnouncementResponse;
-import lombok.RequiredArgsConstructor;
-import peaksoft.house.airbnbb9.dto.responce.AnnouncementResponse;
+
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
+import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
@@ -49,26 +49,6 @@ public class AnnouncementApi {
     @GetMapping("/getById{announcementId}")
     public AllAnnouncementResponse getAnnouncementById(@PathVariable Long announcementId) {
         return announcementService.getByIdAnnouncement(announcementId);
-    }
-    @Operation(summary = "getAnnouncements",description = "Get all announcements")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getAllAnnouncements")
-    public List<AnnouncementResponse> getAllAnnouncement() {
-        return announcementService.getAllAnnouncements();
-    }
-
-    @Operation(summary = "update By id",description = "Update announcement by id ")
-    @PermitAll
-    @PutMapping("/update/{announcementId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public AnnouncementResponse update(@PathVariable Long announcementId, @RequestBody @Valid AnnouncementRequest announcementRequest) {
-        return announcementService.updateAnnouncement(announcementId, announcementRequest);
-    }
-    @Operation(summary = "delete Announcement By id",description = "Delete announcement by id ")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/delete/{announcementId}")
-    public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
-        return announcementService.deleteByIdAnnouncement(announcementId);
     }
 
     @GetMapping("/filterByStatus")

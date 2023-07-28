@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.request.SignInRequest;
-import peaksoft.house.airbnbb9.dto.responce.AuthenticationResponse;
+import peaksoft.house.airbnbb9.dto.response.AuthenticationResponse;
 import peaksoft.house.airbnbb9.service.AuthenticationService;
 
 @RestController
