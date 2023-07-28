@@ -1,7 +1,7 @@
 package peaksoft.house.airbnbb9.dto.response;
 
-import jakarta.persistence.Lob;
 import lombok.*;
+import lombok.Builder;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
@@ -24,7 +24,7 @@ public class AnnouncementResponse{
         private int maxGuests;
         private String province;
 
-
+  
     public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
         this.id = id;
         this.houseType = houseType;

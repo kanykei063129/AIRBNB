@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.springframework.security.core.GrantedAuthority;
+import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import lombok.*;
 import peaksoft.house.airbnbb9.enums.Role;
 
 import java.util.Collection;
@@ -17,10 +18,9 @@ import java.util.List;
 @Table(name = "users")
 @Setter
 @Getter
-@NoArgsConstructor
 @Builder
-@AllArgsConstructor
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
     @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 6)
@@ -64,6 +64,7 @@ public class User implements UserDetails {
             CascadeType.REMOVE},
             mappedBy = "user")
     private List<Booking> bookings;
+}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -99,4 +100,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
