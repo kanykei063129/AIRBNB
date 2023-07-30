@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.config.security.JwtService;
 import peaksoft.house.airbnbb9.dto.request.SignInRequest;
-import peaksoft.house.airbnbb9.dto.responce.AuthenticationResponse;
+import peaksoft.house.airbnbb9.dto.response.AuthenticationResponse;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Role;
 import peaksoft.house.airbnbb9.exceptoin.BadCredentialException;

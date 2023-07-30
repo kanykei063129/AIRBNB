@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
+import peaksoft.house.airbnbb9.dto.response.BookingResponse;
+import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.PaginationBookingResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
@@ -15,7 +18,6 @@ import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -65,7 +67,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcementRepository.existsById(announcementId)) {
             announcementRepository.deleteById(announcementId);
             return SimpleResponse.builder()
-                    .status(HttpStatus.OK)
+                    .httpStatus(HttpStatus.OK)
                     .message("Successfully deleted...")
                     .build();
         } else
