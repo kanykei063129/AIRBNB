@@ -38,13 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @PostConstruct
     public void init() throws IOException {
-        User user = User.
-                builder().
-                fullName("Adilet Islambek Uulu")
-                .role(Role.ADMIN)
-                .email("admin@gmail.com")
-                .password(passwordEncoder.encode("Admin123"))
-                .build();
+        User user = new User();
+        user.setFullName("Adilet Islambek Uulu");
+        user.setRole(Role.ADMIN);
+        user.setEmail("admin@gmail.com");
+        user.setPassword(passwordEncoder.encode("Admin123"));
         userRepository.save(user);
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
                 new ClassPathResource("package.json").getInputStream());

@@ -20,7 +20,7 @@ import java.util.List;
 @Table(name = "users")
 @Setter
 @Getter
-@Builder
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -66,9 +66,6 @@ public class User implements UserDetails {
             CascadeType.REMOVE},
             mappedBy = "user")
     private List<Booking> bookings;
-
-    public User() {
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
