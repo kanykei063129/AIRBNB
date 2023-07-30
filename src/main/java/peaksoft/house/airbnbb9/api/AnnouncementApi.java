@@ -1,15 +1,16 @@
 package peaksoft.house.airbnbb9.api;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.response.*;
-import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-
+import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest
 import io.swagger.v3.oas.annotations.tags.Tag;
+import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
@@ -40,6 +41,13 @@ public class AnnouncementApi {
     @DeleteMapping("/{announcementId}")
     public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
         return announcementService.deleteByIdAnnouncement(announcementId);
+    }
+
+    @Operation(summary = "getAnnouncementByID",description = "Get announcement by id ")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @GetMapping("/getById{announcementId}")
+    public AllAnnouncementResponse getAnnouncementById(@PathVariable Long announcementId) {
+        return announcementService.getByIdAnnouncement(announcementId);
     }
 
     @GetMapping("/filterByStatus")

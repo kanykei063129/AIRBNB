@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import peaksoft.house.airbnbb9.enums.Role;
@@ -20,6 +18,8 @@ import java.util.List;
 @Table(name = "users")
 @Setter
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
 
@@ -29,10 +29,9 @@ public class User implements UserDetails {
     private Long id;
     private String fullName;
     private String email;
-    private String password;
     private String image;
-
-
+    private String password;
+    
     @Enumerated(EnumType.STRING)
     private Role role;
 
