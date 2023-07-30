@@ -1,7 +1,6 @@
-package peaksoft.house.airbnbb9.dto.responce;
+package peaksoft.house.airbnbb9.dto.response;
 
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Builder

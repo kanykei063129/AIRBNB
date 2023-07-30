@@ -1,6 +1,6 @@
 package peaksoft.house.airbnbb9.service;
 
-import peaksoft.house.airbnbb9.dto.responce.*;
+import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 
 import peaksoft.house.airbnbb9.enums.HouseType;
