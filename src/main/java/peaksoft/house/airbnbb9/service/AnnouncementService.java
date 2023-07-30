@@ -1,10 +1,8 @@
 package peaksoft.house.airbnbb9.service;
 
-import peaksoft.house.airbnbb9.dto.SimpleResponse;
+import peaksoft.house.airbnbb9.dto.responce.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 
-import peaksoft.house.airbnbb9.dto.responce.AnnouncementResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 
@@ -20,4 +18,8 @@ public interface AnnouncementService {
     List<AnnouncementResponse> getAllAnnouncementsFilterByHomeType(HouseType houseType);
     List<AnnouncementResponse> getAllAnnouncementsFilterByPriceHighToLow(String highToLow );
     List<AnnouncementResponse> getAllAnnouncementsFilterByPriceLowToHigh();
+    List<BookingResponse> getAllAnnouncementsBookings(Long userId);
+    List<AnnouncementResponse> getAllMyAnnouncements(Long userId);
+    List<PaginationBookingResponse> getAllAnnouncementsBookingsSortAndPagination(String ascOrDesc, int currentPage, int pageSize);
+    List<PaginationAnnouncementResponse> getAllMyAnnouncementsSortAndPagination(String ascOrDesc, int currentPage, int pageSize);
 }

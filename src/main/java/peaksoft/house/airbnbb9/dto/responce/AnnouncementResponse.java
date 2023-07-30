@@ -33,6 +33,19 @@ public class AnnouncementResponse {
     private Integer rating;
 
 
+    public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
+        this.id = id;
+        this.houseType = houseType;
+        this.images = images;
+        this.price = price;
+        this.region = region;
+        this.address = address;
+        this.description = description;
+        this.status = status;
+        this.title = title;
+        this.maxGuests = maxGuests;
+        this.province = province;
+    }
 
     public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status) {
         this.id = id;
@@ -53,5 +66,14 @@ public class AnnouncementResponse {
         this.title = title;
         this.status=status;
         this.rating=rating;
+    }
+    public AnnouncementResponse(Long id,List<String> images, int price, Region region, String address, String description,int maxGuests) {
+        this.id = id;
+        this.images = images;
+        this.price = price;
+        this.region = region;
+        this.address = address;
+        this.description = description;
+        this.maxGuests = maxGuests;
     }
 }
