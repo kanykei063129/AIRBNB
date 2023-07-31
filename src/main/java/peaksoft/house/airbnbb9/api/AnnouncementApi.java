@@ -5,10 +5,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-
+import peaksoft.house.airbnbb9.dto.response.*;
+import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest
 import io.swagger.v3.oas.annotations.tags.Tag;
-import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
@@ -87,5 +86,29 @@ public class AnnouncementApi {
             return announcementService.getAllAnnouncementsFilterByPriceHighToLow(highToLow);
         } else
             return announcementService.getAllAnnouncementsFilterByPriceLowToHigh();
+    }
+    @Operation(summary = "getAllAnnouncementsBookings",description = "Get all announcements bookings")
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/getAllAnnouncementsBookings/{userId}")
+    public List<BookingResponse> getAllAnnouncementBookings(@PathVariable Long userId) {
+        return announcementService.getAllAnnouncementsBookings(userId);
+    }
+    @Operation(summary = "get My Announcements",description = "Get My announcements")
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/getAllMyAnnouncements/{userId}")
+    public List<AnnouncementResponse> getAllMyAnnouncement(@PathVariable Long userId) {
+        return announcementService.getAllMyAnnouncements(userId);
+    }
+    @Operation(summary = "get_All_Announcements_Bookings_Sort_And_Pagination",description = "Get all announcements bookings,Sort And Pagination")
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/announcementsBookings")
+    public List<PaginationBookingResponse> getAllAnnouncementBookingsSortAndPagination(@RequestParam String ascOrDesc, @RequestParam int currentPage, @RequestParam int pageSize) {
+        return announcementService.getAllAnnouncementsBookingsSortAndPagination(ascOrDesc, currentPage, pageSize);
+    }
+    @Operation(summary = "get_All_My Announcements Sort_And_Pagination",description = "Get All My announcements,Sort And Pagination")
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/myAnnouncements")
+    public List<PaginationAnnouncementResponse> getAllMyAnnouncementsSortAndPagination(@RequestParam String ascOrDesc, @RequestParam int currentPage, @RequestParam int pageSize) {
+        return announcementService.getAllMyAnnouncementsSortAndPagination(ascOrDesc, currentPage, pageSize);
     }
 }

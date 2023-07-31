@@ -24,5 +24,5 @@ public class UserApi {
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }
-}
+
 
