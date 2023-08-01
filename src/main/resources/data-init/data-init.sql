@@ -3,11 +3,11 @@ values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWI
        (2, 'Alister Overeem', 'alister@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG', 'photo with kick', 'USER'),
        (3, 'Kyle Snyder', 'snyder@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG','photo wrestling boots', 'USER'),
        (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG', 'photo 74', 'USER'),
-       (5, 'David Taylor', 'tayler@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG','photo 86', 'USER');
+       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$0fNQj3htdAad9Y9BXc.Axep6wxi5RHskU0SbzjJCHHInjmetLiM9y','photo 86', 'USER');
 
 insert into announcements
 (id, house_type, price, region, province, address, description, status, title, max_guests, user_id)
-values (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'MODERATION', 'house', 3, 2),
+values (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'MODERATION', 'house', 3, 1),
        (2, 'HOUSE', 24, 'BATKEN', 'batken', '2-street 4', 'for Relax in the apricot garden', 'MODERATION', 'house', 5,
         2),
        (3, 'APARTMENT', 41, 'BISHKEK', 'ALAMIDIN-1', '3-street 4', 'for long time ', 'MODERATION', 'apartment', 2,
