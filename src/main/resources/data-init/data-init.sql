@@ -3,7 +3,7 @@ values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWI
        (2, 'Alister Overeem', 'alister@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG', 'photo with kick', 'USER'),
        (3, 'Kyle Snyder', 'snyder@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG','photo wrestling boots', 'USER'),
        (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG', 'photo 74', 'USER'),
-       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$0fNQj3htdAad9Y9BXc.Axep6wxi5RHskU0SbzjJCHHInjmetLiM9y','photo 86', 'USER');
+       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy','photo 86', 'ADMIN');
 
 insert into announcements
 (id, house_type, price, region, province, address, description, status, title, max_guests, user_id)
