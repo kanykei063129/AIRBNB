@@ -38,12 +38,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @PostConstruct
     public void init() throws IOException {
-        User user = new User();
-        user.setFullName("Adilet Islambek Uulu");
-        user.setRole(Role.ADMIN);
-        user.setEmail("admin@gmail.com");
-        user.setPassword(passwordEncoder.encode("Admin123"));
-        userRepository.save(user);
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
                 new ClassPathResource("package.json").getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()

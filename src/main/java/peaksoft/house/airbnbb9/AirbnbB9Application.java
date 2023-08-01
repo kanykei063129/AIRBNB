@@ -10,6 +10,7 @@ public class AirbnbB9Application {
     public static void main(String[] args) {
         SpringApplication.run(AirbnbB9Application.class, args);
     }
+
     @GetMapping
     public String greetings(){
         return "index";
