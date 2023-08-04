@@ -27,7 +27,7 @@ public class Announcement {
     @Column(name = "house_type")
     private HouseType houseType;
 
-    @Lob
+    @ElementCollection
     private List<String> images;
 
     @Column(name = "price")

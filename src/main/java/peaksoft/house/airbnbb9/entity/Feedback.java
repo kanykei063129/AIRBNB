@@ -36,14 +36,14 @@ public class Feedback {
     @OneToMany(cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
-            CascadeType.MERGE},
+            CascadeType.MERGE,
+            CascadeType.REMOVE},
             mappedBy = "feedback")
     private List<Like> likes;
 
     @ManyToOne(cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE})
+            CascadeType.REFRESH})
     private User user;
 }
