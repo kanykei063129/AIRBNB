@@ -89,36 +89,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
 
     public SimpleResponse deleteByIdAnnouncement(Long announcementId) {
-        Announcement announcement = announcementRepository.findById(announcementId)
-                .orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
-
-        List<Feedback> feedbacks = announcement.getFeedbacks();
-        if (feedbacks != null) {
-            feedbackRepository.deleteAll(feedbacks);
-        }
-
-        List<Favorite> favorites = announcement.getFavorites();
-        if (favorites != null) {
-            favorites.forEach(favorite -> favorite.setAnnouncement(null));
-            favorites.clear();
-        }
-
-        List<Booking> bookings = announcement.getBookings();
-        if (bookings != null) {
-            bookingRepository.deleteAll(bookings);
-            bookings.clear();
-        }
-
-        User user = announcement.getUser();
-        if (user != null) {
-            user.getAnnouncements().remove(announcement);
-        }
-
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
         announcementRepository.delete(announcement);
-
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
-                .message(String.format("Announcement with id %d has been deleted.", announcementId))
+                .message(String.format("Announcement with id: " +announcementId+ " deleted..."))
                 .build();
     }
 
