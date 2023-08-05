@@ -1,17 +1,16 @@
 package peaksoft.house.airbnbb9.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-
-import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
+import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.enums.Region;
+import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 
@@ -21,13 +20,11 @@ import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Feedback;
 
 import peaksoft.house.airbnbb9.enums.HouseType;
-import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Transactional
@@ -36,6 +33,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final JdbcTemplate jdbcTemplate;
     private final AnnouncementTemplate announcementTemplate;
+
 
 
     @Override
@@ -94,17 +92,16 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementTemplate.getAllAnnouncements();
     }
 
-    @Override
+
     public SimpleResponse deleteByIdAnnouncement(Long announcementId) {
-        if (announcementRepository.existsById(announcementId)) {
-            announcementRepository.deleteById(announcementId);
-            return SimpleResponse.builder()
-                    .httpStatus(HttpStatus.OK)
-                    .message("Successfully deleted...")
-                    .build();
-        } else
-            throw new NoSuchElementException(String.format("Announcement with id:%s does not exist", announcementId));
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
+        announcementRepository.delete(announcement);
+        return SimpleResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .message(String.format("Announcement with id: " +announcementId+ " deleted..."))
+                .build();
     }
+
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType) {
