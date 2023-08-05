@@ -25,7 +25,7 @@ import java.util.List;
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
 
-    @Operation(summary = "getAnnouncements", description = "Get all announcements")
+    @Operation(summary = "getAnnouncements", description = "Get all announcements only moderation")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcements")
     public List<AnnouncementResponse> getAllAnnouncement() {

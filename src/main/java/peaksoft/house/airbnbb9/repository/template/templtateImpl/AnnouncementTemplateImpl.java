@@ -124,8 +124,10 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
                 FROM announcements a
                          JOIN feedbacks r ON a.id = r.announcement_id
+                         WHERE a.status = 'MODERATION'
                 GROUP BY a.id, a.price, a.max_guests, a.address,
                          a.description, a.province, a.region, a.title
+             
                  """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
