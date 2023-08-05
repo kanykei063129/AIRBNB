@@ -62,7 +62,7 @@ public class AnnouncementApi {
     }
     @Operation(summary = "sort announcements", description = " sort announcements by rating and price(only asc or desc!)")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/announcementsSort")
+    @GetMapping("/announcements-sort")
     public List<AnnouncementResponse> getAllAnnouncementsSort(
             @RequestParam(required = false) String rating,
             @RequestParam(required = false) String price) {
