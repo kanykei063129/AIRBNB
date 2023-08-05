@@ -3,7 +3,6 @@ package peaksoft.house.airbnbb9.api;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.response.*;
@@ -28,7 +27,7 @@ public class AnnouncementApi {
 
     @Operation(summary = "getAnnouncements", description = "Get all announcements")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getAnnouncements")
+    @GetMapping("/announcements")
     public List<AnnouncementResponse> getAllAnnouncement() {
         return announcementService.getAllAnnouncements();
     }
@@ -53,14 +52,21 @@ public class AnnouncementApi {
     public AllAnnouncementResponse getAnnouncementById(@PathVariable Long announcementId) {
         return announcementService.getByIdAnnouncement(announcementId);
     }
-    @GetMapping("/filterAndSort")
-    public List<AnnouncementResponse> getAllAnnouncements(
+    @Operation(summary = "filter announcements", description = " filter  announcements by status and house type ")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/announcements-filter")
+    public List<AnnouncementResponse> getAllAnnouncementsFilterAndSort(
             @RequestParam(required = false) Status status,
-            @RequestParam(required = false) HouseType houseType,
-            @RequestParam(defaultValue = "false") boolean ascDesc,
-            @RequestParam(defaultValue = "false") boolean lowToHigh
-    ) {
-        return announcementService.getAllAnnouncementsFilterAndSort(status, houseType, ascDesc, lowToHigh);
+            @RequestParam(required = false) HouseType houseType) {
+        return announcementService.getAllAnnouncementsFilter(status, houseType);
+    }
+    @Operation(summary = "sort announcements", description = " sort announcements by rating and price(only asc or desc!)")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/announcementsSort")
+    public List<AnnouncementResponse> getAllAnnouncementsSort(
+            @RequestParam(required = false) String rating,
+            @RequestParam(required = false) String price) {
+        return announcementService.getAllAnnouncementsSort(rating, price);
     }
 
     @Operation(summary = "getAllAnnouncementsBookings", description = "Get all announcements bookings")

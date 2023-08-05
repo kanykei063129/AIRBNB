@@ -3,15 +3,6 @@ package peaksoft.house.airbnbb9.service;
 
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-
-import peaksoft.house.airbnbb9.dto.response.BookingResponse;
-import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.PaginationBookingResponse;
-
-import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
-
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 
@@ -22,8 +13,8 @@ public interface AnnouncementService {
     AllAnnouncementResponse getByIdAnnouncement(Long announcementId);
     AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
     SimpleResponse deleteByIdAnnouncement(Long announcementId);
-
-    List<AnnouncementResponse> getAllAnnouncementsFilterAndSort(Status status, HouseType houseType, boolean ascDesc, boolean lowToHigh);
+    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType);
+    List<AnnouncementResponse> getAllAnnouncementsSort(String rating, String price);
     List<BookingResponse> getAllAnnouncementsBookings(Long userId);
     List<AnnouncementResponse> getAllMyAnnouncements(Long userId);
     List<PaginationBookingResponse> getAllAnnouncementsBookingsSortAndPagination(String ascOrDesc, int currentPage, int pageSize);

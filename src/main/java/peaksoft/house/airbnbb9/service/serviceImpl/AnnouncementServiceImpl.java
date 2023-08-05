@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-import peaksoft.house.airbnbb9.dto.response.BookingResponse;
-import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.PaginationBookingResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
@@ -110,11 +107,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-
-    public List<AnnouncementResponse> getAllAnnouncementsFilterAndSort(Status status, HouseType houseType, boolean ascDesc, boolean lowToHigh) {
-        return announcementTemplate.getAllAnnouncementsFilterAndSort(status, houseType,ascDesc,lowToHigh);
+    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType) {
+        return announcementTemplate.getAllAnnouncementsFilter(status, houseType);
     }
 
+    @Override
+    public List<AnnouncementResponse> getAllAnnouncementsSort(String rating, String price) {
+        return announcementTemplate.getAllAnnouncementsSort(rating, price);
+    }
 
     @Override
     public List<BookingResponse> getAllAnnouncementsBookings(Long userId) {
