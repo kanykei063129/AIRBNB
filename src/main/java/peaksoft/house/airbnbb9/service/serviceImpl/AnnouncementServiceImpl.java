@@ -8,14 +8,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
-import peaksoft.house.airbnbb9.entity.*;
-import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
-import peaksoft.house.airbnbb9.repository.BookingRepository;
-import peaksoft.house.airbnbb9.repository.FeedbackRepository;
+
+import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
+import peaksoft.house.airbnbb9.entity.Feedback;
+
+import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 
 import java.util.Collections;
@@ -27,8 +32,8 @@ import java.util.List;
 public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final JdbcTemplate jdbcTemplate;
-    private final BookingRepository bookingRepository;
-    private final FeedbackRepository feedbackRepository;
+    private final AnnouncementTemplate announcementTemplate;
+
 
 
     @Override
@@ -84,7 +89,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncements() {
-        return announcementRepository.getAll();
+        return announcementTemplate.getAllAnnouncements();
     }
 
 
@@ -99,114 +104,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilterByStatus(Status status) {
-        String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.title, ai.images, a.status " +
-                "FROM announcements a " +
-                "LEFT JOIN announcement_images ai ON a.id = ai.announcement_id " +
-                "WHERE a.status = ?";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
-                .id(rs.getLong("id"))
-                .price(rs.getInt("price"))
-                .maxGuests(rs.getInt("max_guests"))
-                .address(rs.getString("address"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .status(Status.valueOf(rs.getString("status")))
-                .build());
-    }
-
-
-    @Override
-    public List<AnnouncementResponse> getAllAnnouncementsThePopular(String popular) {
-        String sql = "SELECT * FROM announcements a " +
-                "                LEFT JOIN announcement_images ai ON a.id = ai.announcement_id " +
-                "                 JOIN feedbacks r ON a.id = r.announcement_id " +
-                "                ORDER BY r.rating DESC LIMIT 2";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
-                .id(rs.getLong("id"))
-                .price(rs.getInt("price"))
-                .maxGuests(rs.getInt("max_guests"))
-                .address(rs.getString("address"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .status(Status.valueOf(rs.getString("status")))
-                .rating(rs.getInt("rating"))
-                .build());
+    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType) {
+        return announcementTemplate.getAllAnnouncementsFilter(status, houseType);
     }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsTheLasted() {
-        String sql = "SELECT * FROM announcements a\n" +
-                "                LEFT JOIN announcement_images ai ON a.id = ai.announcement_id\n" +
-                "                 JOIN feedbacks r ON a.id = r.announcement_id\n" +
-                "                ORDER BY r.rating ASC LIMIT 2 ";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
-                .id(rs.getLong("id"))
-                .price(rs.getInt("price"))
-                .maxGuests(rs.getInt("max_guests"))
-                .address(rs.getString("address"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .status(Status.valueOf(rs.getString("status")))
-                .rating(rs.getInt("rating"))
-                .build());
-    }
-
-
-    @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilterByHomeType(HouseType houseType) {
-        String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.title, ai.images, a.status\n" +
-                "FROM announcements a " +
-                "LEFT JOIN announcement_images ai ON a.id = ai.announcement_id WHERE a.house_type = ?";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
-                .id(rs.getLong("id"))
-                .price(rs.getInt("price"))
-                .maxGuests(rs.getInt("max_guests"))
-                .address(rs.getString("address"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .status(Status.valueOf(rs.getString("status")))
-                .build());
-    }
-
-    @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilterByPriceHighToLow(String highToLow) {
-        String sql = "SELECT * FROM announcements a LEFT JOIN announcement_images ai ON a.id = ai.announcement_id\n" +
-                "JOIN feedbacks r ON a.id = r.announcement_id\n" +
-                "ORDER BY a.price DESC";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
-                .id(rs.getLong("id"))
-                .price(rs.getInt("price"))
-                .maxGuests(rs.getInt("max_guests"))
-                .address(rs.getString("address"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .status(Status.valueOf(rs.getString("status")))
-                .rating(rs.getInt("rating"))
-                .build());
-    }
-
-    @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilterByPriceLowToHigh() {
-        String sql = "SELECT * FROM announcements a LEFT JOIN announcement_images ai ON a.id = ai.announcement_id\n" +
-                "JOIN feedbacks r ON a.id = r.announcement_id\n" +
-                "ORDER BY a.price ASC";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
-                .id(rs.getLong("id"))
-                .price(rs.getInt("price"))
-                .maxGuests(rs.getInt("max_guests"))
-                .address(rs.getString("address"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .status(Status.valueOf(rs.getString("status")))
-                .rating(rs.getInt("rating"))
-                .build());
+    public List<AnnouncementResponse> getAllAnnouncementsSort(String rating, String price) {
+        return announcementTemplate.getAllAnnouncementsSort(rating, price);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class AnnouncementResponse {
     private String title;
     private int maxGuests;
     private String province;
-    private Integer rating;
+    private double rating;
 
 
     public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
@@ -57,7 +57,7 @@ public class AnnouncementResponse {
         this.status=status;
     }
 
-    public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status, Integer rating) {
+    public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status, double rating) {
         this.id = id;
         this.address = address;
         this.images = images;
