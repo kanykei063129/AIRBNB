@@ -27,6 +27,7 @@ public class ApplicationConfig {
                 () -> new UsernameNotFoundException("Username :" + email + " is not found")
         );
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

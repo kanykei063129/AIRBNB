@@ -12,7 +12,7 @@ import peaksoft.house.airbnbb9.entity.Feedback;
 import java.util.List;
 
 @Repository
-public interface AnnouncementRepository extends JpaRepository<Announcement,Long> {
+public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
     @Query("select new peaksoft.house.airbnbb9.dto.response.AnnouncementResponse(a.id, a.houseType, a.images, a.price, a.region, a.address, a.description, a.status, a.title, a.maxGuests, a.province) from Announcement a")
     List<AnnouncementResponse> getAll();
 

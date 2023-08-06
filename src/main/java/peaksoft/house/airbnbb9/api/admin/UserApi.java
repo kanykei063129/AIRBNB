@@ -1,4 +1,4 @@
-package peaksoft.house.airbnbb9.api;
+package peaksoft.house.airbnbb9.api.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,10 +15,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Tag(name = "UserApi",description = "Controller for Users")
-@CrossOrigin(origins = "*",maxAge = 3600)
+@Tag(name = "UserApi", description = "Controller for Users")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserApi {
     private final UserService userService;
+
     @Operation(summary = "allUsers", description = "Available only to registered users")
     @GetMapping("getAllUsers")
     public List<UserResponse> getAllUsers() {

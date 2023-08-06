@@ -30,11 +30,10 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class AnnouncementServiceImpl implements AnnouncementService {
+
     private final AnnouncementRepository announcementRepository;
     private final JdbcTemplate jdbcTemplate;
     private final AnnouncementTemplate announcementTemplate;
-
-
 
     @Override
     public AllAnnouncementResponse getByIdAnnouncement(Long announcementId) {
@@ -98,7 +97,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcementRepository.delete(announcement);
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
-                .message(String.format("Announcement with id: " +announcementId+ " deleted..."))
+                .message(String.format("Announcement with id: " + announcementId + " deleted..."))
                 .build();
     }
 
@@ -175,5 +174,30 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 "LIMIT " + pageSize + " OFFSET " + offset;
 
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(PaginationAnnouncementResponse.class));
+    }
+
+    @Override
+    public SimpleResponse approveAnnouncement(Long announcementId) {
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
+                new NotFoundException("Announcement with id: " + announcementId + " is no exist!"));
+        if (announcement != null) {
+            announcement.setStatus(Status.NOT_BOOKED);
+            announcementRepository.save(announcement);
+            return new SimpleResponse("Announcement approved successfully!", HttpStatus.OK);
+        } else {
+            throw new NotFoundException("Announcement not found");
+        }
+    }
+
+    @Override
+    public SimpleResponse rejectAnnouncement(Long announcementId) {
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
+                new NotFoundException("Announcement with id: " + announcementId + " is no exist!"));
+        if (announcement != null) {
+            announcementRepository.delete(announcement);
+            return new SimpleResponse("Announcement rejected successfully!", HttpStatus.OK);
+        } else {
+            throw new NotFoundException("Announcement not found");
+        }
     }
 }

@@ -5,9 +5,12 @@ import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 
 import java.util.List;
+
 public interface AnnouncementTemplate {
 
     List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType);
+
     List<AnnouncementResponse> getAllAnnouncementsSort(String rating, String price);
+
     List<AnnouncementResponse> getAllAnnouncements();
 }
