@@ -3,35 +3,56 @@ package peaksoft.house.airbnbb9.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.dto.response.UserResponse;
+import peaksoft.house.airbnbb9.entity.Like;
+import peaksoft.house.airbnbb9.entity.User;
+import peaksoft.house.airbnbb9.enums.Role;
+import peaksoft.house.airbnbb9.exceptoin.BadCredentialException;
+import peaksoft.house.airbnbb9.repository.LikeRepository;
+import peaksoft.house.airbnbb9.repository.UserRepository;
+import peaksoft.house.airbnbb9.repository.template.UserTemplate;
 import peaksoft.house.airbnbb9.service.UserService;
 
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
-    private final JdbcTemplate jdbcTemplate;
+    private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
+    private final UserTemplate userTemplate;
+
     @Override
     public List<UserResponse> getAllUsers() {
-        String sql = "SELECT u.id, u.full_name, u.email,\n" +
-                "                     COUNT(DISTINCT b.id) as bookings,\n" +
-                "                     COUNT(DISTINCT a.id) as announcements\n" +
-                "                     FROM Users u\n" +
-                "                     LEFT JOIN bookings b ON u.id = b.user_id\n" +
-                "                     LEFT JOIN announcements a ON u.id = a.user_id\n" +
-                "                     GROUP BY u.id, u.full_name";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            UserResponse user = new UserResponse();
-            user.setId(rs.getLong("id"));
-            user.setFullName(rs.getString("full_name"));
-            user.setEmail(rs.getString("email"));
-            user.setBookings(rs.getInt("bookings"));
-            user.setAnnouncements(rs.getInt("announcements"));
-            return user;
-        });
+        return userTemplate.getAllUsers();
+    }
+
+    @Override
+    public SimpleResponse deleteUserById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("User with id: " + userId + " doesn't exist!"));
+        if (user.getRole().equals(Role.ADMIN)) {
+            throw new BadCredentialException("you can't remove the admin!!");
+        }
+        List<Like> userLikes = likeRepository.findByUser(user);
+        if (!userLikes.isEmpty()) {
+            for (Like like : userLikes) {
+                like.setUser(null);
+                likeRepository.save(like);
+            }
+        }
+        userRepository.delete(user);
+        log.error("User successfully deleted");
+        return SimpleResponse
+                .builder()
+                .httpStatus(HttpStatus.OK)
+                .message(String.format("User with id: %s is successfully deleted", userId))
+                .build();
     }
 }
