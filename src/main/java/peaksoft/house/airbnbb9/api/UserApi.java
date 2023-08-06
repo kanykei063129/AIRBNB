@@ -19,8 +19,9 @@ import java.util.List;
 public class UserApi {
     private final UserService userService;
 
-    @Operation(summary = "allUsers", description = "Available only to registered users")
-    @GetMapping("getAllUsers")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "getAllUsers", description = "Available only to registered users")
+    @GetMapping("/get-all")
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }
