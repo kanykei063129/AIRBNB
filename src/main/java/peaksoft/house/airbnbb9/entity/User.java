@@ -38,7 +38,8 @@ public class User implements UserDetails {
     @OneToMany(cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
-            CascadeType.MERGE},
+            CascadeType.MERGE,
+            CascadeType.REMOVE},
             mappedBy = "user")
     private List<Feedback> feedbacks;
 

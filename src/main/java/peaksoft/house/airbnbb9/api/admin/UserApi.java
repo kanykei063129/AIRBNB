@@ -3,10 +3,9 @@ package peaksoft.house.airbnbb9.api.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.dto.response.UserResponse;
 import peaksoft.house.airbnbb9.service.UserService;
 
@@ -20,11 +19,18 @@ import java.util.List;
 public class UserApi {
     private final UserService userService;
 
-    @Operation(summary = "allUsers", description = "Available only to registered users")
-    @GetMapping("getAllUsers")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "getAllUsers", description = "Available only to registered users")
+    @GetMapping("/get-all")
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }
 
-}
+    @Operation(summary = "delete user", description = "delete user by id ")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{userId}")
+    public SimpleResponse deleteUser(@PathVariable Long userId) {
+        return userService.deleteUserById(userId);
+    }
 
+}
