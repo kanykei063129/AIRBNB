@@ -21,7 +21,6 @@ public class FavoriteApi {
     public List<FavoriteAnnouncementsResponse> getAllFavorites(){
       return   favoriteService.getAllFavoriteAnnouncements();
     }
-
     @Operation(summary = "Add or remove Announcement from favorites.",description = "Add or remove Announcements from favorites.")
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/{announcementId}")
