@@ -10,6 +10,7 @@ import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Table(name = "announcements")
@@ -55,6 +56,9 @@ public class Announcement {
 
     @Column(name = "province")
     private String province;
+
+    @Column(name = "create_date")
+    private Locale createDate;
 
     @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,

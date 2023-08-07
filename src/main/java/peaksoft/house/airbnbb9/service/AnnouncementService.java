@@ -34,4 +34,6 @@ public interface AnnouncementService {
     SimpleResponse approveAnnouncement(Long announcementId);
 
     SimpleResponse rejectAnnouncement(Long announcementId);
+
+    PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize);
 }
