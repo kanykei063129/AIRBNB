@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.response.FavoriteAnnouncementsResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.service.FavoriteService;
-
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/favorites")
 @RequiredArgsConstructor
