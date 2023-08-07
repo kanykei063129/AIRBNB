@@ -1,8 +1,6 @@
 package peaksoft.house.airbnbb9.service;
 
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.enums.HouseType;
@@ -19,9 +17,7 @@ public interface AnnouncementService {
 
     SimpleResponse deleteByIdAnnouncement(Long announcementId);
 
-    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType);
-
-    List<AnnouncementResponse> getAllAnnouncementsSort(String rating, String price);
+    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType,String rating, String price);
 
     List<BookingResponse> getAllAnnouncementsBookings(Long userId);
 
