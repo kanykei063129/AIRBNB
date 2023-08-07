@@ -1,5 +1,4 @@
 package peaksoft.house.airbnbb9.service.serviceImpl;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,13 +16,12 @@ import peaksoft.house.airbnbb9.repository.FavoriteRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
 import peaksoft.house.airbnbb9.service.FavoriteService;
-
 import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class FavoriteServiceImpl implements FavoriteService {
+
     private final UserRepository userRepository;
     private final FavoriteTemplate favoriteTemplate;
     private final FavoriteRepository favoriteRepository;
@@ -35,12 +33,10 @@ public class FavoriteServiceImpl implements FavoriteService {
         return userRepository.getUserByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + "doesn't exists!"));
     }
-
     @Override
     public List<FavoriteAnnouncementsResponse> getAllFavoriteAnnouncements() {
         return favoriteTemplate.getAllFavoriteAnnouncements();
     }
-
     @Override
     public SimpleResponse addOrRemoveFavorite(Long announcementId) {
         boolean isTrue;
@@ -48,8 +44,6 @@ public class FavoriteServiceImpl implements FavoriteService {
         User user = getAuthentication();
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
                 new NotFoundException("Announcement with id: " + announcementId + " doesn't exist "));
-
-
         for (Favorite f :
                 user.getFavorites()) {
             if (f.getAnnouncement().getId() != announcement.getId()) {

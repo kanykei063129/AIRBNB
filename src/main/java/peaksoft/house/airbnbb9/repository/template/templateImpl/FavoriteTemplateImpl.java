@@ -12,7 +12,6 @@ import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
-
 import java.util.List;
 @Service
 @Transactional
