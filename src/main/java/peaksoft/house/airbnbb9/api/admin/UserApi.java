@@ -1,4 +1,4 @@
-package peaksoft.house.airbnbb9.api;
+package peaksoft.house.airbnbb9.api.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,4 +34,3 @@ public class UserApi {
     }
 
 }
-

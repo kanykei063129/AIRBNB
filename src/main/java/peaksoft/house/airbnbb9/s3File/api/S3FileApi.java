@@ -21,6 +21,7 @@ import java.io.IOException;
 @PreAuthorize("hasAuthority('ADMIN')")
 public class S3FileApi {
     private final S3FileService s3FileService;
+
     @Operation(summary = "Upload file", description = "Upload file to database")
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -28,6 +29,7 @@ public class S3FileApi {
     public ResponseEntity<String> uploadFile(@RequestParam(name = "file", required = false) MultipartFile file) throws IOException {
         return new ResponseEntity<>(s3FileService.uploadFile(file), HttpStatus.OK);
     }
+
     @DeleteMapping("/{fileName}")
     @Operation(summary = "Deleted file", description = "deleted s3 file")
     public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
