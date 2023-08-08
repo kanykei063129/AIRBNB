@@ -8,7 +8,7 @@ import lombok.Setter;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
-
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -55,6 +55,9 @@ public class Announcement {
 
     @Column(name = "province")
     private String province;
+
+    @Column(name = "create_date")
+    private LocalDate createDate;
 
     @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,

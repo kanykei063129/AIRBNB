@@ -195,4 +195,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throw new NotFoundException("Announcement not found");
         }
     }
+
+    @Override
+    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize) {
+        return announcementTemplate.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
+    }
 }

@@ -20,6 +20,7 @@ import java.util.List;
 @Tag(name = "Announcement Api", description = "All announcement endpoints")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AnnouncementApi {
+
     private final AnnouncementService announcementService;
 
     @Operation(summary = "getAnnouncements", description = "Get all announcements")
@@ -87,5 +88,12 @@ public class AnnouncementApi {
     @GetMapping("/myAnnouncements")
     public List<PaginationAnnouncementResponse> getAllMyAnnouncementsSortAndPagination(@RequestParam String ascOrDesc, @RequestParam int currentPage, @RequestParam int pageSize) {
         return announcementService.getAllMyAnnouncementsSortAndPagination(ascOrDesc, currentPage, pageSize);
+    }
+
+    @Operation(summary = "get all announcements moderation and pagination", description = "Get all  announcements by status 'MODERATION' and pagination")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/announcementsModeration")
+    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage,@RequestParam int pageSize) {
+        return announcementService.getAllAnnouncementsModerationAndPagination(currentPage,pageSize);
     }
 }

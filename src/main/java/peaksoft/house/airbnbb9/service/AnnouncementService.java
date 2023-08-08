@@ -1,6 +1,5 @@
 package peaksoft.house.airbnbb9.service;
 
-
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.enums.HouseType;
@@ -30,4 +29,6 @@ public interface AnnouncementService {
     SimpleResponse approveAnnouncement(Long announcementId);
 
     SimpleResponse rejectAnnouncement(Long announcementId);
+
+    PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize);
 }
