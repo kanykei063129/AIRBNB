@@ -16,9 +16,7 @@ public interface AnnouncementService {
 
     SimpleResponse deleteByIdAnnouncement(Long announcementId);
 
-    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType);
-
-    List<AnnouncementResponse> getAllAnnouncementsSort(String rating, String price);
+    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType,String rating, String price);
 
     List<BookingResponse> getAllAnnouncementsBookings(Long userId);
 
