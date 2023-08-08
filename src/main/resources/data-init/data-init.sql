@@ -1,11 +1,11 @@
 insert into users (id, full_name, email, password, image, role)
-values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG',
+values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q',
         'photo with belt', 'USER'),
-       (2, 'Alister Overeem', 'alister@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG',
+       (2, 'Alister Overeem', 'alister@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q',
         'photo with kick', 'USER'),
-       (3, 'Kyle Snyder', 'snyder@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG',
+       (3, 'Kyle Snyder', 'snyder@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q',
         'photo wrestling boots', 'USER'),
-       (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$5/Bok1UzVWfjtCohyblPruO9GWIugj3aC.nKXGfnORG3JtapTZutG', 'photo 74',
+       (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q', 'photo 74',
         'USER'),
        (5, 'David Taylor', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy',
         'photo 86', 'ADMIN');
@@ -24,16 +24,16 @@ values (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'MODE
        (5, 'HOUSE', 20, 'NARYN', 'At-Bashy', '5-street 6', 'Tash-Rabat visit', 'MODERATION', 'house', 5, now(), 5);
 
 insert into announcement_images (announcement_id, images)
-values (1, 'photo 1'),
-       (1, 'photo 2'),
-       (2, 'photo 1'),
-       (2, 'photo 2'),
-       (3, 'photo 1'),
-       (3, 'photo 2'),
-       (4, 'photo 1'),
-       (4, 'photo 2'),
-       (5, 'photo 1'),
-       (5, 'photo 2');
+values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),
+       (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),
+       (2, 'https://www.myluxoria.com/storage/app/uploads/public/61c/d81/2d7/61cd812d7b38d287793939.jpg'),
+       (2, 'https://www.myluxoria.com/storage/app/uploads/public/61c/d81/2d7/61cd812d7b38d287793939.jpg'),
+       (3, 'https://www.myluxoria.com/storage/app/uploads/public/622/9c6/1c4/6229c61c4f3ff743328316.jpg'),
+       (3, 'https://www.myluxoria.com/storage/app/uploads/public/622/9c6/1c4/6229c61c4f3ff743328316.jpg'),
+       (4, 'https://www.myluxoria.com/storage/app/uploads/public/622/9c6/5b0/6229c65b00ba4507504618.jpg'),
+       (4, 'https://www.myluxoria.com/storage/app/uploads/public/622/9c6/5b0/6229c65b00ba4507504618.jpg'),
+       (5, 'https://www.myluxoria.com/storage/app/uploads/public/630/77d/9dd/63077d9dd7b37898060436.jpg'),
+       (5, 'https://www.myluxoria.com/storage/app/uploads/public/630/77d/9dd/63077d9dd7b37898060436.jpg');
 
 insert into bookings(id, check_in, check_out, date, user_id, announcement_id)
 values (1, '2023-08-14T10:30:00+00:00', '2023-08-15T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 1, 2),
