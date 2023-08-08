@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -174,7 +176,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 ORDER BY a.create_date 
                  """;
         int offset = (currentPage - 1) * pageSize;
-        sql+= "LIMIT ? OFFSET ?";
+        sql += "LIMIT ? OFFSET ?";
 
         List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
@@ -186,8 +188,52 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
-                .build(),pageSize,offset);
+                .build(), pageSize, offset);
 
-        return new PaginationAnnouncementResponse(announcementResponses,currentPage,pageSize);
+        return new PaginationAnnouncementResponse(announcementResponses, currentPage, pageSize);
     }
+    @Override
+    public GlobalSearchResponse search(String word) {
+        String sql = """
+                SELECT a.id            as id,
+                       a.price         as price,
+                       a.max_guests    as max_guests,
+                       a.address       as address,
+                       a.description   as description,
+                       a.province      as province,
+                       a.region        as region,
+                       a.title         as title,
+                       AVG(r.rating)   as rating,
+                       (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                FROM announcements a
+                         LEFT JOIN feedbacks r ON a.id = r.announcement_id
+                WHERE 
+                    a.region ILIKE lower(concat('%', ?, '%'))  
+                    OR a.status ILIKE lower(concat('%', ?, '%'))
+                    OR a.house_type ILIKE lower(concat('%',?,'%'))
+                    OR a.province ILIKE lower(concat('%', ?, '%')) group by 
+                    a.id ,a.price  ,
+                    a.max_guests   ,
+                    a.address      ,
+                    a.description  ,
+                    a.province     , 
+                    a.region       , 
+                    a.title 
+                """;
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql,
+                new Object[]{word,word, word, word},
+                (rs, rowNum) -> AnnouncementResponse.builder()
+                        .id(rs.getLong("id"))
+                        .price(rs.getInt("price"))
+                        .maxGuests(rs.getInt("max_guests"))
+                        .address(rs.getString("address"))
+                        .description(rs.getString("description"))
+                        .province(rs.getString("province"))
+                        .title(rs.getString("title"))
+                        .images(Collections.singletonList(rs.getString("images")))
+                        .rating(rs.getInt("rating"))
+                        .build());
+        return new GlobalSearchResponse(results);
+    }
+
 }

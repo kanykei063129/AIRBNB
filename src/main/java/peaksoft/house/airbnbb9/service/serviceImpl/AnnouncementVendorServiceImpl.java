@@ -15,6 +15,8 @@ import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.service.AnnouncementVendorService;
 
+import java.time.LocalDate;
+
 
 @Service
 @Transactional
@@ -46,6 +48,7 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         announcement.setRegion(announcementRequest.getRegion());
         announcement.setProvince(announcementRequest.getProvince());
         announcement.setAddress(announcementRequest.getAddress());
+        announcement.setCreateDate(LocalDate.now());
         announcement.setUser(user);
         announcement.setStatus(Status.MODERATION);
         try {

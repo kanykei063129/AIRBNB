@@ -103,13 +103,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType,String rating, String price) {
-        return announcementTemplate.getAllAnnouncementsFilter(status, houseType,rating,price);
+    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
+        return announcementTemplate.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
-        return announcementTemplate.getAllAnnouncementsFilterVendor(region,houseType,rating,price);
+        return announcementTemplate.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
     }
 
     @Override
@@ -204,5 +204,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize) {
         return announcementTemplate.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
+    }
+
+    @Override
+    public GlobalSearchResponse search(String word) {
+        return announcementTemplate.search(word);
     }
 }
