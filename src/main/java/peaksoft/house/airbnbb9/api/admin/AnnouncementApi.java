@@ -22,7 +22,7 @@ import java.util.List;
 public class AnnouncementApi {
     private final AnnouncementService announcementService;
 
-    @Operation(summary = "getAnnouncements", description = "Get all announcements only moderation")
+    @Operation(summary = "getAnnouncements", description = "Get all announcements")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcements")
     public List<AnnouncementResponse> getAllAnnouncement() {
@@ -50,22 +50,15 @@ public class AnnouncementApi {
         return announcementService.getByIdAnnouncement(announcementId);
     }
 
-    @Operation(summary = "filter announcements", description = " filter  announcements by status and house type ")
+    @Operation(summary = "filter and sort announcements", description = " filter  announcements by status and house type ")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcements-filter")
     public List<AnnouncementResponse> getAllAnnouncementsFilterAndSort(
             @RequestParam(required = false) Status status,
-            @RequestParam(required = false) HouseType houseType) {
-        return announcementService.getAllAnnouncementsFilter(status, houseType);
-    }
-
-    @Operation(summary = "sort announcements", description = " sort announcements by rating and price(only asc or desc!)")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/announcements-sort")
-    public List<AnnouncementResponse> getAllAnnouncementsSort(
+            @RequestParam(required = false) HouseType houseType,
             @RequestParam(required = false) String rating,
             @RequestParam(required = false) String price) {
-        return announcementService.getAllAnnouncementsSort(rating, price);
+        return announcementService.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
 
     @Operation(summary = "getAllAnnouncementsBookings", description = "Get all announcements bookings")

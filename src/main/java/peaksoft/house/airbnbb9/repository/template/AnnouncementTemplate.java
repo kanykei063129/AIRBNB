@@ -8,9 +8,7 @@ import java.util.List;
 
 public interface AnnouncementTemplate {
 
-    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType);
-
-    List<AnnouncementResponse> getAllAnnouncementsSort(String rating, String price);
+    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType,String rating, String price);
 
     List<AnnouncementResponse> getAllAnnouncements();
 }
