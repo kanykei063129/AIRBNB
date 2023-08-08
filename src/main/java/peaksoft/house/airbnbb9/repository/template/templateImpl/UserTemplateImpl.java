@@ -1,4 +1,4 @@
-package peaksoft.house.airbnbb9.repository.template.templtateImpl;
+package peaksoft.house.airbnbb9.repository.template.templateImpl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

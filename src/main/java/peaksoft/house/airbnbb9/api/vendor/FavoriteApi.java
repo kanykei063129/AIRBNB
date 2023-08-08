@@ -1,4 +1,4 @@
-package peaksoft.house.airbnbb9.api;
+package peaksoft.house.airbnbb9.api.vendor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

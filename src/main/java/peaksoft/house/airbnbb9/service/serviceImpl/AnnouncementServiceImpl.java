@@ -108,6 +108,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
+    public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
+        return announcementTemplate.getAllAnnouncementsFilterVendor(region,houseType,rating,price);
+    }
+
+    @Override
     public List<BookingResponse> getAllAnnouncementsBookings(Long userId) {
         String sql = "SELECT b.bookingId, b.announcementId,b.userId,\n" +
                 "       u.full_name, u.email\n" +

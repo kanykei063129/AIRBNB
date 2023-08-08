@@ -15,6 +15,7 @@ import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.service.AnnouncementVendorService;
 
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -62,5 +63,4 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
                 .message(String.format("announcement  with title: %s is successfully submit!", announcementRequest.getTitle()))
                 .build();
     }
-
 }
