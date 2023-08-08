@@ -161,7 +161,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                          WHERE a.status = 'MODERATION'
                 GROUP BY a.id, a.price, a.max_guests, a.address,
                          a.description, a.province, a.region, a.title,a.create_date
-                order by a.create_date 
+                ORDER BY a.create_date 
                  """;
         int offset = (currentPage - 1) * pageSize;
         sql+= "LIMIT ? OFFSET ?";

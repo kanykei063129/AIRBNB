@@ -8,9 +8,8 @@ import lombok.Setter;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
-
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 
 @Entity
 @Table(name = "announcements")
@@ -58,7 +57,7 @@ public class Announcement {
     private String province;
 
     @Column(name = "create_date")
-    private Locale createDate;
+    private LocalDate createDate;
 
     @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,
