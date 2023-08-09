@@ -22,6 +22,7 @@ import java.util.List;
 @Tag(name = "VendorAnnouncements Api", description = "only available for user")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AnnouncementVendorApi {
+
     private final AnnouncementVendorService announcementVendorService;
     private final AnnouncementService announcementService;
 
