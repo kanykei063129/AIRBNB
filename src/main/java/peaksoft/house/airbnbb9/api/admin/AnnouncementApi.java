@@ -93,7 +93,7 @@ public class AnnouncementApi {
     @Operation(summary = "get all announcements moderation and pagination", description = "Get all  announcements by status 'MODERATION' and pagination")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcementsModeration")
-    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage,@RequestParam int pageSize) {
-        return announcementService.getAllAnnouncementsModerationAndPagination(currentPage,pageSize);
+    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage, @RequestParam int pageSize) {
+        return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }
 }

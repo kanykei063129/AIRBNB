@@ -76,4 +76,17 @@ public class AnnouncementResponse {
         this.description = description;
         this.maxGuests = maxGuests;
     }
+
+    public AnnouncementResponse(Long id, List<String> images, int price, Region region, String address, String description,String title, int maxGuests, String province, double rating) {
+        this.id = id;
+        this.images = images;
+        this.price = price;
+        this.region = region;
+        this.address = address;
+        this.description = description;
+        this.title = title;
+        this.maxGuests = maxGuests;
+        this.province = province;
+        this.rating = rating;
+    }
 }

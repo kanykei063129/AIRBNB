@@ -7,10 +7,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
-import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import peaksoft.house.airbnbb9.service.AnnouncementVendorService;
 
@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/vendor")
-@Tag(name = "VendorAnnouncements Api", description = "user send ad to admin")
+@Tag(name = "VendorAnnouncements Api", description = "only available for user")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AnnouncementVendorApi {
     private final AnnouncementVendorService announcementVendorService;
@@ -42,5 +42,9 @@ public class AnnouncementVendorApi {
         return announcementService.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
     }
 
+    @Operation(summary = "global search", description = "you can search by region,city,house,apartment")
+    @GetMapping("/global-search")
+    public GlobalSearchResponse search(@RequestParam String word) {
+        return announcementService.search(word);
+    }
 }
-
