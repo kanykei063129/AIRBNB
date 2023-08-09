@@ -149,4 +149,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price) {
         return announcementTemplate.getAllAnnouncementsFilters(houseType,rating,price);
     }
+
+    @Override
+    public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
+        return announcementTemplate.pagination(page,size);
+    }
 }
