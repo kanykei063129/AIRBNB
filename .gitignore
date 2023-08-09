@@ -36,4 +36,5 @@ build/
 src/main/resources/application-dev.properties
 src/main/resources/application-aizat.properties
 src/main/resources/application-adilet.properties
+src/main/resources/application-kanykei.properties
 

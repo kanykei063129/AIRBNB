@@ -11,17 +11,14 @@ values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXm
         'photo 86', 'ADMIN');
 
 insert into announcements
-(id, house_type, price, region, province, address, description, status, title, max_guests, create_date, user_id)
-values (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'MODERATION', 'house', 3, now(), 1),
+(id, house_type, price, region, province, address, description, status, title, max_guests, create_date,message_from_admin, user_id,rating)
+values (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'MODERATION', 'house', 3, now(),null, 1,3),
        (2, 'HOUSE', 24, 'BATKEN', 'batken', '2-street 4', 'for Relax in the apricot garden', 'MODERATION', 'house', 5,
-        now(),
-        2),
+        now(),null,2,3),
        (3, 'APARTMENT', 41, 'BISHKEK', 'ALAMIDIN-1', '3-street 4', 'for long time ', 'MODERATION', 'apartment', 2,
-        now(),
-        3),
-       (4, 'HOUSE', 30, 'ISSYK_KUL', 'Bosteri', '4-street 5', 'only for summer season', 'MODERATION', 'house', 3, now(),
-        4),
-       (5, 'HOUSE', 20, 'NARYN', 'At-Bashy', '5-street 6', 'Tash-Rabat visit', 'MODERATION', 'house', 5, now(), 5);
+        now(),null,3,3),
+       (4, 'HOUSE', 30, 'ISSYK_KUL', 'Bosteri', '4-street 5', 'only for summer season', 'MODERATION', 'house', 3, now(),null,4,3),
+       (5, 'HOUSE', 20, 'NARYN', 'At-Bashy', '5-street 6', 'Tash-Rabat visit', 'MODERATION', 'house', 5, now(), null,5,3);
 
 insert into announcement_images (announcement_id, images)
 values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),
