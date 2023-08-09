@@ -61,39 +61,18 @@ public class AnnouncementApi {
             @RequestParam(required = false) String price) {
         return announcementService.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
-
-    @Operation(summary = "getAllAnnouncementsBookings", description = "Get all announcements bookings")
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/getAllAnnouncementsBookings/{userId}")
-    public List<BookingResponse> getAllAnnouncementBookings(@PathVariable Long userId) {
-        return announcementService.getAllAnnouncementsBookings(userId);
-    }
-
-    @Operation(summary = "get My Announcements", description = "Get My announcements")
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/getAllMyAnnouncements/{userId}")
-    public List<AnnouncementResponse> getAllMyAnnouncement(@PathVariable Long userId) {
-        return announcementService.getAllMyAnnouncements(userId);
-    }
-
-    @Operation(summary = "get_All_Announcements_Bookings_Sort_And_Pagination", description = "Get all announcements bookings,Sort And Pagination")
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/announcementsBookings")
-    public List<PaginationBookingResponse> getAllAnnouncementBookingsSortAndPagination(@RequestParam String ascOrDesc, @RequestParam int currentPage, @RequestParam int pageSize) {
-        return announcementService.getAllAnnouncementsBookingsSortAndPagination(ascOrDesc, currentPage, pageSize);
-    }
-
-    @Operation(summary = "get_All_My Announcements Sort_And_Pagination", description = "Get All My announcements,Sort And Pagination")
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/myAnnouncements")
-    public List<PaginationAnnouncementResponse> getAllMyAnnouncementsSortAndPagination(@RequestParam String ascOrDesc, @RequestParam int currentPage, @RequestParam int pageSize) {
-        return announcementService.getAllMyAnnouncementsSortAndPagination(ascOrDesc, currentPage, pageSize);
-    }
-
     @Operation(summary = "get all announcements moderation and pagination", description = "Get all  announcements by status 'MODERATION' and pagination")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcementsModeration")
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage, @RequestParam int pageSize) {
         return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
+    }
+    @Operation(summary = "Any user can filter announcements", description = "Filter accepted announcements by Popular,House Type, and Price Low to High and High to Low")
+    @GetMapping("/filter")
+    public List<AnnouncementResponse> getAllAnnouncementsFilters(
+            @RequestParam(required = false) HouseType houseType,
+            @RequestParam(required = false) String rating,
+            @RequestParam(required = false) String price) {
+        return announcementService.getAllAnnouncementsFilters(houseType, rating, price);
     }
 }

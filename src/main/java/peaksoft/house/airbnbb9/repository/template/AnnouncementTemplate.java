@@ -20,6 +20,6 @@ public interface AnnouncementTemplate {
     PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize);
 
     GlobalSearchResponse search(String word);
-
+    List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price);
 }
 
