@@ -463,6 +463,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     @Override
     public AllAnnouncementResponse getByID(Long announcementId) {
-        return null;
+        return null; //потом
     }
 }
