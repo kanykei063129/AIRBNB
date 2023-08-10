@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,6 +32,10 @@ public class User implements UserDetails {
     private String email;
     private String image;
     private String password;
+
+    @ElementCollection
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<String> messagesFromAdmin;
     
     @Enumerated(EnumType.STRING)
     private Role role;

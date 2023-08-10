@@ -40,6 +40,8 @@ public class Announcement {
     @Column(name = "address")
     private String address;
 
+    private double rating;
+
     @Column(name = "description")
     private String description;
 
@@ -58,6 +60,8 @@ public class Announcement {
 
     @Column(name = "create_date")
     private LocalDate createDate;
+
+    private String messageFromAdmin;
 
     @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,

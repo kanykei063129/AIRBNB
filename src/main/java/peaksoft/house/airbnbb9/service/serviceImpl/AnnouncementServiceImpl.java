@@ -29,7 +29,6 @@ import java.util.List;
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
-    private final JdbcTemplate jdbcTemplate;
     private final AnnouncementTemplate announcementTemplate;
 
     @Override
@@ -100,79 +99,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType,String rating, String price) {
-        return announcementTemplate.getAllAnnouncementsFilter(status, houseType,rating,price);
+    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
+        return announcementTemplate.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
-        return announcementTemplate.getAllAnnouncementsFilterVendor(region,houseType,rating,price);
+        return announcementTemplate.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
     }
-
-    @Override
-    public List<BookingResponse> getAllAnnouncementsBookings(Long userId) {
-        String sql = "SELECT b.bookingId, b.announcementId,b.userId,\n" +
-                "       u.full_name, u.email\n" +
-                "FROM bookings b\n" +
-                "LEFT JOIN Users u ON u.id = b.user_id\n" +
-                "WHERE u.id = ?";
-
-        return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) -> {
-            BookingResponse bookingResponse = new BookingResponse();
-            bookingResponse.setBookingId(rs.getLong("bookingId"));
-            bookingResponse.setUserId(rs.getLong("userId"));
-            bookingResponse.setAnnouncementId(rs.getLong("announcementId"));
-            return bookingResponse;
-        });
-    }
-
-    @Override
-    public List<AnnouncementResponse> getAllMyAnnouncements(Long userId) {
-        String sql = "SELECT a.id, a.images, a.price, a.region, a.address, a.description, a.max_guests\n" +
-                "FROM announcements a\n" +
-                "JOIN Users u ON u.id = a.user_id\n" +
-                "WHERE u.id = ?";
-
-        return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) -> new AnnouncementResponse(
-                rs.getLong("id"),
-                Collections.singletonList(rs.getString("images")),
-                rs.getInt("price"),
-                Region.valueOf(rs.getString("region")),
-                rs.getString("address"),
-                rs.getString("description"),
-                rs.getInt("max_guests")
-        ));
-    }
-
-    @Override
-    public List<PaginationBookingResponse> getAllAnnouncementsBookingsSortAndPagination(String ascOrDesc, int currentPage, int pageSize) {
-        int offset = (currentPage - 1) * pageSize;
-        String sql = "SELECT u.id as userId, u.full_name as fullName, u.email,\n" +
-                "       COUNT(DISTINCT b.id) as bookings\n" +
-                "FROM Users u\n" +
-                "LEFT JOIN bookings b ON u.id = b.user_id\n" +
-                "GROUP BY u.id, u.full_name\n" +
-                "ORDER BY bookings " + (ascOrDesc.equalsIgnoreCase("desc") ? "DESC" : "ASC") + "\n" +
-                "LIMIT " + pageSize + " OFFSET " + offset;
-
-        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(PaginationBookingResponse.class));
-    }
-
-    @Override
-    public List<PaginationAnnouncementResponse> getAllMyAnnouncementsSortAndPagination(String ascOrDesc, int currentPage, int pageSize) {
-        int offset = (currentPage - 1) * pageSize;
-
-        String sql = "SELECT u.id as userId, u.full_name as fullName, u.email,\n" +
-                "       COUNT(DISTINCT a.id) as announcements\n" +
-                "FROM Users u\n" +
-                "LEFT JOIN announcements a ON u.id = a.user_id\n" +
-                "GROUP BY u.id, u.full_name\n" +
-                "ORDER BY announcements " + (ascOrDesc.equalsIgnoreCase("desc") ? "DESC" : "ASC") + "\n" +
-                "LIMIT " + pageSize + " OFFSET " + offset;
-
-        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(PaginationAnnouncementResponse.class));
-    }
-
     @Override
     public SimpleResponse approveAnnouncement(Long announcementId) {
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
@@ -215,5 +149,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     public PopularApartmentResponse getPopularApartment(){
         return announcementTemplate.getPopularApartment();
+      
+    public GlobalSearchResponse search(String word) {
+        return announcementTemplate.search(word);
+    }
+
+    @Override
+    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price) {
+        return announcementTemplate.getAllAnnouncementsFilters(houseType,rating,price);
     }
 }
