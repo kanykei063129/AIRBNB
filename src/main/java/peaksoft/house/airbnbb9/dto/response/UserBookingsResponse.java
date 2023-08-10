@@ -1,12 +1,12 @@
 package peaksoft.house.airbnbb9.dto.response;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import peaksoft.house.airbnbb9.enums.Status;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 public class UserBookingsResponse {
     private Long announcementId;

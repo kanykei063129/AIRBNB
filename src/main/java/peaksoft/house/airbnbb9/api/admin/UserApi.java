@@ -33,4 +33,11 @@ public class UserApi {
     public SimpleResponse deleteUser(@PathVariable Long userId) {
         return userService.deleteUserById(userId);
     }
+    @Operation(summary = "users", description = " get by id and only for bookings and announcements")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{userId}")
+    @GetMapping("/get/{userId}")
+    public UserResponse getUserById(@PathVariable Long userId, @RequestParam String value) {
+        return userService.getByIdUser(userId, value);
+    }
 }
