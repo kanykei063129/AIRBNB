@@ -380,3 +380,85 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .build());
     }
 }
+
+    @Override
+    public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
+        if (page != null && size != null) {
+            String sql = """
+            SELECT a.id            as id,
+                   a.price         as price,
+                   a.max_guests    as max_guests,
+                   a.address       as address,
+                   a.description   as description,
+                   a.province      as province,
+                   a.region        as region,
+                   a.title         as title,
+                   AVG(r.rating)   as rating,
+                   (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+            FROM announcements a
+                     LEFT JOIN feedbacks r ON a.id = r.announcement_id
+            GROUP BY a.id, a.price, a.max_guests, a.address,
+                     a.description, a.province, a.region, a.title, a.create_date
+            ORDER BY a.create_date 
+        """;
+
+            int offset = (page - 1) * size;
+            String paginatedSql = sql + " LIMIT ? OFFSET ?";
+
+            List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(
+                    paginatedSql,
+                    (rs, rowNum) -> AnnouncementResponse.builder()
+                            .id(rs.getLong("id"))
+                            .price(rs.getInt("price"))
+                            .maxGuests(rs.getInt("max_guests"))
+                            .address(rs.getString("address"))
+                            .description(rs.getString("description"))
+                            .province(rs.getString("province"))
+                            .title(rs.getString("title"))
+                            .images(Collections.singletonList(rs.getString("images")))
+                            .rating(rs.getInt("rating"))
+                            .build(),
+                    size, offset
+            );
+
+            return new PaginationAnnouncementResponse(announcementResponses, page, size);
+        } else if (page == null && size == null) {
+            String sql1 = """
+            SELECT a.id            as id,
+                   a.price         as price,
+                   a.max_guests    as max_guests,
+                   a.address       as address,
+                   a.description   as description,
+                   a.province      as province,
+                   a.region        as region,
+                   a.title         as title,
+                   AVG(r.rating)   as rating,
+                   (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+            FROM announcements a
+                     LEFT JOIN feedbacks r ON a.id = r.announcement_id
+            GROUP BY a.id, a.price, a.max_guests, a.address,
+                     a.description, a.province, a.region, a.title, a.create_date
+            ORDER BY a.create_date 
+        """;
+
+            List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(
+                    sql1,
+                    (rs, rowNum) -> AnnouncementResponse.builder()
+                            .id(rs.getLong("id"))
+                            .price(rs.getInt("price"))
+                            .maxGuests(rs.getInt("max_guests"))
+                            .address(rs.getString("address"))
+                            .description(rs.getString("description"))
+                            .province(rs.getString("province"))
+                            .title(rs.getString("title"))
+                            .images(Collections.singletonList(rs.getString("images")))
+                            .rating(rs.getInt("rating"))
+                            .build()
+            );
+
+            return new PaginationAnnouncementResponse(announcementResponses);
+        }
+
+        return null;
+    }
+}

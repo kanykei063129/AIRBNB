@@ -28,4 +28,5 @@ public interface AnnouncementTemplate {
     GlobalSearchResponse search(String word);
   
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price);
+    PaginationAnnouncementResponse pagination(Integer page, Integer size);
 }
