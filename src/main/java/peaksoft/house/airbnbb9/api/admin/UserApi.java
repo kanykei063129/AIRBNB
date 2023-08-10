@@ -21,13 +21,13 @@ public class UserApi {
     private final UserService userService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "getAllUsers", description = "Available only to registered users")
-    @GetMapping("/get-all")
+    @Operation(summary = "Get all users", description = "Available only to registered users")
+    @GetMapping()
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @Operation(summary = "delete user", description = "delete user by id ")
+    @Operation(summary = "Delete user", description = "Delete user by id ")
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{userId}")
     public SimpleResponse deleteUser(@PathVariable Long userId) {

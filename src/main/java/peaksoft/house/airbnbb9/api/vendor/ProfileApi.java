@@ -22,12 +22,14 @@ public class ProfileApi {
     private final UserService userService;
     private final AnnouncementService announcementService;
 
-    @Operation(summary = "User profile", description = "Any registered user can access their own profile")
+    @Operation(summary = "User profile",
+            description = "Any registered user can access their own profile")
     @GetMapping("bookings/my-announcements")
     public UserProfileResponse getUserBookingsAndAnnouncements() {
         return userService.getUserProfile();
     }
-    @Operation(summary = "Any registered user can filter announcements in the profile", description = "Filter accepted announcements by popular,house type, and price low to high and high to low")
+    @Operation(summary = "Any registered user can filter announcements in the profile",
+            description = "Filter accepted announcements by popular,house type, and price low to high and high to low")
     @GetMapping("/filter")
     public List<AnnouncementResponse> getAllAnnouncementsFilters(
             @RequestParam(required = false) HouseType houseType,

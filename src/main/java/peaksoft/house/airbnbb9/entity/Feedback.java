@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -15,11 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 public class Feedback {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "feedback_gen")
-    @SequenceGenerator(name = "feedback_gen",sequenceName = "feedback_seq",allocationSize = 1, initialValue = 6)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "feedback_gen")
+    @SequenceGenerator(name = "feedback_gen",
+            sequenceName = "feedback_seq",
+            allocationSize = 1,
+            initialValue = 6)
     private Long id;
     private String comment;
-
     @ElementCollection
     private List<String> images;
     private int rating;

@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/vendor")
-@Tag(name = "VendorAnnouncements Api", description = "only available for user")
+@Tag(name = "VendorAnnouncements Api", description = "Only available for user")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AnnouncementVendorApi {
 
@@ -28,11 +28,14 @@ public class AnnouncementVendorApi {
 
     @PreAuthorize("hasAnyAuthority('USER')")
     @PostMapping("/submitAnAd")
+    @Operation(summary = "Submit announcement",
+            description = "Submit announcement")
     public SimpleResponse submitAnAd(@RequestBody AnnouncementRequest announcementRequest) {
         return announcementVendorService.submitAnAd(announcementRequest);
     }
 
-    @Operation(summary = "filter and sort announcements", description = " filter  announcements by region and house type  ")
+    @Operation(summary = "Filter and sort announcements (Vendor part)",
+            description = " Filter  announcements by region,house type,rating and price (Vendor part)")
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/announcements-filter")
     public List<AnnouncementResponse> getAllAnnouncementsFilterAndSort(
@@ -43,7 +46,8 @@ public class AnnouncementVendorApi {
         return announcementService.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
     }
 
-    @Operation(summary = "global search", description = "you can search by region,city,house,apartment")
+    @Operation(summary = "Global search",
+            description = "You can search announcements by region,city,house and apartment")
     @GetMapping("/global-search")
     public GlobalSearchResponse search(@RequestParam String word) {
         return announcementService.search(word);

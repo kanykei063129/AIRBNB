@@ -23,35 +23,41 @@ public class AnnouncementApi {
 
     private final AnnouncementService announcementService;
 
-    @Operation(summary = "getAnnouncements", description = "Get all announcements")
+    @Operation(summary = "Get announcements",
+            description = "Get all announcements")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcements")
-    public List<AnnouncementResponse> getAllAnnouncement() {
+    public List<AnnouncementResponse> getAllAnnouncements() {
         return announcementService.getAllAnnouncements();
     }
 
-    @Operation(summary = "update by id", description = "Update announcement by id ")
+    @Operation(summary = "Update announcement",
+            description = "Update announcement by id")
     @PutMapping("/{announcementId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public AnnouncementResponse update(@PathVariable Long announcementId, @RequestBody @Valid AnnouncementRequest announcementRequest) {
+    public AnnouncementResponse update(@PathVariable Long announcementId,
+                                       @RequestBody @Valid AnnouncementRequest announcementRequest) {
         return announcementService.updateAnnouncement(announcementId, announcementRequest);
     }
 
-    @Operation(summary = "delete Announcement By id", description = "Delete announcement by id ")
+    @Operation(summary = "Delete announcement",
+            description = "Delete announcement by id")
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{announcementId}")
     public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
         return announcementService.deleteByIdAnnouncement(announcementId);
     }
 
-    @Operation(summary = "getAnnouncementByID", description = "Get announcement by id ")
+    @Operation(summary = "Get announcement by id",
+            description = "Get announcement by id ")
     @PreAuthorize("hasAnyAuthority('USER')")
     @GetMapping("/getById{announcementId}")
     public AllAnnouncementResponse getAnnouncementById(@PathVariable Long announcementId) {
         return announcementService.getByIdAnnouncement(announcementId);
     }
 
-    @Operation(summary = "filter and sort announcements", description = " filter  announcements by status and house type ")
+    @Operation(summary = "Filter and sort announcements",
+            description = "Filter  announcements by status,house type,rating and price")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcements-filter")
     public List<AnnouncementResponse> getAllAnnouncementsFilterAndSort(
@@ -62,14 +68,17 @@ public class AnnouncementApi {
         return announcementService.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
 
-    @Operation(summary = "get all announcements moderation and pagination", description = "Get all  announcements by status 'MODERATION' and pagination")
+    @Operation(summary = "Get all announcements application and pagination",
+            description = "Get all  announcements by status 'MODERATION' and added pagination")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcementsModeration")
-    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage, @RequestParam int pageSize) {
+    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage,
+                                                                                     @RequestParam int pageSize) {
         return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }
 
-    @Operation(summary = "Any method can use pagination", description = "Pagination for get all methods")
+    @Operation(summary = "Pagination for get all announcements",
+            description = "Announcement can be received with pagination and without pagination")
     @GetMapping("/pagination")
     public PaginationAnnouncementResponse paginations(
             @RequestParam(required = false) Integer page,
@@ -77,10 +86,10 @@ public class AnnouncementApi {
         return announcementService.pagination(page, size);
     }
 
-    @Operation(summary = "Get lastest announcement", description = "Get lastest announcement")
-    @GetMapping("/lastestAnnouncement")
-    public LastestAnnouncementResponse getLastestAnnouncement(){
-        return announcementService.getLastestAnnouncement();
+    @Operation(summary = "Get latest announcement", description = "Get latest announcement by create date")
+    @GetMapping("/latestAnnouncement")
+    public LatestAnnouncementResponse getLatestAnnouncement() {
+        return announcementService.getLatestAnnouncement();
     }
 
     @Operation(summary = "Get popular houses", description = "Get popular houses by rating")

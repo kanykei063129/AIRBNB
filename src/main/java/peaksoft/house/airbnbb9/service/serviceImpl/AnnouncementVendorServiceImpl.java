@@ -23,6 +23,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Slf4j
 public class AnnouncementVendorServiceImpl implements AnnouncementVendorService {
+
     private final AnnouncementRepository announcementRepository;
     private final JwtService jwtService;
 

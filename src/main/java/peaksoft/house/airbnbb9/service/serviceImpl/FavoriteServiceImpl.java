@@ -1,4 +1,5 @@
 package peaksoft.house.airbnbb9.service.serviceImpl;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
 import peaksoft.house.airbnbb9.service.FavoriteService;
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -33,10 +35,12 @@ public class FavoriteServiceImpl implements FavoriteService {
         return userRepository.getUserByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + "doesn't exists!"));
     }
+
     @Override
     public List<FavoriteAnnouncementsResponse> getAllFavoriteAnnouncements() {
         return favoriteTemplate.getAllFavoriteAnnouncements();
     }
+
     @Override
     public SimpleResponse addOrRemoveFavorite(Long announcementId) {
         boolean isTrue;

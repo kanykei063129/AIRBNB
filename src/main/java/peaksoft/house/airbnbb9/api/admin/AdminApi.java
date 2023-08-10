@@ -11,20 +11,20 @@ import peaksoft.house.airbnbb9.service.AnnouncementService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
-@Tag(name = "Admin api", description = "")
+@Tag(name = "Admin api", description = "API for admin management")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AdminApi {
 
     private final AnnouncementService announcementService;
 
-    @Operation(summary = "accepted", description = "admin accept application")
+    @Operation(summary = "Accepted", description = "Admin accept application")
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/accepted-announcement/{announcementId}")
     public SimpleResponse approveAnnouncement(@PathVariable Long announcementId) {
         return announcementService.approveAnnouncement(announcementId);
     }
 
-    @Operation(summary = "rejected", description = "admin reject application")
+    @Operation(summary = "Rejected", description = "Admin reject application")
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/reject-announcement/{announcementId}")
     public SimpleResponse rejectAnnouncement(@PathVariable Long announcementId) {

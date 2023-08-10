@@ -13,6 +13,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class UserTemplateImpl implements UserTemplate {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Override
