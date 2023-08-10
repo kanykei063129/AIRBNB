@@ -18,7 +18,7 @@ public class AdminApi {
 
     private final AnnouncementService announcementService;
     @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "accepted", description = "admin accept application")
+    @Operation(summary = "Accepted", description = "Admin accept application")
     @PostMapping("/accepted-announcement/{announcementId}")
     public SimpleResponse approveAnnouncement(@PathVariable Long announcementId, @RequestParam String value) throws MessagingException {
         return announcementService.processAnnouncement(announcementId, value);

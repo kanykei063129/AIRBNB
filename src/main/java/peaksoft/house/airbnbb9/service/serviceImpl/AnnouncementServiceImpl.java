@@ -114,31 +114,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public SimpleResponse approveAnnouncement(Long announcementId) {
-        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
-                new NotFoundException("Announcement with id: " + announcementId + " is no exist!"));
-        if (announcement != null) {
-            announcement.setStatus(Status.NOT_BOOKED);
-            announcementRepository.save(announcement);
-            return new SimpleResponse("Announcement approved successfully!", HttpStatus.OK);
-        } else {
-            throw new NotFoundException("Announcement not found");
-        }
-    }
-
-    @Override
-    public SimpleResponse rejectAnnouncement(Long announcementId) {
-        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
-                new NotFoundException("Announcement with id: " + announcementId + " is no exist!"));
-        if (announcement != null) {
-            announcementRepository.delete(announcement);
-            return new SimpleResponse("Announcement rejected successfully!", HttpStatus.OK);
-        } else {
-            throw new NotFoundException("Announcement not found");
-        }
-    }
-
-    @Override
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize) {
         return announcementTemplate.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }

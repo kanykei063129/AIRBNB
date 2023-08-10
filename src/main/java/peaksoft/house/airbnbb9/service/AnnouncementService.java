@@ -23,10 +23,6 @@ public interface AnnouncementService {
 
     List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price);
 
-    SimpleResponse approveAnnouncement(Long announcementId);
-
-    SimpleResponse rejectAnnouncement(Long announcementId);
-
     PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize);
 
     LatestAnnouncementResponse getLatestAnnouncement();
