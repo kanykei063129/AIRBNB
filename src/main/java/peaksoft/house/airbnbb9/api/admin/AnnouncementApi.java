@@ -96,4 +96,22 @@ public class AnnouncementApi {
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage,@RequestParam int pageSize) {
         return announcementService.getAllAnnouncementsModerationAndPagination(currentPage,pageSize);
     }
+
+    @Operation(summary = "Get lastest announcement", description = "Get lastest announcement")
+    @GetMapping("/lastestAnnouncement")
+    public LastestAnnouncementResponse getLastestAnnouncement(){
+        return announcementService.getLastestAnnouncement();
+    }
+
+    @Operation(summary = "Get popular houses", description = "Get popular houses by rating")
+    @GetMapping("/getPopularHouses")
+    public List<PopularHouseResponse> getPopularHouses() {
+        return announcementService.getPopularHouses();
+    }
+
+    @Operation(summary = "Get popular apartment ", description = "Get popular apartment by rating")
+    @GetMapping("/getPopularApartment")
+    public PopularApartmentResponse getPopularApartment() {
+        return announcementService.getPopularApartment();
+    }
 }

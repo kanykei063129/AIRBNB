@@ -4,13 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class AnnouncementTemplateImpl implements AnnouncementTemplate {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -131,7 +133,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.region        as region,
                        a.title         as title,
                        AVG(r.rating)   as rating,
-                       (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                       (SELECT ai.images FROM announcement_images ai
+                        WHERE ai.announcement_id = a.id LIMIT 1) as images
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                          WHERE a.status =?
@@ -156,16 +159,19 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize) {
         String sql = """
-                SELECT a.id            as id,
-                       a.price         as price,
-                       a.max_guests    as max_guests,
-                       a.address       as address,
-                       a.description   as description,
-                       a.province      as province,
-                       a.region        as region,
-                       a.title         as title,
-                       AVG(r.rating)   as rating,
-                       (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                SELECT a.id            AS id,
+                       a.price         AS price,
+                       a.max_guests    AS max_guests,
+                       a.address       AS address,
+                       a.description   AS description,
+                       a.province      AS province,
+                       a.region        AS region,
+                       a.title         AS title,
+                       AVG(r.rating)   AS rating,
+                       (SELECT ai.images 
+                       FROM announcement_images ai 
+                       WHERE ai.announcement_id = a.id 
+                       LIMIT 1) AS images
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                          WHERE a.status = 'MODERATION'
@@ -174,7 +180,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 ORDER BY a.create_date 
                  """;
         int offset = (currentPage - 1) * pageSize;
-        sql+= "LIMIT ? OFFSET ?";
+        sql += "LIMIT ? OFFSET ?";
 
         List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
@@ -186,8 +192,100 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
-                .build(),pageSize,offset);
+                .build(), pageSize, offset);
 
-        return new PaginationAnnouncementResponse(announcementResponses,currentPage,pageSize);
+        return new PaginationAnnouncementResponse(announcementResponses, currentPage, pageSize);
+    }
+
+    @Override
+    public LastestAnnouncementResponse getLastestAnnouncement() {
+
+        String sql = """
+                SELECT 
+                       a.address       AS address,
+                       a.description   AS description,
+                       a.title         AS title,
+                       (SELECT string_agg(ai.images, ',')
+                        FROM announcement_images ai
+                        WHERE ai.announcement_id = a.id) AS images
+                FROM announcements a 
+                LEFT JOIN announcement_images i on a.id = i.announcement_id 
+                ORDER BY create_date 
+                DESC LIMIT 1
+                 """;
+
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> LastestAnnouncementResponse.builder()
+                .images(Arrays.asList(rs.getString("images").split(",")))
+                .title(rs.getString("title"))
+                .address(rs.getString("address"))
+                .description(rs.getString("description"))
+                .build());
+    }
+
+    @Override
+    public List<PopularHouseResponse> getPopularHouses() {
+
+        String sql = """
+                SELECT 
+                       a.address,       
+                       a.description, 
+                       a.title,     
+                       a.price,
+                       AVG(f.rating) AS rating,   
+                       (SELECT ai.images 
+                       FROM announcement_images ai 
+                       WHERE ai.announcement_id = a.id 
+                       LIMIT 1) AS image
+                FROM announcements a  
+                LEFT JOIN feedbacks f 
+                ON a.id = f.announcement_id 
+                WHERE a.house_type ='HOUSE' 
+                GROUP BY     
+                a.id,
+                a.address,
+                a.description,
+                a.title,
+                a.price 
+                ORDER BY rating 
+                DESC LIMIT 3;
+                 """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> PopularHouseResponse.builder()
+                .title(rs.getString("title"))
+                .image(rs.getString("image"))
+                .address(rs.getString("address"))
+                .price(rs.getInt("price"))
+                .rating(rs.getDouble("rating"))
+                .build());
+    }
+
+    @Override
+    public PopularApartmentResponse getPopularApartment() {
+        String sql = """
+                SELECT 
+                          a.address,       
+                          a.description, 
+                          a.title,    
+                          AVG(f.rating) AS rating,   
+                          (SELECT string_agg(ai.images, ',')
+                           FROM announcement_images ai
+                           WHERE ai.announcement_id = a.id) AS images
+                   FROM announcements a  
+                   LEFT JOIN feedbacks f 
+                   ON a.id = f.announcement_id  
+                   WHERE a.house_type ='APARTMENT'
+                   GROUP BY     
+                   a.id,
+                   a.address,
+                   a.description,
+                   a.title
+                   ORDER BY rating 
+                   DESC LIMIT 1;
+                    """;
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
+                        .images(Arrays.asList(rs.getString("images").split(",")))
+                        .title(rs.getString("title"))
+                        .address(rs.getString("address"))
+                        .description(rs.getString("description"))
+                        .build());
     }
 }

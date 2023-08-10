@@ -34,4 +34,10 @@ public interface AnnouncementService {
     SimpleResponse rejectAnnouncement(Long announcementId);
 
     PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize);
+
+    LastestAnnouncementResponse getLastestAnnouncement ();
+
+    List<PopularHouseResponse> getPopularHouses();
+
+    PopularApartmentResponse getPopularApartment();
 }
