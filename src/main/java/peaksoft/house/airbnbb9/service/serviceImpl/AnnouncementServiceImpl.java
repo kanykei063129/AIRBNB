@@ -146,10 +146,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementTemplate.getPopularHouses();
     }
 
-    public PopularApartmentResponse getPopularApartment(){
+    public PopularApartmentResponse getPopularApartment() {
         return announcementTemplate.getPopularApartment();
-      
-    public GlobalSearchResponse search(String word) {
+    }
+    public GlobalSearchResponse search (String word) {
         return announcementTemplate.search(word);
     }
 

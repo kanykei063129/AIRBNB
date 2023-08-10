@@ -286,11 +286,12 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                    DESC LIMIT 1;
                     """;
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
-                        .images(Arrays.asList(rs.getString("images").split(",")))
-                        .title(rs.getString("title"))
-                        .address(rs.getString("address"))
-                        .description(rs.getString("description"))
-                        .build());
+                .images(Arrays.asList(rs.getString("images").split(",")))
+                .title(rs.getString("title"))
+                .address(rs.getString("address"))
+                .description(rs.getString("description"))
+                .build());
+    }
 
     @Override
     public GlobalSearchResponse search(String word) {
@@ -379,7 +380,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .rating(rs.getInt("rating"))
                 .build());
     }
-}
+
 
     @Override
     public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
