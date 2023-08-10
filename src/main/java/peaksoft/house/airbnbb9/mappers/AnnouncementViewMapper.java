@@ -21,6 +21,7 @@ public class AnnouncementViewMapper {
                  """;
         return jdbcTemplate.queryForObject(sql, Double.class);
     }
+
     public Double calculateRating1() {
         String sql = """
                  SELECT

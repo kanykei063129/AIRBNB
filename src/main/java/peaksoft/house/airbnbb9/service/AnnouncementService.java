@@ -9,6 +9,7 @@ import peaksoft.house.airbnbb9.enums.Status;
 import java.util.List;
 
 public interface AnnouncementService {
+
     List<AnnouncementResponse> getAllAnnouncements();
 
     AllAnnouncementResponse getByIdAnnouncement(Long announcementId);
@@ -18,14 +19,16 @@ public interface AnnouncementService {
     SimpleResponse deleteByIdAnnouncement(Long announcementId);
 
     List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType,String rating, String price);
+
     List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price);
+
     SimpleResponse approveAnnouncement(Long announcementId);
 
     SimpleResponse rejectAnnouncement(Long announcementId);
 
     PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize);
 
-    LastestAnnouncementResponse getLastestAnnouncement ();
+    LatestAnnouncementResponse getLatestAnnouncement();
 
     List<PopularHouseResponse> getPopularHouses();
 

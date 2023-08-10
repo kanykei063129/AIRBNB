@@ -4,7 +4,6 @@ import lombok.Builder;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
-
 import java.util.List;
 
 @Builder

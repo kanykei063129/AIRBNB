@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.UserRepository;
-
 import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
 public class JwtService {
+
     private final UserRepository userRepository;
 
     @Value("${spring.jwt.secret_key}")

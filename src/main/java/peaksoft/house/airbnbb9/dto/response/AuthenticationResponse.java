@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import peaksoft.house.airbnbb9.enums.Role;
 
-
 @Getter
 @Setter
 @AllArgsConstructor

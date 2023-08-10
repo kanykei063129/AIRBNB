@@ -12,12 +12,10 @@ import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 
 @Repository
 @Transactional
@@ -202,7 +200,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
 
     @Override
-    public LastestAnnouncementResponse getLastestAnnouncement() {
+    public LatestAnnouncementResponse getLatestAnnouncement() {
 
         String sql = """
                 SELECT 
@@ -218,7 +216,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 DESC LIMIT 1
                  """;
 
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> LastestAnnouncementResponse.builder()
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> LatestAnnouncementResponse.builder()
                 .images(Arrays.asList(rs.getString("images").split(",")))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))

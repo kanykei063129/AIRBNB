@@ -19,6 +19,7 @@ import peaksoft.house.airbnbb9.repository.UserRepository;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class ApplicationConfig {
+
     private final UserRepository userRepository;
 
     @Bean

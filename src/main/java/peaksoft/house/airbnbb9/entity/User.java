@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import peaksoft.house.airbnbb9.enums.Role;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -25,18 +23,20 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
-    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 6)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "user_gen")
+    @SequenceGenerator(name = "user_gen",
+            sequenceName = "user_seq",
+            allocationSize = 1,
+            initialValue = 6)
     private Long id;
     private String fullName;
     private String email;
     private String image;
     private String password;
-
     @ElementCollection
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<String> messagesFromAdmin;
-    
     @Enumerated(EnumType.STRING)
     private Role role;
 

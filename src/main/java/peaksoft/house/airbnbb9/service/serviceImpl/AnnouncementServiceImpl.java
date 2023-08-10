@@ -18,7 +18,6 @@ import peaksoft.house.airbnbb9.entity.Feedback;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
-import java.util.Collections;
 
 import java.util.List;
 
@@ -96,7 +95,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .build();
     }
 
-
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
         return announcementTemplate.getAllAnnouncementsFilter(status, houseType, rating, price);
@@ -106,6 +104,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
         return announcementTemplate.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
     }
+
     @Override
     public SimpleResponse approveAnnouncement(Long announcementId) {
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
@@ -137,8 +136,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public LastestAnnouncementResponse getLastestAnnouncement() {
-        return announcementTemplate.getLastestAnnouncement();
+    public LatestAnnouncementResponse getLatestAnnouncement() {
+        return announcementTemplate.getLatestAnnouncement();
     }
 
     @Override

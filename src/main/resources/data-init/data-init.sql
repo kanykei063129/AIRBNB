@@ -5,9 +5,9 @@ values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXm
         'photo with kick', 'USER'),
        (3, 'Kyle Snyder', 'snyder@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q',
         'photo wrestling boots', 'USER'),
-       (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q', 'photo 74',
+       (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q', 'photo 74', --user
         'USER'),
-       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy',
+       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy', --Admin123
         'photo 86', 'ADMIN');
 
 insert into announcements

@@ -24,7 +24,7 @@ public class AuthenticationApi {
         return authenticationService.signInWithGoogle(tokenId);
     }
 
-    @Operation(summary = "signIn", description = "Available only to registered and authenticated users")
+    @Operation(summary = "Sign in", description = "Available only to registered and authenticated users")
     @PostMapping("/signIn")
     public AuthenticationResponse signIn(@RequestBody SignInRequest request) {
         return authenticationService.signIn(request);

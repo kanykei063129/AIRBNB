@@ -24,11 +24,13 @@ import peaksoft.house.airbnbb9.repository.template.UserTemplate;
 import peaksoft.house.airbnbb9.service.UserService;
 
 import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final UserTemplate userTemplate;

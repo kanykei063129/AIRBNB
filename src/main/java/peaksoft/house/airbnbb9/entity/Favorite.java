@@ -12,8 +12,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Favorite {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "favorite_gen")
-    @SequenceGenerator(name = "favorite_gen",sequenceName = "favorite_seq",allocationSize = 1, initialValue = 6)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "favorite_gen")
+    @SequenceGenerator(name = "favorite_gen",
+            sequenceName = "favorite_seq",
+            allocationSize = 1,
+            initialValue = 6)
     private Long id;
 
     @ManyToOne(cascade = {
