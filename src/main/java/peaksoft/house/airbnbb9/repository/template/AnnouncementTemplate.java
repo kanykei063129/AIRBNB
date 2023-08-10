@@ -7,6 +7,7 @@ import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
+
 import java.util.List;
 
 public interface AnnouncementTemplate {
@@ -26,8 +27,10 @@ public interface AnnouncementTemplate {
     PopularApartmentResponse getPopularApartment();
 
     GlobalSearchResponse search(String word);
-  
+
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price);
 
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
+
+    AllAnnouncementResponse getByID(Long announcementId);
 }

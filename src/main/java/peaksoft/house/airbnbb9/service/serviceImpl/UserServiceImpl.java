@@ -70,6 +70,11 @@ public class UserServiceImpl implements UserService {
         return userProfileViewMapper.entityToDto(user);
     }
 
+    @Override
+    public UserResponse getByIdUser(Long userId, String value) {
+        return userTemplate.getByIdUser(userId,value);
+    }
+
 
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
