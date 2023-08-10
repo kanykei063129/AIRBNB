@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
-import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
 import peaksoft.house.airbnbb9.dto.response.UserResponse;
 import peaksoft.house.airbnbb9.service.UserService;
 
@@ -18,6 +17,7 @@ import java.util.List;
 @Tag(name = "UserApi", description = "Controller for Users")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserApi {
+
     private final UserService userService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -32,11 +32,5 @@ public class UserApi {
     @DeleteMapping("/{userId}")
     public SimpleResponse deleteUser(@PathVariable Long userId) {
         return userService.deleteUserById(userId);
-    }
-
-    @Operation(summary = "User profile", description = "Any registered user can access their own profile")
-    @GetMapping("bookings/my-announcements")
-    public UserProfileResponse getUserBookingsAndAnnouncements() {
-        return userService.getUserProfile();
     }
 }

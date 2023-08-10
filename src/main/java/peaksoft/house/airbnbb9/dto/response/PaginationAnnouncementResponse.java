@@ -10,4 +10,7 @@ public record PaginationAnnouncementResponse(
         int currentPage,
         int pageSize
 ) {
+    public PaginationAnnouncementResponse(List<AnnouncementResponse> announcementResponses) {
+        this(announcementResponses, 0, 0);
+    }
 }

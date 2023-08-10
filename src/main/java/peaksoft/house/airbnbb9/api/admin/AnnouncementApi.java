@@ -1,13 +1,16 @@
 package peaksoft.house.airbnbb9.api.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
@@ -61,18 +64,19 @@ public class AnnouncementApi {
             @RequestParam(required = false) String price) {
         return announcementService.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
+
     @Operation(summary = "get all announcements moderation and pagination", description = "Get all  announcements by status 'MODERATION' and pagination")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcementsModeration")
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage, @RequestParam int pageSize) {
         return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }
-    @Operation(summary = "Any user can filter announcements", description = "Filter accepted announcements by Popular,House Type, and Price Low to High and High to Low")
-    @GetMapping("/filter")
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(
-            @RequestParam(required = false) HouseType houseType,
-            @RequestParam(required = false) String rating,
-            @RequestParam(required = false) String price) {
-        return announcementService.getAllAnnouncementsFilters(houseType, rating, price);
+
+    @Operation(summary = "Any method can use pagination", description = "Pagination for get all methods")
+    @GetMapping("/pagination")
+    public PaginationAnnouncementResponse paginations(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+        return announcementService.pagination(page, size);
     }
 }
