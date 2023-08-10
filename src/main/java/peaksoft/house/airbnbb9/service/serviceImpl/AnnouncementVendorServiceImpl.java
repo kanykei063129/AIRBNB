@@ -10,6 +10,7 @@ import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.User;
+import peaksoft.house.airbnbb9.enums.Position;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
@@ -51,7 +52,8 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         announcement.setAddress(announcementRequest.getAddress());
         announcement.setCreateDate(LocalDate.now());
         announcement.setUser(user);
-        announcement.setStatus(Status.MODERATION);
+        announcement.setStatus(Status.NOT_BOOKED);
+        announcement.setPosition(Position.MODERATION);
         try {
             announcementRepository.save(announcement);
         } catch (Exception e) {

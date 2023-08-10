@@ -160,26 +160,26 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize) {
         String sql = """
-                SELECT a.id            AS id,
-                       a.price         AS price,
-                       a.max_guests    AS max_guests,
-                       a.address       AS address,
-                       a.description   AS description,
-                       a.province      AS province,
-                       a.region        AS region,
-                       a.title         AS title,
-                       AVG(r.rating)   AS rating,
-                       (SELECT ai.images 
-                       FROM announcement_images ai 
-                       WHERE ai.announcement_id = a.id 
-                       LIMIT 1) AS images
+                SELECT a.id          AS id,
+                       a.price       AS price,
+                       a.max_guests  AS max_guests,
+                       a.address     AS address,
+                       a.description AS description,
+                       a.province    AS province,
+                       a.title       AS title,
+                       a.position    AS position,
+                       AVG(r.rating) AS rating,
+                       (SELECT ai.images
+                        FROM announcement_images ai
+                        WHERE ai.announcement_id = a.id
+                        LIMIT 1)     AS images
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
-                         WHERE a.status = 'MODERATION'
+                WHERE a.position = 'MODERATION'
                 GROUP BY a.id, a.price, a.max_guests, a.address,
-                         a.description, a.province, a.region, a.title,a.create_date
-                ORDER BY a.create_date 
-                 """;
+                         a.description, a.province, a.region, a.title, a.create_date
+                ORDER BY a.create_date
+                                 """;
         int offset = (currentPage - 1) * pageSize;
         sql += "LIMIT ? OFFSET ?";
 

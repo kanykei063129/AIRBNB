@@ -5,20 +5,21 @@ values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXm
         'photo with kick', 'USER'),
        (3, 'Kyle Snyder', 'snyder@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q',
         'photo wrestling boots', 'USER'),
-       (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q', 'photo 74', --user
+       (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXmQLe8WYfPFJ4K/oNZskIYAWBo9q', 'photo 74',
         'USER'),
-       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy', --Admin123
-        'photo 86', 'ADMIN');
+       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy',
+        'photo 86', 'ADMIN'),
+       (6, 'Rus', 'rusi.studio.kgz@gmail.com', '$2a$12$99Q6ccCQVhM.Rv6lbXza4uGUTiJLZkzBBDiLHopPN1niFwMVPsw8W',
+        'default image', 'USER');
 
-insert into announcements
-(id, house_type, price, region, province, address, description, status, title, max_guests, create_date,message_from_admin, user_id,rating)
-values (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'MODERATION', 'house', 3, now(),null, 1,3),
-       (2, 'HOUSE', 24, 'BATKEN', 'batken', '2-street 4', 'for Relax in the apricot garden', 'MODERATION', 'house', 5,
-        now(),null,2,3),
-       (3, 'APARTMENT', 41, 'BISHKEK', 'ALAMIDIN-1', '3-street 4', 'for long time ', 'MODERATION', 'apartment', 2,
-        now(),null,3,3),
-       (4, 'HOUSE', 30, 'ISSYK_KUL', 'Bosteri', '4-street 5', 'only for summer season', 'MODERATION', 'house', 3, now(),null,4,3),
-       (5, 'HOUSE', 20, 'NARYN', 'At-Bashy', '5-street 6', 'Tash-Rabat visit', 'MODERATION', 'house', 5, now(), null,5,3);
+INSERT INTO announcements
+(id, house_type, price, region, province, address, description, status, title, max_guests, create_date, message_from_admin, user_id, rating, position)
+VALUES
+       (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'BOOKED', 'house', 3, NOW(), NULL, 1, 3, 'MODERATION'),
+       (2, 'HOUSE', 24, 'BATKEN', 'batken', '2-street 4', 'for Relax in the apricot garden', 'NOT_BOOKED', 'house', 5, NOW(), NULL, 2, 3, 'MODERATION'),
+       (3, 'APARTMENT', 41, 'BISHKEK', 'ALAMIDIN-1', '3-street 4', 'for long time', 'BOOKED', 'apartment', 2, NOW(), NULL, 3, 3, 'MODERATION'),
+       (4, 'HOUSE', 30, 'ISSYK_KUL', 'Bosteri', '4-street 5', 'only for summer season', 'NOT_BOOKED', 'house', 3, NOW(), NULL, 4, 3, 'MODERATION'),
+       (5, 'HOUSE', 20, 'NARYN', 'At-Bashy', '5-street 6', 'Tash-Rabat visit', 'BOOKED', 'house', 5, NOW(), NULL, 5, 3, 'MODERATION');
 
 insert into announcement_images (announcement_id, images)
 values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),
