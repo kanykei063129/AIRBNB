@@ -24,7 +24,16 @@ public interface AnnouncementService {
     SimpleResponse rejectAnnouncement(Long announcementId);
 
     PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize);
+
+    LastestAnnouncementResponse getLastestAnnouncement ();
+
+    List<PopularHouseResponse> getPopularHouses();
+
+    PopularApartmentResponse getPopularApartment();
+  
     GlobalSearchResponse search(String word);
+  
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price);
+
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
 }

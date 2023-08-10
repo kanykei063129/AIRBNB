@@ -11,15 +11,14 @@ import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
-
 import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Feedback;
-
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
+import java.util.Collections;
 
 import java.util.List;
 
@@ -138,6 +137,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
+    public LastestAnnouncementResponse getLastestAnnouncement() {
+        return announcementTemplate.getLastestAnnouncement();
+    }
+
+    @Override
+    public List<PopularHouseResponse> getPopularHouses() {
+        return announcementTemplate.getPopularHouses();
+    }
+
+    public PopularApartmentResponse getPopularApartment(){
+        return announcementTemplate.getPopularApartment();
+      
     public GlobalSearchResponse search(String word) {
         return announcementTemplate.search(word);
     }
