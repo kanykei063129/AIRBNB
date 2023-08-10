@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.Position;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,6 +56,8 @@ public class Announcement {
     @Column(name = "create_date")
     private LocalDate createDate;
     private String messageFromAdmin;
+    @Enumerated(EnumType.STRING)
+    private Position position;
 
     @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,

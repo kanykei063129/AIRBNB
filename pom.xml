@@ -52,12 +52,12 @@
 <!--      <artifactId>swagger-core</artifactId>-->
 <!--      <version>2.1.4</version>-->
 <!--    </dependency>-->
-    <dependency>
-      <groupId>jakarta.platform</groupId>
-      <artifactId>jakarta.jakartaee-api</artifactId>
-      <version>9.0.0</version> <!-- Replace with the version compatible with your project -->
-      <scope>provided</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>jakarta.platform</groupId>-->
+<!--      <artifactId>jakarta.jakartaee-api</artifactId>-->
+<!--      <version>9.0.0</version> &lt;!&ndash; Replace with the version compatible with your project &ndash;&gt;-->
+<!--      <scope>provided</scope>-->
+<!--    </dependency>-->
     <dependency>
 
       <groupId>org.springframework.boot</groupId>
@@ -134,6 +134,10 @@
       <groupId>com.google.firebase</groupId>
       <artifactId>firebase-admin</artifactId>
       <version>9.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
   </dependencies>
   <build>

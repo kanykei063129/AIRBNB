@@ -1,12 +1,17 @@
 package peaksoft.house.airbnbb9.service.serviceImpl;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
+import peaksoft.house.airbnbb9.entity.User;
+import peaksoft.house.airbnbb9.enums.Position;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
@@ -18,6 +23,8 @@ import peaksoft.house.airbnbb9.entity.Feedback;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
+import org.springframework.mail.javamail.JavaMailSender;
+
 
 import java.util.List;
 
@@ -28,6 +35,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementTemplate announcementTemplate;
+    private final JavaMailSender javaMailSender;
 
     @Override
     public AllAnnouncementResponse getByIdAnnouncement(Long announcementId) {
@@ -151,6 +159,57 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public GlobalSearchResponse search (String word) {
         return announcementTemplate.search(word);
     }
+
+    @Override
+    public SimpleResponse processAnnouncement(Long announcementId, String message) throws MessagingException {
+        Announcement announcement = announcementRepository.findById(announcementId)
+                .orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
+        if (announcement.getPosition() == Position.MODERATION) {
+            if (message.equalsIgnoreCase("accept")) {
+                announcement.setPosition(Position.ACCEPTED);
+                announcementRepository.save(announcement);
+                return SimpleResponse.builder().
+                        message("Announcement accepted successfully").httpStatus(HttpStatus.OK).
+                        build();
+            } else if (message.equalsIgnoreCase("reject")) {
+                announcement.setPosition(Position.REJECT);
+                announcementRepository.save(announcement);
+                sendRejectionMessageToUser(announcement);
+                return SimpleResponse.builder().
+                        message("Announcement rejected successfully").httpStatus(HttpStatus.OK).
+                        build();
+            } else if (message.equalsIgnoreCase("delete")) {
+                announcementRepository.delete(announcement);
+                return SimpleResponse.builder().
+                        message("Announcement deleted successfully.").httpStatus(HttpStatus.OK).
+                        build();
+            } else {
+                return SimpleResponse.builder().
+                        message("Invalid action. Use 'accept', 'reject', or 'delete'.").httpStatus(HttpStatus.OK).
+                        build();
+            }
+        } else {
+            return SimpleResponse.builder().
+                    message("Invalid position for processing.").httpStatus(HttpStatus.OK).
+                    build();
+        }
+    }
+
+    private void sendRejectionMessageToUser(Announcement announcement) throws MessagingException {
+        User user = announcement.getUser();
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+        helper.setTo(user.getEmail());
+        helper.setFrom("adiibrahimov@gmail.com");
+        helper.setSubject("Your Announcement Status");
+        helper.setText("Dear " + user.getFullName() + "\n" +
+                "                \"We regret to inform you that your announcement with ID \" + announcement.getId() +\n" +
+                "                \" has been rejected. Please review the guidelines and resubmit if necessary.\\n\\n\" +\n" +
+                "                \"Thank you,\\n\" +\n" +
+                "                \"Your Announcement Platform Team");
+        javaMailSender.send(message);
+    }
+
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price) {

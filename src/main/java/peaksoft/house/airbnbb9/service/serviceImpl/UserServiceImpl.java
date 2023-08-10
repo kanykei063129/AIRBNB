@@ -2,7 +2,6 @@
 package peaksoft.house.airbnbb9.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -75,6 +74,6 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
         return userRepository.getUserByEmail(login).orElseThrow(() ->
-                new ForbiddenException("An unregistered user cannot write comment for this announcement!"));
+                new BadCredentialException("An unregistered user cannot write comment for this announcement!"));
     }
 }

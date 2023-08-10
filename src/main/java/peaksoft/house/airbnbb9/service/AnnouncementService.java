@@ -1,5 +1,6 @@
 package peaksoft.house.airbnbb9.service;
 
+import jakarta.mail.MessagingException;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.enums.HouseType;
@@ -35,7 +36,10 @@ public interface AnnouncementService {
     PopularApartmentResponse getPopularApartment();
   
     GlobalSearchResponse search(String word);
-  
+
+    SimpleResponse processAnnouncement(Long announcementId,String message) throws MessagingException;
+
+
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price);
 
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
