@@ -13,13 +13,13 @@ values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXm
         'default image', 'USER');
 
 INSERT INTO announcements
-(id, house_type, price, region, province, address, description, status, title, max_guests, create_date, message_from_admin, user_id, rating, position)
+(id, house_type, price, region, province, address, description, status, title, max_guests, create_date, message_from_admin, user_id, position)
 VALUES
-       (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'BOOKED', 'house', 3, NOW(), NULL, 1, 3, 'MODERATION'),
-       (2, 'HOUSE', 24, 'BATKEN', 'batken', '2-street 4', 'for Relax in the apricot garden', 'NOT_BOOKED', 'house', 5, NOW(), NULL, 2, 3, 'MODERATION'),
-       (3, 'APARTMENT', 41, 'BISHKEK', 'ALAMIDIN-1', '3-street 4', 'for long time', 'BOOKED', 'apartment', 2, NOW(), NULL, 3, 3, 'MODERATION'),
-       (4, 'HOUSE', 30, 'ISSYK_KUL', 'Bosteri', '4-street 5', 'only for summer season', 'NOT_BOOKED', 'house', 3, NOW(), NULL, 4, 3, 'MODERATION'),
-       (5, 'HOUSE', 20, 'NARYN', 'At-Bashy', '5-street 6', 'Tash-Rabat visit', 'BOOKED', 'house', 5, NOW(), NULL, 5, 3, 'MODERATION');
+       (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'BOOKED', 'house', 3, NOW(), NULL, 1, 'MODERATION'),
+       (2, 'HOUSE', 24, 'BATKEN', 'batken', '2-street 4', 'for Relax in the apricot garden', 'NOT_BOOKED', 'house', 5, NOW(), NULL, 2, 'MODERATION'),
+       (3, 'APARTMENT', 41, 'BISHKEK', 'ALAMIDIN-1', '3-street 4', 'for long time', 'BOOKED', 'apartment', 2, NOW(), NULL, 3, 'MODERATION'),
+       (4, 'HOUSE', 30, 'ISSYK_KUL', 'Bosteri', '4-street 5', 'only for summer season', 'NOT_BOOKED', 'house', 3, NOW(), NULL, 4, 'MODERATION'),
+       (5, 'HOUSE', 20, 'NARYN', 'At-Bashy', '5-street 6', 'Tash-Rabat visit', 'BOOKED', 'house', 5, NOW(), NULL, 5, 'MODERATION');
 
 insert into announcement_images (announcement_id, images)
 values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),
@@ -33,12 +33,12 @@ values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626
        (5, 'https://www.myluxoria.com/storage/app/uploads/public/630/77d/9dd/63077d9dd7b37898060436.jpg'),
        (5, 'https://www.myluxoria.com/storage/app/uploads/public/630/77d/9dd/63077d9dd7b37898060436.jpg');
 
-insert into bookings(id, check_in, check_out, date, user_id, announcement_id)
-values (1, '2023-08-14T10:30:00+00:00', '2023-08-15T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 1, 2),
-       (2, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 2, 3),
-       (3, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 3, 4),
-       (4, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 4, 5),
-       (5, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 5, 1);
+insert into bookings(id, check_in, check_out, date, user_id, announcement_id,position)
+values (1, '2023-08-14T10:30:00+00:00', '2023-08-15T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 1, 2,1),
+       (2, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 2, 3,1),
+       (3, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 3, 4,2),
+       (4, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 4, 5,2),
+       (5, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 5, 1,2);
 
 insert into favorites(id, user_id, announcement_id)
 values (1, 1, 2),

@@ -35,7 +35,6 @@ public class UserApi {
     }
     @Operation(summary = "users", description = " get by id and only for bookings and announcements")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/{userId}")
     @GetMapping("/get/{userId}")
     public UserResponse getUserById(@PathVariable Long userId, @RequestParam String value) {
         return userService.getByIdUser(userId, value);

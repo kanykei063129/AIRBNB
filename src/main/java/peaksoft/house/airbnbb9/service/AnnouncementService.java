@@ -13,7 +13,7 @@ public interface AnnouncementService {
 
     List<AnnouncementResponse> getAllAnnouncements();
 
-    AllAnnouncementResponse getByIdAnnouncement(Long announcementId);
+    AnnouncementInnerPageResponse getAnnouncementDetails(Long announcementId);
 
     AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
 

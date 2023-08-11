@@ -48,12 +48,11 @@ public class AnnouncementApi {
         return announcementService.deleteByIdAnnouncement(announcementId);
     }
 
-    @Operation(summary = "Get announcement by id",
-            description = "Get announcement by id ")
-    @PreAuthorize("hasAnyAuthority('USER')")
-    @GetMapping("/getById{announcementId}")
-    public AllAnnouncementResponse getAnnouncementById(@PathVariable Long announcementId) {
-        return announcementService.getByIdAnnouncement(announcementId);
+    @Operation(summary = "Find an announcement by id", description = "Any user can find announcement by id")
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("{id}")
+    public AnnouncementInnerPageResponse getAnnouncementDetails(@PathVariable Long id) {
+        return announcementService.getAnnouncementDetails(id);
     }
 
     @Operation(summary = "Filter and sort announcements",

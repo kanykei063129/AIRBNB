@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import peaksoft.house.airbnbb9.entity.Booking;
 import peaksoft.house.airbnbb9.enums.Role;
 
 import java.util.List;
