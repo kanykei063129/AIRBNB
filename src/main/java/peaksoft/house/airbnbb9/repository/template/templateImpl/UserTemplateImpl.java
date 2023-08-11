@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.BookingResponse;
-import peaksoft.house.airbnbb9.dto.response.UserBookingsResponse;
 import peaksoft.house.airbnbb9.dto.response.UserResponse;
 import peaksoft.house.airbnbb9.repository.template.UserTemplate;
 

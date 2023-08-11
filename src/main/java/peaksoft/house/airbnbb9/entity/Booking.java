@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import peaksoft.house.airbnbb9.enums.Position;
+
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -22,7 +25,9 @@ public class Booking {
     private Long id;
     private ZonedDateTime checkOut;
     private ZonedDateTime checkIn;
+    private BigDecimal pricePerDay;
     private ZonedDateTime date;
+    private Position position;
 
     @ManyToOne(cascade = {
             CascadeType.DETACH,

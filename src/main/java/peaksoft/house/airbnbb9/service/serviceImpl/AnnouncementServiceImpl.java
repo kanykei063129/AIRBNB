@@ -15,11 +15,12 @@ import peaksoft.house.airbnbb9.enums.Position;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
+import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
+import peaksoft.house.airbnbb9.mappers.BookingViewMapper;
+import peaksoft.house.airbnbb9.mappers.FeedbackViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
-import peaksoft.house.airbnbb9.dto.response.AllAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
-import peaksoft.house.airbnbb9.entity.Feedback;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
@@ -36,27 +37,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementTemplate announcementTemplate;
     private final JavaMailSender javaMailSender;
-
-    @Override
-    public AllAnnouncementResponse getByIdAnnouncement(Long announcementId) {
-        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
-                new NotFoundException("Announcement with id: " + announcementId + " is no exist!"));
-        List<Feedback> feedbacks = announcementRepository.getAllAnnouncementFeedback(announcementId);
-        return AllAnnouncementResponse.builder()
-                .id(announcement.getId())
-                .houseType(announcement.getHouseType())
-                .images(announcement.getImages())
-                .price(announcement.getPrice())
-                .region(announcement.getRegion())
-                .address(announcement.getAddress())
-                .description(announcement.getDescription())
-                .status(announcement.getStatus())
-                .title(announcement.getTitle())
-                .maxGuests(announcement.getMaxGuests())
-                .province(announcement.getProvince())
-                .isFeedback(feedbacks.size())
-                .build();
-    }
+    private final AnnouncementViewMapper viewMapper;
+    private final BookingViewMapper bookingViewMapper;
+    private final FeedbackViewMapper feedbackViewMapper;
 
     @Override
     public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
@@ -91,6 +74,23 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public List<AnnouncementResponse> getAllAnnouncements() {
         return announcementTemplate.getAllAnnouncements();
+    }
+    protected Announcement getAnnouncementById(Long announcementId) {
+        return announcementRepository.findById(announcementId).orElseThrow(() ->
+                new NotFoundException("Announcement with id " + announcementId + " not found!"));
+    }
+
+    @Override
+    public AnnouncementInnerPageResponse getAnnouncementDetails(Long announcementId) {
+        Announcement announcementById = getAnnouncementById(announcementId);
+        announcementRepository.save(announcementById);
+        return getAnnouncementInnerPageResponse(announcementById);
+    }
+    private AnnouncementInnerPageResponse getAnnouncementInnerPageResponse(Announcement announcement) {
+        AnnouncementInnerPageResponse response = viewMapper.entityToDtoConverting(announcement);
+        response.setAnnouncementBookings(bookingViewMapper.viewBooked(announcement.getBookings()));
+        response.setFeedbackResponses(feedbackViewMapper.viewFeedback(announcement.getFeedbacks()));
+        return response;
     }
 
 

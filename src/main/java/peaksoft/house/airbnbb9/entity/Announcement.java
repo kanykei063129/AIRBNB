@@ -41,7 +41,6 @@ public class Announcement {
     private Region region;
     @Column(name = "address")
     private String address;
-    private double rating;
     @Column(name = "description")
     private String description;
     @Enumerated(EnumType.STRING)

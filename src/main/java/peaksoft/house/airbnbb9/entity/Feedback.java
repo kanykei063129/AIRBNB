@@ -48,4 +48,20 @@ public class Feedback {
             CascadeType.MERGE,
             CascadeType.REFRESH})
     private User user;
+
+    public int incrementLikes() {
+        return likeCount++;
+    }
+
+    public int decrementLikes() {
+        return likeCount--;
+    }
+
+    public int incrementDisLikes() {
+        return disLikeCount++;
+    }
+
+    public int decrementDisLikes() {
+        return disLikeCount--;
+    }
 }
