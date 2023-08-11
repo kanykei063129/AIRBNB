@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import peaksoft.house.airbnbb9.s3File.service.S3FileService;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -22,16 +21,16 @@ public class S3FileApi {
     private final S3FileService s3FileService;
 
     @Operation(summary = "Upload file", description = "This is upload file ")
-    @PostMapping(
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    String upload(@RequestParam(value = "file") MultipartFile multipartFile) throws IOException {
-        return s3FileService.upload(multipartFile);
+    public Map<String, String> uploadFile(@RequestParam MultipartFile file) {
+        return s3FileService.uploadFile(file);
     }
 
     @Operation(summary = "Delete file", description = "This is delete file ")
     @DeleteMapping
-    Map<String, String> delete(@RequestParam String fileLink) {
-        return s3FileService.delete(fileLink);
+    public Map<String, String> deleteFile(@RequestParam String fileName) {
+        return s3FileService.deleteFile(fileName);
     }
+
 }
