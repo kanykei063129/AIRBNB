@@ -24,7 +24,7 @@ public class UserProfileViewMapper {
         }
         UserAnnouncementResponse announcementsResponse = new UserAnnouncementResponse();
         announcementsResponse.setId(announcement.getId());
-        announcementsResponse.setImage(announcement.getImages().get(0));
+        announcementsResponse.setImages(announcement.getImages());
         announcementsResponse.setHouseType(announcement.getHouseType());
         announcementsResponse.setPrice(announcement.getPrice());
         announcementsResponse.setRating(announcementViewMapper.calculateRating1());
@@ -74,7 +74,7 @@ public class UserProfileViewMapper {
         }
         UserBookingsResponse bookingsResponse = new UserBookingsResponse();
         bookingsResponse.setAnnouncementId(booking.getAnnouncement().getId());
-        bookingsResponse.setImage(booking.getAnnouncement().getImages().get(0));
+        bookingsResponse.setImages(booking.getAnnouncement().getImages());
         bookingsResponse.setRating(announcementViewMapper.calculateRating());
         bookingsResponse.setTitle(booking.getAnnouncement().getTitle());
         bookingsResponse.setAddress(booking.getAnnouncement().getAddress());
