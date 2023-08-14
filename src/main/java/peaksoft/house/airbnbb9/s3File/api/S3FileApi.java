@@ -16,7 +16,6 @@ import java.util.Map;
 @RequestMapping("/api/file")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "S3-File API", description = "API for S3-File management")
-@PreAuthorize("hasAuthority('ADMIN')")
 public class S3FileApi {
     private final S3FileService s3FileService;
 
