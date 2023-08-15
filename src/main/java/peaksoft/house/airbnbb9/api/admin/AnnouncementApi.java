@@ -34,7 +34,7 @@ public class AnnouncementApi {
     @Operation(summary = "Update announcement",
             description = "Update announcement by id")
     @PutMapping("/{announcementId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER')")
     public AnnouncementResponse update(@PathVariable Long announcementId,
                                        @RequestBody @Valid AnnouncementRequest announcementRequest) {
         return announcementService.updateAnnouncement(announcementId, announcementRequest);
@@ -42,7 +42,7 @@ public class AnnouncementApi {
 
     @Operation(summary = "Delete announcement",
             description = "Delete announcement by id")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @DeleteMapping("/{announcementId}")
     public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
         return announcementService.deleteByIdAnnouncement(announcementId);
@@ -71,8 +71,8 @@ public class AnnouncementApi {
             description = "Get all  announcements by status 'MODERATION' and added pagination")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/announcementsModeration")
-    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage,
-                                                                                     @RequestParam int pageSize) {
+    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam(defaultValue = "1") int currentPage,
+                                                                                     @RequestParam(defaultValue = "15") int pageSize) {
         return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }
 
