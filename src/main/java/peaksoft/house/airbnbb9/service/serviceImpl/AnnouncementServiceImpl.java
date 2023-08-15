@@ -11,9 +11,7 @@ import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.User;
-import peaksoft.house.airbnbb9.enums.Position;
-import peaksoft.house.airbnbb9.enums.Region;
-import peaksoft.house.airbnbb9.enums.Status;
+import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
 import peaksoft.house.airbnbb9.mappers.BookingViewMapper;
@@ -21,7 +19,6 @@ import peaksoft.house.airbnbb9.mappers.FeedbackViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
-import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -187,7 +184,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price) {
+    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
         return announcementTemplate.getAllAnnouncementsFilters(houseType,rating,price);
     }
 

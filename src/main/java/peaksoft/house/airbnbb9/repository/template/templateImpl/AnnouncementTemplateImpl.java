@@ -9,6 +9,7 @@ import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.PriceType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
@@ -336,7 +337,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price) {
+    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
         String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, "
                 + "(SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images "
                 + "FROM announcements a "
@@ -354,7 +355,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "AND r.rating IS NOT NULL ";
         }
 
-        if (price != null && !price.isEmpty()) {
+        if (price != null) {
             sql += "AND a.price IS NOT NULL ";
         }
 
@@ -362,24 +363,24 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
         if (rating != null && !rating.isEmpty()) {
             sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
-        } else if (price != null && !price.isEmpty()) {
-            sql += "ORDER BY a.price " + (price.equalsIgnoreCase("asc") ? "ASC" : "DESC");
+        } else if (price != null && !price.equals(PriceType.LOW_TO_HIGH)) {
+            sql += "ORDER BY a.price " + (price.equals("LOW_TO_HIGH") ? "ASC" : "DESC");
+        } else if (price != null && !price.equals(PriceType.HIGH_TO_LOW)) {
+            sql += "ORDER BY a.price " + (price.equals("HIGH_TO_LOW") ? "DESC" : "ASC");
         }
 
-        return jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
-                .id(rs.getLong("id"))
-                .price(rs.getInt("price"))
-                .maxGuests(rs.getInt("max_guests"))
-                .address(rs.getString("address"))
-                .description(rs.getString("description"))
-                .province(rs.getString("province"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .rating(rs.getInt("rating"))
-                .build());
-    }
-
-
+            return jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+                    .id(rs.getLong("id"))
+                    .price(rs.getInt("price"))
+                    .maxGuests(rs.getInt("max_guests"))
+                    .address(rs.getString("address"))
+                    .description(rs.getString("description"))
+                    .province(rs.getString("province"))
+                    .title(rs.getString("title"))
+                    .images(Collections.singletonList(rs.getString("images")))
+                    .rating(rs.getInt("rating"))
+                    .build());
+        }
     @Override
     public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
         if (page != null && size != null) {
