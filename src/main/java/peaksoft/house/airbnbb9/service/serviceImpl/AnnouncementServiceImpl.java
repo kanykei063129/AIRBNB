@@ -191,6 +191,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 return SimpleResponse.builder().
                         message("Announcement deleted successfully.").httpStatus(HttpStatus.OK).
                         build();
+            } else if (message.isEmpty()) {
+                return SimpleResponse.builder().
+                        message("Invalid action. Use 'accept', 'reject', or 'delete'.").httpStatus(HttpStatus.OK).
+                        build();
             } else {
                 log.info("Invalid action '{}' for announcement with id={}", message, announcementId);
                 return SimpleResponse.builder().
@@ -198,16 +202,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                         build();
             }
         } else {
-            log.info("Invalid position for processing announcement with id={}", announcementId);
             return SimpleResponse.builder().
                     message("Invalid position for processing.").httpStatus(HttpStatus.OK).
                     build();
         }
-    }
-
-    @Override
-    public AnnouncementResponse getApplicationById(Long applicationId) {
-        return announcementTemplate.getApplicationById(applicationId);
     }
 
     private void sendRejectionMessageToUser(Announcement announcement, String messageFromAdminToUser) throws MessagingException {
@@ -226,6 +224,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         log.info("Rejection message sent to user with email={}", user.getEmail());
     }
 
+    @Override
+    public AnnouncementResponse getApplicationById(Long applicationId) {
+        return announcementTemplate.getApplicationById(applicationId);
+    }
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {

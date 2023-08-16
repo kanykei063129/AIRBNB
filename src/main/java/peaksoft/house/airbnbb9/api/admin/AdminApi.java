@@ -24,7 +24,7 @@ public class AdminApi {
     @Operation(summary = "Accepted,Deleted,Rejected", description = "Admin accept,deleted,rejected application")
     @PostMapping("/accepted-announcement/{announcementId}")
     public SimpleResponse approveAnnouncement(@PathVariable Long announcementId,
-                                              @RequestParam(required = false) String value,
+                                              @RequestParam String value,
                                               @RequestParam(required = false)
                                               String messageFromAdminToUser) throws MessagingException {
         return announcementService.processAnnouncement(announcementId, value, messageFromAdminToUser);
