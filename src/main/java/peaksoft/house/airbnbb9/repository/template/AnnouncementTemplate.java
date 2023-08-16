@@ -33,5 +33,6 @@ public interface AnnouncementTemplate {
 
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
 
-    AllAnnouncementResponse getByID(Long announcementId);
+    AnnouncementResponse  getApplicationById(Long id);
+
 }
