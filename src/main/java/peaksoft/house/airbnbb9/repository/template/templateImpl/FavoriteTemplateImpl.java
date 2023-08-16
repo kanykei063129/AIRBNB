@@ -2,6 +2,7 @@ package peaksoft.house.airbnbb9.repository.template.templateImpl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FavoriteTemplateImpl implements FavoriteTemplate {
 
     private final UserRepository userRepository;
@@ -26,9 +28,15 @@ public class FavoriteTemplateImpl implements FavoriteTemplate {
     private User getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        return userRepository.getUserByEmail(email)
+
+        log.info("Getting authentication for user with email: " + email);
+
+        User user = userRepository.getUserByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + "doesn't exists!"));
 
+        log.info("Got authentication for user with email: " + email + " successfully!");
+
+        return user;
     }
 
     @Override
@@ -51,7 +59,10 @@ public class FavoriteTemplateImpl implements FavoriteTemplate {
                 "from announcements a\n" +
                 "         join favorites f on f.announcement_id = a.id\n" +
                 "         and f.user_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new FavoriteAnnouncementsResponse(
+
+        log.info("Fetching all favorite announcements.");
+
+        List<FavoriteAnnouncementsResponse> favoriteAnnouncements = jdbcTemplate.query(sql, (rs, rowNum) -> new FavoriteAnnouncementsResponse(
                 rs.getLong("id")
                 , rs.getString("images")
                 , rs.getInt("price")
@@ -62,5 +73,8 @@ public class FavoriteTemplateImpl implements FavoriteTemplate {
                 , rs.getDouble("rating")
                 , rs.getBoolean("is_favorite")
         ), getAuthentication().getId());
+
+        log.info("Fetched all favorite announcements successfully!");
+        return favoriteAnnouncements;
     }
 }

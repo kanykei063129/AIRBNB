@@ -2,6 +2,7 @@ package peaksoft.house.airbnbb9.repository.template.templateImpl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import peaksoft.house.airbnbb9.dto.response.*;
@@ -21,6 +22,7 @@ import java.util.List;
 @Repository
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     private final JdbcTemplate jdbcTemplate;
@@ -32,6 +34,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 + "FROM announcements a "
                 + "LEFT JOIN feedbacks r ON a.id = r.announcement_id "
                 + "WHERE 1=1 ";
+        log.info("Starting to filter announcements.");
 
         List<Object> params = new ArrayList<>();
 
@@ -60,8 +63,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         } else if (price != null && !price.isEmpty()) {
             sql += "ORDER BY a.price " + (price.equalsIgnoreCase("asc") ? "ASC" : "DESC");
         }
+        log.info("Filtering announcements with SQL: " + sql);
 
-        return jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -72,6 +76,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build());
+
+        log.info("Announcements filtered successfully!");
+        return results;
     }
 
     @Override
@@ -81,6 +88,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 + "FROM announcements a "
                 + "LEFT JOIN feedbacks r ON a.id = r.announcement_id "
                 + "WHERE 1=1 ";
+        log.info("Starting to filter announcements for vendors.");
 
         List<Object> params = new ArrayList<>();
 
@@ -109,8 +117,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         } else if (price != null && !price.isEmpty()) {
             sql += "ORDER BY a.price " + (price.equalsIgnoreCase("asc") ? "ASC" : "DESC");
         }
+        log.info("Filtering announcements for vendors with SQL: " + sql);
 
-        return jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -121,6 +130,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build());
+
+        log.info("Announcements filtered successfully for vendors!");
+        return results;
     }
 
     @Override
@@ -144,8 +156,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                          a.description, a.province, a.region, a.title
                              
                  """;
+        log.info("Retrieving all accepted announcements.");
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -156,6 +169,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build());
+
+        log.info("Retrieved all accepted announcements successfully!");
+        return results;
     }
 
     @Override
@@ -184,6 +200,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         int offset = (currentPage - 1) * pageSize;
         sql += "LIMIT ? OFFSET ?";
 
+        log.info("Fetching moderated announcements with pagination.");
+
         List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
@@ -196,6 +214,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .rating(rs.getInt("rating"))
                 .build(), pageSize, offset);
 
+        log.info("Fetched moderated announcements with pagination successfully!");
         return new PaginationAnnouncementResponse(announcementResponses, currentPage, pageSize);
     }
 
@@ -216,13 +235,17 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 ORDER BY create_date 
                 DESC LIMIT 1
                  """;
+        log.info("Fetching the latest announcement.");
 
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> LatestAnnouncementResponse.builder()
+        LatestAnnouncementResponse latestAnnouncement = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> LatestAnnouncementResponse.builder()
                 .images(Arrays.asList(rs.getString("images").split(",")))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
                 .build());
+
+        log.info("Fetched the latest announcement successfully!");
+        return latestAnnouncement;
     }
 
     @Override
@@ -252,13 +275,18 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 ORDER BY rating 
                 DESC LIMIT 3;
                  """;
-        return jdbcTemplate.query(sql, (rs, rowNum) -> PopularHouseResponse.builder()
+        log.info("Fetching popular houses.");
+
+        List<PopularHouseResponse> popularHouses = jdbcTemplate.query(sql, (rs, rowNum) -> PopularHouseResponse.builder()
                 .title(rs.getString("title"))
                 .image(rs.getString("image"))
                 .address(rs.getString("address"))
                 .price(rs.getInt("price"))
                 .rating(rs.getDouble("rating"))
                 .build());
+
+        log.info("Fetched popular houses successfully!");
+        return popularHouses;
     }
 
     @Override
@@ -284,12 +312,17 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                    ORDER BY rating 
                    DESC LIMIT 1;
                     """;
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
+        log.info("Fetching the most popular apartment.");
+
+        PopularApartmentResponse popularApartment = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
                 .images(Arrays.asList(rs.getString("images").split(",")))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
                 .build());
+
+        log.info("Fetched the most popular apartment successfully!");
+        return popularApartment;
     }
 
     @Override
@@ -320,6 +353,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                     a.region       , 
                     a.title 
                 """;
+        log.info("Performing global search with keyword: " + word);
+
         List<AnnouncementResponse> results = jdbcTemplate.query(sql,
                 new Object[]{word,word, word, word},
                 (rs, rowNum) -> AnnouncementResponse.builder()
@@ -333,6 +368,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .images(Collections.singletonList(rs.getString("images")))
                         .rating(rs.getInt("rating"))
                         .build());
+
+        log.info("Global search completed successfully!");
         return new GlobalSearchResponse(results);
     }
 
@@ -369,7 +406,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "ORDER BY a.price " + (price.equals("HIGH_TO_LOW") ? "DESC" : "ASC");
         }
 
-            return jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+        log.info("Fetching announcements with filters: HouseType - " + houseType + ", Rating - " + rating + ", PriceType - " + price);
+
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
                     .id(rs.getLong("id"))
                     .price(rs.getInt("price"))
                     .maxGuests(rs.getInt("max_guests"))
@@ -380,6 +419,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                     .images(Collections.singletonList(rs.getString("images")))
                     .rating(rs.getInt("rating"))
                     .build());
+
+        log.info("Fetched announcements with filters successfully!");
+        return results;
         }
     @Override
     public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
@@ -405,6 +447,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             int offset = (page - 1) * size;
             String paginatedSql = sql + " LIMIT ? OFFSET ?";
 
+            log.info("Fetching paginated announcements. Page: " + page + ", Size: " + size);
+
             List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(
                     paginatedSql,
                     (rs, rowNum) -> AnnouncementResponse.builder()
@@ -421,6 +465,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                     size, offset
             );
 
+            log.info("Fetched paginated announcements successfully!");
             return new PaginationAnnouncementResponse(announcementResponses, page, size);
         } else if (page == null && size == null) {
             String sql1 = """
@@ -441,6 +486,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             ORDER BY a.create_date 
         """;
 
+            log.info("Fetching all announcements without pagination.");
+
             List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(
                     sql1,
                     (rs, rowNum) -> AnnouncementResponse.builder()
@@ -456,6 +503,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                             .build()
             );
 
+            log.info("Fetched all announcements without pagination successfully!");
             return new PaginationAnnouncementResponse(announcementResponses);
         }
 

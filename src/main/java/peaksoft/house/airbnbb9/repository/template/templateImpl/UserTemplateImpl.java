@@ -2,6 +2,7 @@ package peaksoft.house.airbnbb9.repository.template.templateImpl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
@@ -17,6 +18,7 @@ import java.util.List;
 @Repository
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserTemplateImpl implements UserTemplate {
 
     private final JdbcTemplate jdbcTemplate;
@@ -30,7 +32,10 @@ public class UserTemplateImpl implements UserTemplate {
                 "                     LEFT JOIN bookings b ON u.id = b.user_id\n" +
                 "                     LEFT JOIN announcements a ON u.id = a.user_id\n" +
                 "                     GROUP BY u.id, u.full_name";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+
+        log.info("Fetching all users with booking and announcement counts.");
+
+        List<UserResponse> users = jdbcTemplate.query(sql, (rs, rowNum) -> {
             UserResponse user = new UserResponse();
             user.setId(rs.getLong("id"));
             user.setFullName(rs.getString("full_name"));
@@ -39,6 +44,9 @@ public class UserTemplateImpl implements UserTemplate {
             user.setAnnouncements(rs.getInt("announcements"));
             return user;
         });
+
+        log.info("Fetched all users with booking and announcement counts successfully!");
+        return users;
     }
     @Override
     public UserResponse getByIdUser(Long userId,String values) {
@@ -51,6 +59,8 @@ public class UserTemplateImpl implements UserTemplate {
             where u.id = ?
             GROUP BY u.id, u.full_name,u.email
             """;
+
+        log.info("Fetching user by ID: " + userId + " with additional values: " + values);
 
         UserResponse userResponse = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> UserResponse.builder()
                 .id(rs.getLong("id"))
@@ -67,7 +77,7 @@ public class UserTemplateImpl implements UserTemplate {
             assert userResponse != null;
             userResponse.setAnnouncementResponses(announcementResponses);
         }
-
+        log.info("Fetched user by ID: " + userId + " successfully with additional values: " + values);
         return userResponse;
     }
     private List<AnnouncementResponse> getAnnouncementByUserId(Long userID){
@@ -89,10 +99,11 @@ public class UserTemplateImpl implements UserTemplate {
                          WHERE u.id = ?
                 GROUP BY a.id, a.price, a.max_guests, a.address,
                          a.description, a.province, a.region, a.title
-
                  """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+        log.info("Fetching announcements by user ID: " + userID);
+
+        List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -103,12 +114,19 @@ public class UserTemplateImpl implements UserTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build(),userID);
+
+        log.info("Fetched announcements by user ID: " + userID + " successfully!");
+        return announcementResponses;
     }
     private BookingResponse createBookingResponse(ResultSet rs, int rowNum) throws SQLException {
         long bookingId = rs.getLong("id");
         Long userId = rs.getLong("userId");
 
+        log.info("Creating BookingResponse for booking ID: " + bookingId);
+
         List<AnnouncementResponse> announcements = getAnnouncementByUserId(userId);
+
+        log.info("Created BookingResponse successfully for booking ID: " + bookingId);
 
         return BookingResponse.builder()
                 .bookingId(bookingId)
@@ -122,7 +140,12 @@ public class UserTemplateImpl implements UserTemplate {
                 join users u on u.id = b.user_id
                 where u.id = ?;
                 """;
-        return jdbcTemplate.query(sql, this::createBookingResponse, userId);
-    }
 
+        log.info("Fetching bookings and announcements by user ID: " + userId);
+
+        List<BookingResponse> bookingResponses = jdbcTemplate.query(sql, this::createBookingResponse, userId);
+
+        log.info("Fetched bookings and announcements by user ID: " + userId + " successfully!");
+        return bookingResponses;
+    }
 }
