@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
@@ -40,8 +42,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
+        log.info("Updating Announcement with ID: " + announcementId);
+
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
                 new NotFoundException(" Announcement with id: " + announcementId + " is no exist!"));
+
+        log.info("Updating Announcement fields...");
+
         announcement.setHouseType(announcementRequest.getHouseType());
         announcement.setImages(announcementRequest.getImages());
         announcement.setPrice(announcementRequest.getPrice());
@@ -53,6 +60,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setMaxGuests(announcementRequest.getMaxGuests());
         announcement.setProvince(announcementRequest.getProvince());
         announcementRepository.save(announcement);
+
+        log.info("Announcement with ID " + announcementId + " has been successfully updated.");
         return AnnouncementResponse.builder()
                 .id(announcement.getId())
                 .houseType(announcement.getHouseType())
@@ -73,27 +82,45 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementTemplate.getAllAnnouncements();
     }
     protected Announcement getAnnouncementById(Long announcementId) {
-        return announcementRepository.findById(announcementId).orElseThrow(() ->
+        log.info("Getting Announcement with ID: " + announcementId);
+
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
                 new NotFoundException("Announcement with id " + announcementId + " not found!"));
+
+        log.info("Announcement with ID " + announcementId + " has been retrieved.");
+
+        return announcement;
     }
 
     @Override
     public AnnouncementInnerPageResponse getAnnouncementDetails(Long announcementId) {
+        log.info("Getting Announcement details for ID: " + announcementId);
+
         Announcement announcementById = getAnnouncementById(announcementId);
         announcementRepository.save(announcementById);
+
+        log.info("Announcement details for ID " + announcementId + " have been retrieved and saved.");
         return getAnnouncementInnerPageResponse(announcementById);
     }
     private AnnouncementInnerPageResponse getAnnouncementInnerPageResponse(Announcement announcement) {
+        log.info("Creating AnnouncementInnerPageResponse for Announcement with ID: " + announcement.getId());
+
         AnnouncementInnerPageResponse response = viewMapper.entityToDtoConverting(announcement);
         response.setAnnouncementBookings(bookingViewMapper.viewBooked(announcement.getBookings()));
         response.setFeedbackResponses(feedbackViewMapper.viewFeedback(announcement.getFeedbacks()));
+
+        log.info("AnnouncementInnerPageResponse created for Announcement with ID: " + announcement.getId());
         return response;
     }
 
 
     public SimpleResponse deleteByIdAnnouncement(Long announcementId) {
+        log.info("Deleting Announcement with ID: " + announcementId);
+
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
         announcementRepository.delete(announcement);
+
+        log.info("Announcement with ID: " + announcementId + " deleted.");
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
                 .message(String.format("Announcement with id: " + announcementId + " deleted..."))
@@ -134,12 +161,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public SimpleResponse processAnnouncement(Long announcementId, String message) throws MessagingException {
+        log.info("Processing announcement with id={} and action={}", announcementId, message);
+
         Announcement announcement = announcementRepository.findById(announcementId)
                 .orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
         if (announcement.getPosition() == Position.MODERATION) {
             if (message.equalsIgnoreCase("accept")) {
                 announcement.setPosition(Position.ACCEPTED);
                 announcementRepository.save(announcement);
+                log.info("Announcement with id={} accepted successfully", announcementId);
                 return SimpleResponse.builder().
                         message("Announcement accepted successfully").httpStatus(HttpStatus.OK).
                         build();
@@ -147,20 +177,24 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 announcement.setPosition(Position.REJECT);
                 announcementRepository.save(announcement);
                 sendRejectionMessageToUser(announcement);
+                log.info("Announcement with id={} rejected successfully", announcementId);
                 return SimpleResponse.builder().
                         message("Announcement rejected successfully").httpStatus(HttpStatus.OK).
                         build();
             } else if (message.equalsIgnoreCase("delete")) {
                 announcementRepository.delete(announcement);
+                log.info("Announcement with id={} deleted successfully", announcementId);
                 return SimpleResponse.builder().
                         message("Announcement deleted successfully.").httpStatus(HttpStatus.OK).
                         build();
             } else {
+                log.info("Invalid action '{}' for announcement with id={}", message, announcementId);
                 return SimpleResponse.builder().
                         message("Invalid action. Use 'accept', 'reject', or 'delete'.").httpStatus(HttpStatus.OK).
                         build();
             }
         } else {
+            log.info("Invalid position for processing announcement with id={}", announcementId);
             return SimpleResponse.builder().
                     message("Invalid position for processing.").httpStatus(HttpStatus.OK).
                     build();
@@ -169,6 +203,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     private void sendRejectionMessageToUser(Announcement announcement) throws MessagingException {
         User user = announcement.getUser();
+        log.info("Sending rejection message to user with email={}", user.getEmail());
+
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
         helper.setTo(user.getEmail());
@@ -180,6 +216,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 "                \"Thank you,\\n\" +\n" +
                 "                \"Your Announcement Platform Team");
         javaMailSender.send(message);
+        log.info("Rejection message sent to user with email={}", user.getEmail());
     }
 
 

@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     public SimpleResponse deleteUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("User with id: " + userId + " doesn't exist!"));
+        log.info("Deleting user with id: {}", userId);
         if (user.getRole().equals(Role.ADMIN)) {
             throw new BadCredentialException("you can't remove the admin!!");
         }
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         userRepository.delete(user);
-        log.error("User successfully deleted");
+        log.info("User with id: {} successfully deleted", userId);
         return SimpleResponse
                 .builder()
                 .httpStatus(HttpStatus.OK)
@@ -66,6 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileResponse getUserProfile() {
         User user = getAuthenticatedUser();
+        log.info("Retrieving user profile for user with id: {}", user.getId());
         return userProfileViewMapper.entityToDto(user);
     }
 
@@ -78,6 +80,7 @@ public class UserServiceImpl implements UserService {
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
+        log.info("Getting authenticated user with email: {}", login);
         return userRepository.getUserByEmail(login).orElseThrow(() ->
                 new BadCredentialException("An unregistered user cannot write comment for this announcement!"));
     }

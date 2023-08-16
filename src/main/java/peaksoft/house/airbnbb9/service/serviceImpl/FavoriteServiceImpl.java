@@ -2,6 +2,7 @@ package peaksoft.house.airbnbb9.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class FavoriteServiceImpl implements FavoriteService {
 
     private final UserRepository userRepository;
@@ -32,8 +34,13 @@ public class FavoriteServiceImpl implements FavoriteService {
     private User getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
+        log.info("Getting authentication details for user with email: {}", email);
+
         return userRepository.getUserByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User with email: " + email + "doesn't exists!"));
+                .orElseThrow(() -> {
+                    log.error("User with email: {} not found!", email);
+                    return new NotFoundException("User with email: " + email + " doesn't exist!");
+                });
     }
 
     @Override
@@ -46,6 +53,8 @@ public class FavoriteServiceImpl implements FavoriteService {
         boolean isTrue;
         Favorite favorite = new Favorite();
         User user = getAuthentication();
+        log.info("Adding or removing favorite for user with email: {}", user.getEmail());
+
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
                 new NotFoundException("Announcement with id: " + announcementId + " doesn't exist "));
         for (Favorite f :
@@ -56,6 +65,9 @@ public class FavoriteServiceImpl implements FavoriteService {
             } else if (f.getAnnouncement().getId() == announcement.getId()) {
                 isTrue = false;
                 favoriteRepository.delete(f);
+
+                log.info("Announcement with id: {} was deleted from favorites for user: {}", announcementId, user.getEmail());
+
                 return SimpleResponse
                         .builder()
                         .httpStatus(HttpStatus.OK)
@@ -67,6 +79,9 @@ public class FavoriteServiceImpl implements FavoriteService {
             favorite.setAnnouncement(announcement);
             favorite.setUser(user);
             favoriteRepository.save(favorite);
+            
+            log.info("Announcement with id: {} was added to favorites for user: {}", announcementId, user.getEmail());
+
             return SimpleResponse
                     .builder()
                     .httpStatus(HttpStatus.OK)

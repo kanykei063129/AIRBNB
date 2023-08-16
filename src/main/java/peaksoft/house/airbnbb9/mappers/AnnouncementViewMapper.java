@@ -1,6 +1,7 @@
 package peaksoft.house.airbnbb9.mappers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementInnerPageResponse;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AnnouncementViewMapper {
 
     private final JdbcTemplate jdbcTemplate;
@@ -24,7 +26,14 @@ public class AnnouncementViewMapper {
                           JOIN feedbacks f ON a.id = f.announcement_id
                  WHERE a.status = 'BOOKED'
                  """;
-        return jdbcTemplate.queryForObject(sql, Double.class);
+
+        log.info("Calculating average rating for announcements with status 'BOOKED'");
+
+        Double averageRating = jdbcTemplate.queryForObject(sql, Double.class);
+
+        log.info("Calculated average rating successfully: " + averageRating);
+
+        return averageRating;
     }
 
     public Double calculateRating1() {
@@ -36,12 +45,21 @@ public class AnnouncementViewMapper {
                           JOIN feedbacks f ON a.id = f.announcement_id
                  WHERE a.status = 'NOT_BOOKED'
                  """;
-        return jdbcTemplate.queryForObject(sql, Double.class);
+
+        log.info("Calculating average rating for announcements with status 'NOT_BOOKED'");
+
+        Double averageRating = jdbcTemplate.queryForObject(sql, Double.class);
+
+        log.info("Calculated average rating successfully: " + averageRating);
+
+        return averageRating;
     }
     public AnnouncementInnerPageResponse entityToDtoConverting(Announcement announcement) {
         if (announcement == null) {
             return null;
         }
+        log.info("Converting Announcement entity to AnnouncementInnerPageResponse");
+
         AnnouncementInnerPageResponse response = new AnnouncementInnerPageResponse();
         response.setId(announcement.getId());
         response.setImages(announcement.getImages());
@@ -54,6 +72,8 @@ public class AnnouncementViewMapper {
         response.setUserImage(announcement.getUser().getImage());
         response.setUserFullName(announcement.getUser().getFullName());
         response.setUserEmail(announcement.getUser().getEmail());
+
+        log.info("Converted Announcement entity to AnnouncementInnerPageResponse successfully");
         return response;
     }
 }

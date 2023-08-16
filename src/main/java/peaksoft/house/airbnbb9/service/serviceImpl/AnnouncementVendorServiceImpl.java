@@ -30,6 +30,8 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
 
     @Override
     public SimpleResponse submitAnAd(AnnouncementRequest announcementRequest) {
+        log.info("Submitting an advertisement with title: {}", announcementRequest.getTitle());
+
         if (announcementRequest == null) {
             throw new BadRequestException("Announcement request cannot be empty!");
         }
@@ -56,7 +58,9 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         announcement.setPosition(Position.MODERATION);
         try {
             announcementRepository.save(announcement);
+            log.info("Advertisement with title: {} successfully submitted", announcementRequest.getTitle());
         } catch (Exception e) {
+            log.error("Error while saving the advertisement: {}", e.getMessage(), e);
             return SimpleResponse
                     .builder()
                     .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
