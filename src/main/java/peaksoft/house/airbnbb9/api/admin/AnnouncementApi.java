@@ -67,15 +67,6 @@ public class AnnouncementApi {
         return announcementService.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
 
-    @Operation(summary = "Get all announcements application and pagination",
-            description = "Get all  announcements by status 'MODERATION' and added pagination")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/announcementsModeration")
-    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam(defaultValue = "1") int currentPage,
-                                                                                     @RequestParam(defaultValue = "15") int pageSize) {
-        return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
-    }
-
     @Operation(summary = "Pagination for get all announcements",
             description = "Announcement can be received with pagination and without pagination")
     @GetMapping("/pagination")

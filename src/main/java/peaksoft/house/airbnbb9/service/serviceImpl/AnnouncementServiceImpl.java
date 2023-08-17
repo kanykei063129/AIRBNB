@@ -13,6 +13,7 @@ import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
+import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
 import peaksoft.house.airbnbb9.mappers.BookingViewMapper;
@@ -81,6 +82,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public List<AnnouncementResponse> getAllAnnouncements() {
         return announcementTemplate.getAllAnnouncements();
     }
+
     protected Announcement getAnnouncementById(Long announcementId) {
         log.info("Getting Announcement with ID: " + announcementId);
 
@@ -102,6 +104,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         log.info("Announcement details for ID " + announcementId + " have been retrieved and saved.");
         return getAnnouncementInnerPageResponse(announcementById);
     }
+
     private AnnouncementInnerPageResponse getAnnouncementInnerPageResponse(Announcement announcement) {
         log.info("Creating AnnouncementInnerPageResponse for Announcement with ID: " + announcement.getId());
 
@@ -155,12 +158,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public PopularApartmentResponse getPopularApartment() {
         return announcementTemplate.getPopularApartment();
     }
-    public GlobalSearchResponse search (String word) {
+
+    public GlobalSearchResponse search(String word) {
         return announcementTemplate.search(word);
     }
 
     @Override
-    public SimpleResponse processAnnouncement(Long announcementId, String message) throws MessagingException {
+    public SimpleResponse processAnnouncement(Long announcementId, String message, String messageFromAdminToUser) throws MessagingException {
         log.info("Processing announcement with id={} and action={}", announcementId, message);
 
         Announcement announcement = announcementRepository.findById(announcementId)
@@ -176,7 +180,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             } else if (message.equalsIgnoreCase("reject")) {
                 announcement.setPosition(Position.REJECT);
                 announcementRepository.save(announcement);
-                sendRejectionMessageToUser(announcement);
+                sendRejectionMessageToUser(announcement, messageFromAdminToUser);
                 log.info("Announcement with id={} rejected successfully", announcementId);
                 return SimpleResponse.builder().
                         message("Announcement rejected successfully").httpStatus(HttpStatus.OK).
@@ -187,6 +191,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 return SimpleResponse.builder().
                         message("Announcement deleted successfully.").httpStatus(HttpStatus.OK).
                         build();
+            } else if (message.isEmpty()) {
+                return SimpleResponse.builder().
+                        message("Invalid action. Use 'accept', 'reject', or 'delete'.").httpStatus(HttpStatus.OK).
+                        build();
             } else {
                 log.info("Invalid action '{}' for announcement with id={}", message, announcementId);
                 return SimpleResponse.builder().
@@ -194,39 +202,41 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                         build();
             }
         } else {
-            log.info("Invalid position for processing announcement with id={}", announcementId);
             return SimpleResponse.builder().
                     message("Invalid position for processing.").httpStatus(HttpStatus.OK).
                     build();
         }
     }
 
-    private void sendRejectionMessageToUser(Announcement announcement) throws MessagingException {
+    private void sendRejectionMessageToUser(Announcement announcement, String messageFromAdminToUser) throws MessagingException {
         User user = announcement.getUser();
         log.info("Sending rejection message to user with email={}", user.getEmail());
 
         MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(user.getEmail());
         helper.setFrom("adiibrahimov@gmail.com");
-        helper.setSubject("Your Announcement Status");
+        helper.setSubject("AirBnb b9");
         helper.setText("Dear " + user.getFullName() + "\n" +
-                "                \"We regret to inform you that your announcement with ID \" + announcement.getId() +\n" +
-                "                \" has been rejected. Please review the guidelines and resubmit if necessary.\\n\\n\" +\n" +
-                "                \"Thank you,\\n\" +\n" +
-                "                \"Your Announcement Platform Team");
+                "your application with id: " + announcement.getId() + " was rejected because:" + messageFromAdminToUser
+        );
         javaMailSender.send(message);
         log.info("Rejection message sent to user with email={}", user.getEmail());
     }
 
+    @Override
+    public AnnouncementResponse getApplicationById(Long applicationId) {
+        return announcementTemplate.getApplicationById(applicationId);
+    }
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
-        return announcementTemplate.getAllAnnouncementsFilters(houseType,rating,price);
+        return announcementTemplate.getAllAnnouncementsFilters(houseType, rating, price);
     }
 
     @Override
     public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
-        return announcementTemplate.pagination(page,size);
+        return announcementTemplate.pagination(page, size);
     }
+
 }

@@ -6,9 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
+
 import java.util.List;
 
 @Data
@@ -29,6 +31,7 @@ public class AnnouncementResponse {
     private int maxGuests;
     private String province;
     private double rating;
+    private User user;
 
 
     public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
@@ -52,7 +55,7 @@ public class AnnouncementResponse {
         this.price = price;
         this.maxGuests = maxGuests;
         this.title = title;
-        this.status=status;
+        this.status = status;
     }
 
     public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status, double rating) {
@@ -62,10 +65,11 @@ public class AnnouncementResponse {
         this.price = price;
         this.maxGuests = maxGuests;
         this.title = title;
-        this.status=status;
-        this.rating=rating;
+        this.status = status;
+        this.rating = rating;
     }
-    public AnnouncementResponse(Long id,List<String> images, int price, Region region, String address, String description,int maxGuests) {
+
+    public AnnouncementResponse(Long id, List<String> images, int price, Region region, String address, String description, int maxGuests) {
         this.id = id;
         this.images = images;
         this.price = price;
@@ -75,7 +79,7 @@ public class AnnouncementResponse {
         this.maxGuests = maxGuests;
     }
 
-    public AnnouncementResponse(Long id, List<String> images, int price, Region region, String address, String description,String title, int maxGuests, String province, double rating) {
+    public AnnouncementResponse(Long id, List<String> images, int price, Region region, String address, String description, String title, int maxGuests, String province, double rating) {
         this.id = id;
         this.images = images;
         this.price = price;
@@ -87,4 +91,5 @@ public class AnnouncementResponse {
         this.province = province;
         this.rating = rating;
     }
+
 }

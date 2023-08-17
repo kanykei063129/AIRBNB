@@ -3,17 +3,18 @@ package peaksoft.house.airbnbb9.repository.template.templateImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
-import peaksoft.house.airbnbb9.enums.HouseType;
-import peaksoft.house.airbnbb9.enums.PriceType;
-import peaksoft.house.airbnbb9.enums.Region;
-import peaksoft.house.airbnbb9.enums.Status;
+import peaksoft.house.airbnbb9.entity.User;
+import peaksoft.house.airbnbb9.enums.*;
+import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -356,7 +357,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         log.info("Performing global search with keyword: " + word);
 
         List<AnnouncementResponse> results = jdbcTemplate.query(sql,
-                new Object[]{word,word, word, word},
+                new Object[]{word, word, word, word},
                 (rs, rowNum) -> AnnouncementResponse.builder()
                         .id(rs.getLong("id"))
                         .price(rs.getInt("price"))
@@ -409,40 +410,41 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         log.info("Fetching announcements with filters: HouseType - " + houseType + ", Rating - " + rating + ", PriceType - " + price);
 
         List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
-                    .id(rs.getLong("id"))
-                    .price(rs.getInt("price"))
-                    .maxGuests(rs.getInt("max_guests"))
-                    .address(rs.getString("address"))
-                    .description(rs.getString("description"))
-                    .province(rs.getString("province"))
-                    .title(rs.getString("title"))
-                    .images(Collections.singletonList(rs.getString("images")))
-                    .rating(rs.getInt("rating"))
-                    .build());
+                .id(rs.getLong("id"))
+                .price(rs.getInt("price"))
+                .maxGuests(rs.getInt("max_guests"))
+                .address(rs.getString("address"))
+                .description(rs.getString("description"))
+                .province(rs.getString("province"))
+                .title(rs.getString("title"))
+                .images(Collections.singletonList(rs.getString("images")))
+                .rating(rs.getInt("rating"))
+                .build());
 
         log.info("Fetched announcements with filters successfully!");
         return results;
-        }
+    }
+
     @Override
     public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
         if (page != null && size != null) {
             String sql = """
-            SELECT a.id            as id,
-                   a.price         as price,
-                   a.max_guests    as max_guests,
-                   a.address       as address,
-                   a.description   as description,
-                   a.province      as province,
-                   a.region        as region,
-                   a.title         as title,
-                   AVG(r.rating)   as rating,
-                   (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
-            FROM announcements a
-                     LEFT JOIN feedbacks r ON a.id = r.announcement_id
-            GROUP BY a.id, a.price, a.max_guests, a.address,
-                     a.description, a.province, a.region, a.title, a.create_date
-            ORDER BY a.create_date 
-        """;
+                        SELECT a.id            as id,
+                               a.price         as price,
+                               a.max_guests    as max_guests,
+                               a.address       as address,
+                               a.description   as description,
+                               a.province      as province,
+                               a.region        as region,
+                               a.title         as title,
+                               AVG(r.rating)   as rating,
+                               (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                        FROM announcements a
+                                 LEFT JOIN feedbacks r ON a.id = r.announcement_id
+                        GROUP BY a.id, a.price, a.max_guests, a.address,
+                                 a.description, a.province, a.region, a.title, a.create_date
+                        ORDER BY a.create_date 
+                    """;
 
             int offset = (page - 1) * size;
             String paginatedSql = sql + " LIMIT ? OFFSET ?";
@@ -469,22 +471,22 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             return new PaginationAnnouncementResponse(announcementResponses, page, size);
         } else if (page == null && size == null) {
             String sql1 = """
-            SELECT a.id            as id,
-                   a.price         as price,
-                   a.max_guests    as max_guests,
-                   a.address       as address,
-                   a.description   as description,
-                   a.province      as province,
-                   a.region        as region,
-                   a.title         as title,
-                   AVG(r.rating)   as rating,
-                   (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
-            FROM announcements a
-                     LEFT JOIN feedbacks r ON a.id = r.announcement_id
-            GROUP BY a.id, a.price, a.max_guests, a.address,
-                     a.description, a.province, a.region, a.title, a.create_date
-            ORDER BY a.create_date 
-        """;
+                        SELECT a.id            as id,
+                               a.price         as price,
+                               a.max_guests    as max_guests,
+                               a.address       as address,
+                               a.description   as description,
+                               a.province      as province,
+                               a.region        as region,
+                               a.title         as title,
+                               AVG(r.rating)   as rating,
+                               (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                        FROM announcements a
+                                 LEFT JOIN feedbacks r ON a.id = r.announcement_id
+                        GROUP BY a.id, a.price, a.max_guests, a.address,
+                                 a.description, a.province, a.region, a.title, a.create_date
+                        ORDER BY a.create_date 
+                    """;
 
             log.info("Fetching all announcements without pagination.");
 
@@ -511,7 +513,107 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     }
 
     @Override
-    public AllAnnouncementResponse getByID(Long announcementId) {
-        return null; //потом
+    public AnnouncementResponse getApplicationById(Long id) {
+        String sql = """
+                SELECT a.id            as id,
+                       a.position      as position,
+                       a.price         as price,
+                       a.max_guests    as max_guests,
+                       a.address       as address,
+                       a.description   as description,
+                       a.province      as province,
+                       a.title         as title,
+                       u.role          as role,
+                       u.id            as user_id,
+                       u.full_name     as username,
+                       u.email         as email,
+                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai
+                    WHERE ai.announcement_id = a.id) as images
+                FROM announcements a
+                         LEFT JOIN users u ON a.user_id = u.id
+                WHERE a.id = ?
+                GROUP BY a.id, a.position, a.price, a.max_guests, a.address,
+                         a.description, a.province, a.title,
+                         u.id, u.full_name, u.email,u.role
+                """;
+        log.info("Retrieving announcement with ID: {}", id);
+
+        AnnouncementResponse result;
+        try {
+            result = jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+                String position = rs.getString("position");
+                if (!"MODERATION".equals(position)) {
+                    throw new NotFoundException("Application with ID " + id + " not found.");
+                }
+                return AnnouncementResponse.builder()
+                        .id(rs.getLong("id"))
+                        .price(rs.getInt("price"))
+                        .maxGuests(rs.getInt("max_guests"))
+                        .address(rs.getString("address"))
+                        .description(rs.getString("description"))
+                        .province(rs.getString("province"))
+                        .title(rs.getString("title"))
+                        .images(Collections.singletonList(rs.getString("images")))
+                        .user(User.builder()
+                                .id(rs.getLong("user_id"))
+                                .fullName(rs.getString("username"))
+                                .email(rs.getString("email"))
+                                .role(Role.valueOf(rs.getString("role")))
+                                .build())
+                        .build();
+            });
+
+            log.info("Retrieved announcement with ID {} successfully!", id);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new NotFoundException("Announcement with ID " + id + " not found.");
+        }
+
+        return result;
     }
+
+
+//    @Override
+//    public AnnouncementResponse getApplicationById(Long id) {
+//        String sql = """
+//                SELECT a.id            as id,
+//                       a.price         as price,
+//                       a.max_guests    as max_guests,
+//                       a.address       as address,
+//                       a.description   as description,
+//                       a.province      as province,
+//                       a.title         as title,
+//                       u.id            as user_id,
+//                       u.full_name      as username,
+//                       u.email         as email,
+//                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai
+//                        WHERE ai.announcement_id = a.id) as images
+//                FROM announcements a
+//                         LEFT JOIN users u ON a.user_id = u.id
+//                WHERE a.id = ? AND a.position ='MODERATION'
+//                GROUP BY a.id, a.price, a.max_guests, a.address,
+//                         a.description, a.province, a.title,
+//                         u.id, u.full_name, u.email
+//                                """;
+//        log.info("Retrieving announcement with ID: {}", id);
+//
+//        AnnouncementResponse result = jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> AnnouncementResponse.builder()
+//                .id(rs.getLong("id"))
+//                .price(rs.getInt("price"))
+//                .maxGuests(rs.getInt("max_guests"))
+//                .address(rs.getString("address"))
+//                .description(rs.getString("description"))
+//                .province(rs.getString("province"))
+//                .title(rs.getString("title"))
+//                .images(Collections.singletonList(rs.getString("images")))
+//                .user(User.builder()
+//                        .id(rs.getLong("user_id"))
+//                        .fullName(rs.getString("username"))
+//                        .email(rs.getString("email"))
+//                        .build())
+//                .build());
+//
+//        log.info("Retrieved announcement with ID {} successfully!", id);
+//        return result;
+//    }
+
 }
