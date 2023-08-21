@@ -42,41 +42,33 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final FeedbackViewMapper feedbackViewMapper;
 
     @Override
-    public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
-        log.info("Updating Announcement with ID: " + announcementId);
-
+    public SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest request) {
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
-                new NotFoundException(" Announcement with id: " + announcementId + " is no exist!"));
-
-        log.info("Updating Announcement fields...");
-
-        announcement.setHouseType(announcementRequest.getHouseType());
-        announcement.setImages(announcementRequest.getImages());
-        announcement.setPrice(announcementRequest.getPrice());
-        announcement.setRegion(announcementRequest.getRegion());
-        announcement.setAddress(announcementRequest.getAddress());
-        announcement.setDescription(announcementRequest.getDescription());
-        announcement.setStatus(announcementRequest.getStatus());
-        announcement.setTitle(announcementRequest.getTitle());
-        announcement.setMaxGuests(announcementRequest.getMaxGuests());
-        announcement.setProvince(announcementRequest.getProvince());
-        announcementRepository.save(announcement);
-
-        log.info("Announcement with ID " + announcementId + " has been successfully updated.");
-        return AnnouncementResponse.builder()
-                .id(announcement.getId())
-                .houseType(announcement.getHouseType())
-                .images(announcement.getImages())
-                .price(announcement.getPrice())
-                .region(announcement.getRegion())
-                .address(announcement.getAddress())
-                .description(announcement.getDescription())
-                .status(announcement.getStatus())
-                .title(announcement.getTitle())
-                .maxGuests(announcement.getMaxGuests())
-                .province(announcement.getProvince())
+                new NotFoundException("Announcement with id " + announcementId + " not found!"));
+        viewMapper.updateAnnouncement(announcement, request);
+        checkAdField(request, announcement);
+           announcementRepository.save(announcement);
+        return SimpleResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .message(String.format("Announcement with id " + announcementId + ", successfully updated."))
                 .build();
     }
+    private void checkAdField(AnnouncementRequest request, Announcement announcement) {
+
+        if (request.getImages().size() <= 4) {
+            announcement.setImages(request.getImages());
+        } else {
+            throw new BadRequestException(" You can upload up to 4 photos !");
+        }
+
+        if (request.getMaxGuests() <= 0) {
+            throw new BadRequestException("The number of guests cannot be negative and equal to zero!");
+        }
+        if (request.getPrice() <= 0) {
+            throw new BadRequestException("The ad price cannot be negative or zero!");
+        }
+    }
+
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncements() {

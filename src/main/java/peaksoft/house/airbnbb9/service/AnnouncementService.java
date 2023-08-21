@@ -17,7 +17,7 @@ public interface AnnouncementService {
 
     AnnouncementInnerPageResponse getAnnouncementDetails(Long announcementId);
 
-    AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
+    SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
 
     SimpleResponse deleteByIdAnnouncement(Long announcementId);
 

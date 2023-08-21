@@ -31,7 +31,7 @@ public class UserProfileViewMapper {
         announcementsResponse.setImages(announcement.getImages());
         announcementsResponse.setHouseType(announcement.getHouseType());
         announcementsResponse.setPrice(announcement.getPrice());
-        announcementsResponse.setRating(announcementViewMapper.calculateRating1());
+        announcementsResponse.setRating(announcementViewMapper.calculateRating());
         announcementsResponse.setTitle(announcement.getTitle());
         announcementsResponse.setDescription(announcement.getDescription());
         announcementsResponse.setAddress(announcement.getAddress());
@@ -69,6 +69,7 @@ public class UserProfileViewMapper {
         response.setMessageFromAdmin(user.getMessagesFromAdmin());
         response.setBookings(listUserBookings(user.getBookings()));
         response.setAnnouncements(listUserAnnouncements(user.getAnnouncements()));
+        response.setAnnouncements(listUserAnnouncementsModeration(user.getAnnouncements()));
 
         log.info("Converted User entity to UserProfileResponse successfully for user ID: " + user.getId());
         return response;
@@ -104,5 +105,39 @@ public class UserProfileViewMapper {
 
         log.info("Converted Booking to UserBookingsResponse successfully for booking ID: " + booking.getId());
         return bookingsResponse;
+    }
+    public UserAnnouncementResponse announcementToAnnouncementsResponseModeration(Announcement announcement) {
+        if (announcement == null) {
+            return null;
+        }
+        log.info("Converting Announcement to UserAnnouncementResponse for announcement ID: " + announcement.getId());
+
+        UserAnnouncementResponse announcementsResponse = new UserAnnouncementResponse();
+        announcementsResponse.setId(announcement.getId());
+        announcementsResponse.setImages(announcement.getImages());
+        announcementsResponse.setHouseType(announcement.getHouseType());
+        announcementsResponse.setPrice(announcement.getPrice());
+        announcementsResponse.setRating(announcementViewMapper.calculateRating2());
+        announcementsResponse.setTitle(announcement.getTitle());
+        announcementsResponse.setDescription(announcement.getDescription());
+        announcementsResponse.setAddress(announcement.getAddress());
+        announcementsResponse.setMaxGuests(announcement.getMaxGuests());
+        announcementsResponse.setStatus(announcement.getStatus());
+        announcementsResponse.setMessagesFromAdmin(announcement.getMessageFromAdmin());
+
+        log.info("Converted Announcement to UserAnnouncementResponse successfully for announcement ID: " + announcement.getId());
+        return announcementsResponse;
+    }
+
+    public List<UserAnnouncementResponse> listUserAnnouncementsModeration(List<Announcement> announcements) {
+        List<UserAnnouncementResponse> responses = new ArrayList<>();
+
+        log.info("Converting a list of Announcements to UserAnnouncementResponses");
+
+        for (Announcement announcement : announcements) {
+            responses.add(announcementToAnnouncementsResponseModeration(announcement));
+        }
+        log.info("Converted the list of Announcements to UserAnnouncementResponses successfully");
+        return responses;
     }
 }
