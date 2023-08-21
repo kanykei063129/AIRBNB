@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementInnerPageResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
@@ -24,10 +25,9 @@ public class AnnouncementViewMapper {
                  FROM users u
                           JOIN announcements a ON u.id = a.user_id
                           JOIN feedbacks f ON a.id = f.announcement_id
-                 WHERE a.status = 'BOOKED'
                  """;
 
-        log.info("Calculating average rating for announcements with status 'BOOKED'");
+        log.info("Calculating average rating for announcements");
 
         Double averageRating = jdbcTemplate.queryForObject(sql, Double.class);
 
@@ -35,18 +35,17 @@ public class AnnouncementViewMapper {
 
         return averageRating;
     }
-
-    public Double calculateRating1() {
+    public Double calculateRating2() {
         String sql = """
                  SELECT
                      AVG(f.rating) AS rating
                  FROM users u
                           JOIN announcements a ON u.id = a.user_id
                           JOIN feedbacks f ON a.id = f.announcement_id
-                 WHERE a.status = 'NOT_BOOKED'
+                 WHERE a.position = 'MODERATION'
                  """;
 
-        log.info("Calculating average rating for announcements with status 'NOT_BOOKED'");
+        log.info("Calculating average rating for announcements with status 'MODERATION'");
 
         Double averageRating = jdbcTemplate.queryForObject(sql, Double.class);
 
@@ -75,5 +74,18 @@ public class AnnouncementViewMapper {
 
         log.info("Converted Announcement entity to AnnouncementInnerPageResponse successfully");
         return response;
+    }
+    private void dtoToEntityConverting(AnnouncementRequest request, Announcement announcement) {
+        announcement.setTitle(request.getTitle());
+        announcement.setDescription(request.getDescription());
+        announcement.setImages(request.getImages());
+        announcement.setStatus(announcement.getStatus());
+        announcement.setPrice(request.getPrice());
+        announcement.setMaxGuests(request.getMaxGuests());
+        announcement.setHouseType(request.getHouseType());
+        announcement.setCreateDate(LocalDate.now());
+    }
+    public void updateAnnouncement(Announcement announcement, AnnouncementRequest request) {
+        dtoToEntityConverting(request, announcement);
     }
 }

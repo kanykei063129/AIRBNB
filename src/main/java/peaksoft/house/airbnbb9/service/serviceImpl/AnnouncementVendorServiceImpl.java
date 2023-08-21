@@ -54,7 +54,6 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         announcement.setAddress(announcementRequest.getAddress());
         announcement.setCreateDate(LocalDate.now());
         announcement.setUser(user);
-        announcement.setStatus(Status.NOT_BOOKED);
         announcement.setPosition(Position.MODERATION);
         try {
             announcementRepository.save(announcement);
