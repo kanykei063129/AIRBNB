@@ -7,7 +7,7 @@ import lombok.Setter;
 import peaksoft.house.airbnbb9.enums.Position;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "bookings")
@@ -23,10 +23,10 @@ public class Booking {
             allocationSize = 1,
             initialValue = 6)
     private Long id;
-    private ZonedDateTime checkOut;
-    private ZonedDateTime checkIn;
+    private java.time.LocalDate checkOut;
+    private LocalDate checkIn;
     private BigDecimal pricePerDay;
-    private ZonedDateTime date;
+    private LocalDate date;
     private Position position;
 
     @ManyToOne(cascade = {

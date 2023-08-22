@@ -1,5 +1,10 @@
 package peaksoft.house.airbnbb9.mappers;
 
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -7,9 +12,13 @@ import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementInnerPageResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
+import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.Region;
+import peaksoft.house.airbnbb9.enums.Status;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -84,6 +93,9 @@ public class AnnouncementViewMapper {
         announcement.setMaxGuests(request.getMaxGuests());
         announcement.setHouseType(request.getHouseType());
         announcement.setCreateDate(LocalDate.now());
+        announcement.setRegion(request.getRegion());
+        announcement.setAddress(request.getAddress());
+        announcement.setProvince(request.getProvince());
     }
     public void updateAnnouncement(Announcement announcement, AnnouncementRequest request) {
         dtoToEntityConverting(request, announcement);
