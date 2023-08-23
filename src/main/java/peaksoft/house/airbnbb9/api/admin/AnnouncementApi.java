@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/announcements")
 @RequiredArgsConstructor
-@Tag(name = "Announcement Api", description = "All announcement endpoints")
+@Tag(name = "Announcement Api", description = "API for announcement management")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AnnouncementApi {
 
