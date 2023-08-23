@@ -1,9 +1,11 @@
 package peaksoft.house.airbnbb9.service;
 
 import jakarta.mail.MessagingException;
+import org.checkerframework.checker.units.qual.A;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.PriceType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 
@@ -15,11 +17,11 @@ public interface AnnouncementService {
 
     AnnouncementInnerPageResponse getAnnouncementDetails(Long announcementId);
 
-    AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
+    SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest);
 
     SimpleResponse deleteByIdAnnouncement(Long announcementId);
 
-    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType,String rating, String price);
+    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price);
 
     List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price);
 
@@ -30,13 +32,16 @@ public interface AnnouncementService {
     List<PopularHouseResponse> getPopularHouses();
 
     PopularApartmentResponse getPopularApartment();
-  
+
     GlobalSearchResponse search(String word);
 
-    SimpleResponse processAnnouncement(Long announcementId,String message) throws MessagingException;
+    SimpleResponse processAnnouncement(Long announcementId, String message, String messageFromAdminToUser) throws MessagingException;
 
+    AnnouncementResponse getApplicationById(Long applicationId);
 
-    List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price);
+    List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
 
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
+
+
 }

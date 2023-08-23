@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,8 @@ import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.User;
-import peaksoft.house.airbnbb9.enums.Position;
-import peaksoft.house.airbnbb9.enums.Region;
-import peaksoft.house.airbnbb9.enums.Status;
+import peaksoft.house.airbnbb9.enums.*;
+import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
 import peaksoft.house.airbnbb9.mappers.BookingViewMapper;
@@ -21,7 +21,6 @@ import peaksoft.house.airbnbb9.mappers.FeedbackViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
-import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -32,6 +31,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final AnnouncementRepository announcementRepository;
@@ -42,61 +42,80 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final FeedbackViewMapper feedbackViewMapper;
 
     @Override
-    public AnnouncementResponse updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
+    public SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest request) {
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
-                new NotFoundException(" Announcement with id: " + announcementId + " is no exist!"));
-        announcement.setHouseType(announcementRequest.getHouseType());
-        announcement.setImages(announcementRequest.getImages());
-        announcement.setPrice(announcementRequest.getPrice());
-        announcement.setRegion(announcementRequest.getRegion());
-        announcement.setAddress(announcementRequest.getAddress());
-        announcement.setDescription(announcementRequest.getDescription());
-        announcement.setStatus(announcementRequest.getStatus());
-        announcement.setTitle(announcementRequest.getTitle());
-        announcement.setMaxGuests(announcementRequest.getMaxGuests());
-        announcement.setProvince(announcementRequest.getProvince());
-        announcementRepository.save(announcement);
-        return AnnouncementResponse.builder()
-                .id(announcement.getId())
-                .houseType(announcement.getHouseType())
-                .images(announcement.getImages())
-                .price(announcement.getPrice())
-                .region(announcement.getRegion())
-                .address(announcement.getAddress())
-                .description(announcement.getDescription())
-                .status(announcement.getStatus())
-                .title(announcement.getTitle())
-                .maxGuests(announcement.getMaxGuests())
-                .province(announcement.getProvince())
+                new NotFoundException("Announcement with id " + announcementId + " not found!"));
+        viewMapper.updateAnnouncement(announcement, request);
+        checkAdField(request, announcement);
+           announcementRepository.save(announcement);
+        return SimpleResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .message(String.format("Announcement with id " + announcementId + ", successfully updated."))
                 .build();
     }
+    private void checkAdField(AnnouncementRequest request, Announcement announcement) {
+
+        if (request.getImages().size() <= 4) {
+            announcement.setImages(request.getImages());
+        } else {
+            throw new BadRequestException(" You can upload up to 4 photos !");
+        }
+
+        if (request.getMaxGuests() <= 0) {
+            throw new BadRequestException("The number of guests cannot be negative and equal to zero!");
+        }
+        if (request.getPrice() <= 0) {
+            throw new BadRequestException("The ad price cannot be negative or zero!");
+        }
+    }
+
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncements() {
         return announcementTemplate.getAllAnnouncements();
     }
+
     protected Announcement getAnnouncementById(Long announcementId) {
-        return announcementRepository.findById(announcementId).orElseThrow(() ->
+        log.info("Getting Announcement with ID: " + announcementId);
+
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
                 new NotFoundException("Announcement with id " + announcementId + " not found!"));
+
+        log.info("Announcement with ID " + announcementId + " has been retrieved.");
+
+        return announcement;
     }
 
     @Override
     public AnnouncementInnerPageResponse getAnnouncementDetails(Long announcementId) {
+        log.info("Getting Announcement details for ID: " + announcementId);
+
         Announcement announcementById = getAnnouncementById(announcementId);
         announcementRepository.save(announcementById);
+
+        log.info("Announcement details for ID " + announcementId + " have been retrieved and saved.");
         return getAnnouncementInnerPageResponse(announcementById);
     }
+
     private AnnouncementInnerPageResponse getAnnouncementInnerPageResponse(Announcement announcement) {
+        log.info("Creating AnnouncementInnerPageResponse for Announcement with ID: " + announcement.getId());
+
         AnnouncementInnerPageResponse response = viewMapper.entityToDtoConverting(announcement);
         response.setAnnouncementBookings(bookingViewMapper.viewBooked(announcement.getBookings()));
         response.setFeedbackResponses(feedbackViewMapper.viewFeedback(announcement.getFeedbacks()));
+
+        log.info("AnnouncementInnerPageResponse created for Announcement with ID: " + announcement.getId());
         return response;
     }
 
 
     public SimpleResponse deleteByIdAnnouncement(Long announcementId) {
+        log.info("Deleting Announcement with ID: " + announcementId);
+
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
         announcementRepository.delete(announcement);
+
+        log.info("Announcement with ID: " + announcementId + " deleted.");
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
                 .message(String.format("Announcement with id: " + announcementId + " deleted..."))
@@ -131,34 +150,45 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public PopularApartmentResponse getPopularApartment() {
         return announcementTemplate.getPopularApartment();
     }
-    public GlobalSearchResponse search (String word) {
+
+    public GlobalSearchResponse search(String word) {
         return announcementTemplate.search(word);
     }
 
     @Override
-    public SimpleResponse processAnnouncement(Long announcementId, String message) throws MessagingException {
+    public SimpleResponse processAnnouncement(Long announcementId, String message, String messageFromAdminToUser) throws MessagingException {
+        log.info("Processing announcement with id={} and action={}", announcementId, message);
+
         Announcement announcement = announcementRepository.findById(announcementId)
                 .orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
         if (announcement.getPosition() == Position.MODERATION) {
             if (message.equalsIgnoreCase("accept")) {
                 announcement.setPosition(Position.ACCEPTED);
                 announcementRepository.save(announcement);
+                log.info("Announcement with id={} accepted successfully", announcementId);
                 return SimpleResponse.builder().
                         message("Announcement accepted successfully").httpStatus(HttpStatus.OK).
                         build();
             } else if (message.equalsIgnoreCase("reject")) {
                 announcement.setPosition(Position.REJECT);
                 announcementRepository.save(announcement);
-                sendRejectionMessageToUser(announcement);
+                sendRejectionMessageToUser(announcement, messageFromAdminToUser);
+                log.info("Announcement with id={} rejected successfully", announcementId);
                 return SimpleResponse.builder().
                         message("Announcement rejected successfully").httpStatus(HttpStatus.OK).
                         build();
             } else if (message.equalsIgnoreCase("delete")) {
                 announcementRepository.delete(announcement);
+                log.info("Announcement with id={} deleted successfully", announcementId);
                 return SimpleResponse.builder().
                         message("Announcement deleted successfully.").httpStatus(HttpStatus.OK).
                         build();
+            } else if (message.isEmpty()) {
+                return SimpleResponse.builder().
+                        message("Invalid action. Use 'accept', 'reject', or 'delete'.").httpStatus(HttpStatus.OK).
+                        build();
             } else {
+                log.info("Invalid action '{}' for announcement with id={}", message, announcementId);
                 return SimpleResponse.builder().
                         message("Invalid action. Use 'accept', 'reject', or 'delete'.").httpStatus(HttpStatus.OK).
                         build();
@@ -170,29 +200,35 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
     }
 
-    private void sendRejectionMessageToUser(Announcement announcement) throws MessagingException {
+    private void sendRejectionMessageToUser(Announcement announcement, String messageFromAdminToUser) throws MessagingException {
         User user = announcement.getUser();
+        log.info("Sending rejection message to user with email={}", user.getEmail());
+
         MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(user.getEmail());
         helper.setFrom("adiibrahimov@gmail.com");
-        helper.setSubject("Your Announcement Status");
+        helper.setSubject("AirBnb b9");
         helper.setText("Dear " + user.getFullName() + "\n" +
-                "                \"We regret to inform you that your announcement with ID \" + announcement.getId() +\n" +
-                "                \" has been rejected. Please review the guidelines and resubmit if necessary.\\n\\n\" +\n" +
-                "                \"Thank you,\\n\" +\n" +
-                "                \"Your Announcement Platform Team");
+                "your application with id: " + announcement.getId() + " was rejected because:" + messageFromAdminToUser
+        );
         javaMailSender.send(message);
+        log.info("Rejection message sent to user with email={}", user.getEmail());
     }
 
+    @Override
+    public AnnouncementResponse getApplicationById(Long applicationId) {
+        return announcementTemplate.getApplicationById(applicationId);
+    }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, String price) {
-        return announcementTemplate.getAllAnnouncementsFilters(houseType,rating,price);
+    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
+        return announcementTemplate.getAllAnnouncementsFilters(houseType, rating, price);
     }
 
     @Override
     public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
-        return announcementTemplate.pagination(page,size);
+        return announcementTemplate.pagination(page, size);
     }
+
 }

@@ -34,15 +34,15 @@ public class AnnouncementApi {
     @Operation(summary = "Update announcement",
             description = "Update announcement by id")
     @PutMapping("/{announcementId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public AnnouncementResponse update(@PathVariable Long announcementId,
+    @PreAuthorize("hasAuthority('USER')")
+    public SimpleResponse update(@PathVariable Long announcementId,
                                        @RequestBody @Valid AnnouncementRequest announcementRequest) {
         return announcementService.updateAnnouncement(announcementId, announcementRequest);
     }
 
     @Operation(summary = "Delete announcement",
             description = "Delete announcement by id")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @DeleteMapping("/{announcementId}")
     public SimpleResponse deleteByIdAnnouncement(@PathVariable Long announcementId) {
         return announcementService.deleteByIdAnnouncement(announcementId);
@@ -65,15 +65,6 @@ public class AnnouncementApi {
             @RequestParam(required = false) String rating,
             @RequestParam(required = false) String price) {
         return announcementService.getAllAnnouncementsFilter(status, houseType, rating, price);
-    }
-
-    @Operation(summary = "Get all announcements application and pagination",
-            description = "Get all  announcements by status 'MODERATION' and added pagination")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/announcementsModeration")
-    public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(@RequestParam int currentPage,
-                                                                                     @RequestParam int pageSize) {
-        return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }
 
     @Operation(summary = "Pagination for get all announcements",

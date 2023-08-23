@@ -7,13 +7,15 @@ import lombok.Setter;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Status;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAnnouncementResponse {
     private Long id;
-    private String image;
+    private List<String> images;
     private HouseType houseType;
     private int price;
     private Double rating;

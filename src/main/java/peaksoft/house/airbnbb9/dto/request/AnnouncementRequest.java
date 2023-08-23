@@ -11,6 +11,8 @@ import lombok.Data;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
