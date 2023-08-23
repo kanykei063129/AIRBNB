@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class Feedback {
     @ElementCollection
     private List<String> images;
     private int rating;
-    private ZonedDateTime createDate;
+    private LocalDate createDate;
     private int likeCount;
     private int disLikeCount;
 

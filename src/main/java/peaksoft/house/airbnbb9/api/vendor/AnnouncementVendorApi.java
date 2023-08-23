@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
+import peaksoft.house.airbnbb9.dto.request.BookRequest;
+import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
@@ -13,8 +15,10 @@ import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import peaksoft.house.airbnbb9.service.AnnouncementVendorService;
+import peaksoft.house.airbnbb9.service.BookingService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class AnnouncementVendorApi {
 
     private final AnnouncementVendorService announcementVendorService;
     private final AnnouncementService announcementService;
+    private final BookingService bookingService;
 
     @PreAuthorize("hasAnyAuthority('USER')")
     @PostMapping("/submitAnAd")
@@ -51,5 +56,19 @@ public class AnnouncementVendorApi {
     @GetMapping("/global-search")
     public GlobalSearchResponse search(@RequestParam String word) {
         return announcementService.search(word);
+    }
+    @Operation(summary = "Request to book",
+            description = "Any registered user can submit a booking request.")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @PostMapping
+    public Map<String, String> sendRequestToBook(@RequestBody BookRequest request) {
+        return bookingService.requestToBook(request);
+    }
+    @Operation(summary = "Change the date",
+            description = "The user can change the booking date.")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @PutMapping
+    public Map<String, String> updateRequestToBook(@RequestBody UpdateBookRequest request) {
+        return bookingService.updateRequestToBook(request);
     }
 }
