@@ -17,7 +17,6 @@ import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
 import peaksoft.house.airbnbb9.mappers.BookingViewMapper;
-import peaksoft.house.airbnbb9.mappers.FeedbackViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
@@ -39,7 +38,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final JavaMailSender javaMailSender;
     private final AnnouncementViewMapper viewMapper;
     private final BookingViewMapper bookingViewMapper;
-    private final FeedbackViewMapper feedbackViewMapper;
 
     @Override
     public SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest request) {
@@ -102,7 +100,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         AnnouncementInnerPageResponse response = viewMapper.entityToDtoConverting(announcement);
         response.setAnnouncementBookings(bookingViewMapper.viewBooked(announcement.getBookings()));
-        response.setFeedbackResponses(feedbackViewMapper.viewFeedback(announcement.getFeedbacks()));
 
         log.info("AnnouncementInnerPageResponse created for Announcement with ID: " + announcement.getId());
         return response;
