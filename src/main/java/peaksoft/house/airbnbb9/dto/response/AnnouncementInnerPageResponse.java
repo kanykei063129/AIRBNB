@@ -26,5 +26,4 @@ public class AnnouncementInnerPageResponse {
     private String userFullName;
     private String userEmail;
     private List<BookedResponse> announcementBookings;
-    private List<FeedbackResponse> feedbackResponses;
 }
