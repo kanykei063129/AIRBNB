@@ -1,15 +1,15 @@
 package peaksoft.house.airbnbb9.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "likes")
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,

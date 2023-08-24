@@ -6,10 +6,12 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.stripe.Stripe;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +38,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    @Value("${stripe.apiKey")
+    private String API_KEY;
+
     @PostConstruct
     public void init() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
@@ -43,6 +48,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                 .setCredentials(googleCredentials).build();
         FirebaseApp.initializeApp(firebaseOptions);
+        setUp();
+    }
+
+    private void setUp(){
+        Stripe.apiKey = API_KEY;
     }
 
     @Override

@@ -1,13 +1,14 @@
 package peaksoft.house.airbnbb9.dto.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class FeedbackResponse {
     private Long id;
     private String feedbackUserImage;
@@ -18,4 +19,5 @@ public class FeedbackResponse {
     private LocalDate createdAt;
     private Integer likeCount;
     private Integer disLikeCount;
+
 }

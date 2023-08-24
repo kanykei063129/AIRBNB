@@ -9,17 +9,29 @@ import peaksoft.house.airbnbb9.dto.request.FeedbackRequest;
 import peaksoft.house.airbnbb9.dto.response.FeedbackResponse;
 import peaksoft.house.airbnbb9.service.FeedbackService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/feedbacks")
 @Tag(name = "Feedback api", description = "Only available for user")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class FeedbackApi {
+
     private final FeedbackService feedbackService;
+
     @Operation(summary = "Leave feedback", description = "Leave feedback to announcement")
     @PreAuthorize("hasAnyAuthority('USER')")
     @PostMapping("leave/{announcementId}")
     public FeedbackResponse leaveFeedback(@PathVariable Long announcementId, @RequestBody FeedbackRequest request) {
         return feedbackService.saveFeedback(announcementId, request);
     }
+
+    @Operation(summary = "Get all feedback", description = "Get all feedback by announcement id")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    @PostMapping("/{announcementId}")
+    public List<FeedbackResponse> getAllFeedback(@PathVariable Long announcementId){
+        return feedbackService.getAllFeedback(announcementId);
+    }
+
 }

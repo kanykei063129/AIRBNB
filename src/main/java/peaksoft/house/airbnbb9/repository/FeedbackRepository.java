@@ -6,4 +6,5 @@ import peaksoft.house.airbnbb9.entity.Feedback;
 
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
+
 }
