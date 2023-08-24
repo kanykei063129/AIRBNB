@@ -113,10 +113,16 @@ public class FeedbackServiceImpl implements FeedbackService {
                 int likeOrDislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId,true);
                 feedback.setLikeCount(1 + likeOrDislikeCount);
             }else {
-
+                Like like = likeRepository.getLikeByUserId(user.getId()).orElseThrow(
+                        () -> {
+                            log.error("Like not found");
+                            return new NotFoundException("Like not found");
+                        });
+                like.getFeedback().getLikes().remove(like);
+                likeRepository.delete(like);
+                int likeOrDislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId,true);
+                feedback.setLikeCount(likeOrDislikeCount - 1);
             }
-
-            feedbackRepository.save(feedback);
         }else if (likeOrDislike.equalsIgnoreCase("Dislike")) {
             Like like = Like
                     .builder()
@@ -127,9 +133,10 @@ public class FeedbackServiceImpl implements FeedbackService {
             feedback.getLikes().add(like);
             int likeOrDislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId,false);
             feedback.setDisLikeCount(1 + likeOrDislikeCount);
-            feedbackRepository.save(feedback);
-        }
 
+        }
+        feedbackRepository.save(feedback);
+        return null;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import peaksoft.house.airbnbb9.entity.Like;
 import peaksoft.house.airbnbb9.entity.User;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like,Long> {
@@ -16,5 +17,7 @@ public interface LikeRepository extends JpaRepository<Like,Long> {
 
     @Query("SELECT COUNT(l.id) FROM Like l JOIN l.feedback f WHERE f.id = ?1 AND l.isLiked = ?2")
     int getCountLikeOrDislikeByFeedbackId(Long feedbackId, boolean isLike);
+
+    Optional<Like> getLikeByUserId(Long userId);
 
 }
