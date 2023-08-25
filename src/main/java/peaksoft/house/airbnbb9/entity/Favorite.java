@@ -19,7 +19,6 @@ public class Favorite {
             allocationSize = 1,
             initialValue = 6)
     private Long id;
-
     @ManyToOne(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
