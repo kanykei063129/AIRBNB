@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.entity.User;
-import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
+import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import java.time.ZonedDateTime;
 import java.util.Date;

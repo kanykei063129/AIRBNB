@@ -21,7 +21,7 @@ public class Like {
     private Long id;
     private Boolean isLiked;
 
-    @OneToOne(cascade = {
+    @ManyToOne(cascade = {
             CascadeType.DETACH,
             CascadeType.REFRESH,
             CascadeType.MERGE})

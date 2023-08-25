@@ -12,7 +12,7 @@ import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
-import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
+import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 
 import java.util.ArrayList;

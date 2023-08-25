@@ -12,7 +12,7 @@ import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Favorite;
 import peaksoft.house.airbnbb9.entity.User;
-import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
+import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.FavoriteRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;

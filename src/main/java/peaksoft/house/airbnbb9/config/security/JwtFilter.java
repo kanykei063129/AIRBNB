@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import peaksoft.house.airbnbb9.entity.User;
-import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
+import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import java.io.IOException;
 

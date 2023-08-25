@@ -1,11 +1,11 @@
-package peaksoft.house.airbnbb9.exceptoin.handler;
+package peaksoft.house.airbnbb9.exception.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import peaksoft.house.airbnbb9.dto.response.ExceptionResponse;
-import peaksoft.house.airbnbb9.exceptoin.*;
+import peaksoft.house.airbnbb9.exception.*;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -37,6 +37,15 @@ public class GlobalException {
     public ExceptionResponse handlerNotFoundException(BadRequestException e) {
         return new ExceptionResponse(
                 HttpStatus.BAD_REQUEST,
+                e.getClass().getSimpleName(),
+                e.getMessage());
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.FOUND)
+    public ExceptionResponse handlerAlreadyExist(AlreadyExistsException e) {
+        return new ExceptionResponse(
+                HttpStatus.FOUND,
                 e.getClass().getSimpleName(),
                 e.getMessage());
     }

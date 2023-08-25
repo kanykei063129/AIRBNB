@@ -21,8 +21,8 @@ import peaksoft.house.airbnbb9.dto.request.SignInRequest;
 import peaksoft.house.airbnbb9.dto.response.AuthenticationResponse;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Role;
-import peaksoft.house.airbnbb9.exceptoin.BadCredentialException;
-import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
+import peaksoft.house.airbnbb9.exception.BadCredentialException;
+import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.service.AuthenticationService;
 

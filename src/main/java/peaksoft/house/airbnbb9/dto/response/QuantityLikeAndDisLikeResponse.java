@@ -1,7 +1,14 @@
 package peaksoft.house.airbnbb9.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+@AllArgsConstructor
+@Getter
 public class QuantityLikeAndDisLikeResponse {
 
-    private Integer likeCount;
-    private Integer disLikeCount;
+    private int likeCount;
+    private int disLikeCount;
 }
