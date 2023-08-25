@@ -14,7 +14,6 @@ import peaksoft.house.airbnbb9.enums.Status;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @Builder
 @NoArgsConstructor
 public class AnnouncementResponse {
@@ -32,6 +31,7 @@ public class AnnouncementResponse {
     private String province;
     private double rating;
     private User user;
+    private boolean isFavorite;
 
 
     public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
@@ -92,4 +92,20 @@ public class AnnouncementResponse {
         this.rating = rating;
     }
 
+    public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province, double rating, User user, boolean isFavorite) {
+        this.id = id;
+        this.houseType = houseType;
+        this.images = images;
+        this.price = price;
+        this.region = region;
+        this.address = address;
+        this.description = description;
+        this.status = status;
+        this.title = title;
+        this.maxGuests = maxGuests;
+        this.province = province;
+        this.rating = rating;
+        this.user = user;
+        this.isFavorite = isFavorite;
+    }
 }

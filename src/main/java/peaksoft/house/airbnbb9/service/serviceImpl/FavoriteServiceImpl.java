@@ -18,6 +18,7 @@ import peaksoft.house.airbnbb9.repository.FavoriteRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
 import peaksoft.house.airbnbb9.service.FavoriteService;
+
 import java.util.List;
 
 @Service
@@ -79,7 +80,7 @@ public class FavoriteServiceImpl implements FavoriteService {
             favorite.setAnnouncement(announcement);
             favorite.setUser(user);
             favoriteRepository.save(favorite);
-            
+
             log.info("Announcement with id: {} was added to favorites for user: {}", announcementId, user.getEmail());
 
             return SimpleResponse
