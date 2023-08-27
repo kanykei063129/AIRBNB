@@ -1,7 +1,6 @@
 package peaksoft.house.airbnbb9.service;
 
 import jakarta.mail.MessagingException;
-import org.checkerframework.checker.units.qual.A;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.enums.HouseType;
@@ -33,7 +32,7 @@ public interface AnnouncementService {
 
     PopularApartmentResponse getPopularApartment();
 
-    GlobalSearchResponse search(String word);
+    GlobalSearchResponse search(String word, boolean isNearby, double latitude,double longitude);
 
     SimpleResponse processAnnouncement(Long announcementId, String message, String messageFromAdminToUser) throws MessagingException;
 

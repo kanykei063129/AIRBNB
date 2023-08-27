@@ -54,9 +54,11 @@ public class AnnouncementVendorApi {
     @Operation(summary = "Global search",
             description = "You can search announcements by region,city,house and apartment")
     @GetMapping("/global-search")
-    public GlobalSearchResponse search(@RequestParam String word) {
-        return announcementService.search(word);
+    public GlobalSearchResponse search(@RequestParam String word, @RequestParam(required = false) boolean isNearby ,
+                                       @RequestParam(required = false) double latitude,@RequestParam(required = false) double longitude) {
+        return announcementService.search(word, isNearby,latitude , longitude );
     }
+
     @Operation(summary = "Request to book",
             description = "Any registered user can submit a booking request.")
     @PreAuthorize("hasAnyAuthority('USER')")
@@ -64,6 +66,7 @@ public class AnnouncementVendorApi {
     public Map<String, String> sendRequestToBook(@RequestBody BookRequest request) {
         return bookingService.requestToBook(request);
     }
+
     @Operation(summary = "Change the date",
             description = "The user can change the booking date.")
     @PreAuthorize("hasAnyAuthority('USER')")

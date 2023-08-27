@@ -14,7 +14,6 @@ import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -314,20 +313,66 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                    DESC LIMIT 1;
                     """;
         log.info("Fetching the most popular apartment.");
-
         PopularApartmentResponse popularApartment = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
                 .images(Arrays.asList(rs.getString("images").split(",")))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
                 .build());
-
         log.info("Fetched the most popular apartment successfully!");
         return popularApartment;
     }
 
     @Override
-    public GlobalSearchResponse search(String word) {
+    public GlobalSearchResponse search(String word, boolean isNearby, double latitude, double longitude) {
+        if (isNearby) {
+            double earthRadius = 6371;
+            double distance = 5;
+            double latRange = Math.toDegrees(distance / earthRadius);
+            double longRange = Math.toDegrees(distance / (earthRadius * Math.cos(Math.toRadians(latitude))));
+            double minLat = latitude - latRange;
+            double maxLat = latitude + latRange;
+            double minLong = longitude - longRange;
+            double maxLong = longitude + longRange;
+            String query = """
+                    SELECT a.id as id,
+                           a.price as price,
+                           a.max_guests as max_guests,
+                           a.address as address,
+                           a.description as description,
+                           a.province as province,
+                           a.region as region,
+                           a.title as title,
+                           AVG(r.rating) as rating,
+                           (SELECT ai.images
+                            FROM announcement_images ai
+                            WHERE ai.announcement_id = a.id
+                            LIMIT 1) as images
+                    FROM announcements a
+                             LEFT JOIN feedbacks r ON a.id = r.announcement_id
+                    WHERE (a.region ILIKE lower(concat('%', ?, '%'))
+                           OR a.status ILIKE lower(concat('%', ?, '%'))
+                           OR a.house_type ILIKE lower(concat('%', ?, '%'))
+                           OR a.province ILIKE lower(concat('%', ?, '%')))
+                      AND a.latitude BETWEEN ? AND ?
+                      AND a.longitude BETWEEN ? AND ?
+                    GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title;
+                    """;
+            List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(query, (rs, rowNum) -> AnnouncementResponse
+                    .builder()
+                    .id(rs.getLong("id"))
+                    .price(rs.getInt("price"))
+                    .maxGuests(rs.getInt("max_guests"))
+                    .address(rs.getString("address"))
+                    .description(rs.getString("description"))
+                    .province(rs.getString("province"))
+                    .title(rs.getString("title"))
+                    .images(Collections.singletonList(rs.getString("images")))
+                    .rating(rs.getInt("rating"))
+                    .build(), word, word, word, word, minLat, maxLat, minLong, maxLong);
+            log.info(String.format("Performing global search with key word:%s and get nearby user's location",word));
+            return new GlobalSearchResponse(announcementResponses);
+        }
         String sql = """
                 SELECT a.id            as id,
                        a.price         as price,
@@ -355,10 +400,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                     a.title 
                 """;
         log.info("Performing global search with keyword: " + word);
-
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql,
-                new Object[]{word, word, word, word},
-                (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql,(rs, rowNum) -> AnnouncementResponse.builder()
                         .id(rs.getLong("id"))
                         .price(rs.getInt("price"))
                         .maxGuests(rs.getInt("max_guests"))
@@ -368,8 +410,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .title(rs.getString("title"))
                         .images(Collections.singletonList(rs.getString("images")))
                         .rating(rs.getInt("rating"))
-                        .build());
-
+                        .build(),word, word, word, word);
         log.info("Global search completed successfully!");
         return new GlobalSearchResponse(results);
     }
@@ -540,7 +581,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
         AnnouncementResponse result;
         try {
-            result = jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+            result = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
                 String position = rs.getString("position");
                 if (!"MODERATION".equals(position)) {
                     throw new NotFoundException("Application with ID " + id + " not found.");
@@ -561,7 +602,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                 .role(Role.valueOf(rs.getString("role")))
                                 .build())
                         .build();
-            });
+            },id);
 
             log.info("Retrieved announcement with ID {} successfully!", id);
         } catch (EmptyResultDataAccessException ex) {

@@ -91,5 +91,4 @@ public class AnnouncementResponse {
         this.province = province;
         this.rating = rating;
     }
-
 }

@@ -3,20 +3,29 @@ package peaksoft.house.airbnbb9.service.serviceImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import peaksoft.house.airbnbb9.config.security.JwtService;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
+import peaksoft.house.airbnbb9.dto.response.GeocodingResponse;
+import peaksoft.house.airbnbb9.dto.response.GeocodingResult;
+import peaksoft.house.airbnbb9.dto.response.LatLng;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Position;
-import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.service.AnnouncementVendorService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 @Service
@@ -27,14 +36,35 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
 
     private final AnnouncementRepository announcementRepository;
     private final JwtService jwtService;
+    @Value("${google.api.key}")
+    private String google_api_key;
+
+    private RestTemplate restTemplate() {
+        final RestTemplate restTemplate = new RestTemplate();
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+        messageConverters.add(converter);
+        restTemplate.setMessageConverters(messageConverters);
+        return restTemplate;
+    }
+
+    private peaksoft.house.airbnbb9.dto.response.LatLng getGeoCoordinateForAddress(String address){
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + google_api_key;
+        GeocodingResponse response = restTemplate().getForObject(url, GeocodingResponse.class);
+        if (response != null && response.getResults().size() > 0){
+            GeocodingResult result = response.getResults().get(0);
+            return result.getGeometry().getLocation();
+        }else throw new BadRequestException("Address not found");
+    }
 
     @Override
     public SimpleResponse submitAnAd(AnnouncementRequest announcementRequest) {
+        LatLng coordinate = getGeoCoordinateForAddress(announcementRequest.getAddress());
+        double latitude = coordinate.getLat();
+        double longitude = coordinate.getLng();
         log.info("Submitting an advertisement with title: {}", announcementRequest.getTitle());
 
-        if (announcementRequest == null) {
-            throw new BadRequestException("Announcement request cannot be empty!");
-        }
         if (announcementRequest.getTitle() == null || announcementRequest.getTitle().isEmpty()) {
             throw new BadRequestException("Title cannot be empty!");
         }
@@ -55,6 +85,8 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         announcement.setCreateDate(LocalDate.now());
         announcement.setUser(user);
         announcement.setPosition(Position.MODERATION);
+        announcement.setLatitude(latitude);
+        announcement.setLongitude(longitude);
         try {
             announcementRepository.save(announcement);
             log.info("Advertisement with title: {} successfully submitted", announcementRequest.getTitle());
