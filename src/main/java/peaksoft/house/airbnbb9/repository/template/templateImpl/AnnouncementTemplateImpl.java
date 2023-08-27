@@ -83,11 +83,26 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
-        String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, "
-                + "(SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images "
-                + "FROM announcements a "
-                + "LEFT JOIN feedbacks r ON a.id = r.announcement_id "
-                + "WHERE 1=1 ";
+        String sql = "SELECT\n" +
+                "    a.id,\n" +
+                "    a.price,\n" +
+                "    a.max_guests,\n" +
+                "    a.address,\n" +
+                "    a.description,\n" +
+                "    a.province,\n" +
+                "    a.region,\n" +
+                "    a.title,\n" +
+                "    r.rating,\n" +
+                "    CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END as is_favorite,\n" +
+                "    (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images\n" +
+                "FROM\n" +
+                "    announcements a\n" +
+                "        LEFT JOIN\n" +
+                "    favorites f ON a.id = f.announcement_id\n" +
+                "        LEFT JOIN\n" +
+                "    feedbacks r ON a.id = r.announcement_id\n" +
+                "WHERE\n" +
+                "        1=1 ";
         log.info("Starting to filter announcements for vendors.");
 
         List<Object> params = new ArrayList<>();
@@ -110,7 +125,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "AND a.price IS NOT NULL ";
         }
 
-        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ";
+        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images,is_favorite ";
 
         if (rating != null && !rating.isEmpty()) {
             sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
@@ -129,6 +144,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
+                .isFavorite(rs.getBoolean("is_favorite"))
                 .build());
 
         log.info("Announcements filtered successfully for vendors!");

@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.stripe.Stripe;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+
     @PostConstruct
     public void init() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
@@ -43,15 +45,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                 .setCredentials(googleCredentials).build();
         FirebaseApp.initializeApp(firebaseOptions);
+        setUp();
+    }
+
+    private void setUp(){
+        Stripe.apiKey = "sk_test_51NdWEALAAx1GCzR7I1XAEu92hke6xAF6AkpHCy52uX94MvdPVgjlCVmpxXXJwUMnNtTpTBjDJTMo95HF0FmZqgN600px1alzRQ";
     }
 
     @Override
     public AuthenticationResponse signInWithGoogle(String tokenId) throws FirebaseAuthException {
-        log.info("Verifying Google ID token...");
         FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
         User user;
         if (!userRepository.existsByEmail(firebaseToken.getEmail())) {
-            log.info("Creating new user with Google sign-in...");
             user = new User();
             user.setFullName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
@@ -65,10 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     return new NotFoundException("User with this email not found!");
                 }
         );
-        log.info("Generating JWT token for the user...");
         String token = jwtService.generateToken(user);
-
-        log.info("Google sign-in successful for user: {}", user.getEmail());
         return AuthenticationResponse.builder()
                 .email(user.getEmail())
                 .role(user.getRole())
@@ -78,7 +80,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse signIn(SignInRequest signInRequest) {
-        log.info("Signing in user with email: {}", signInRequest.getEmail());
         if (signInRequest.getEmail().isBlank()) {
             throw new BadCredentialsException("Email doesn't exist!");
         }
@@ -92,7 +93,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BadCredentialException("Incorrect password !");
         }
         String jwtToken = jwtService.generateToken(user);
-        log.info("User with email: {} signed in successfully.", signInRequest.getEmail());
         return AuthenticationResponse.builder()
                 .email(user.getEmail())
                 .role(user.getRole())
