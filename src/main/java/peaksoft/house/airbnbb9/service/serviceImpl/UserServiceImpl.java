@@ -15,7 +15,7 @@ import peaksoft.house.airbnbb9.dto.response.UserResponse;
 import peaksoft.house.airbnbb9.entity.Like;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Role;
-import peaksoft.house.airbnbb9.exceptoin.BadCredentialException;
+import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.mappers.UserProfileViewMapper;
 import peaksoft.house.airbnbb9.repository.LikeRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;

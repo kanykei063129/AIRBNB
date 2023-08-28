@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 public class FeedbackRequest {
     private List<String> images;
-    private Integer rating;
+    private int rating;
     private String comment;
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.response.FavoriteAnnouncementsResponse;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Status;
-import peaksoft.house.airbnbb9.exceptoin.NotFoundException;
+import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
 

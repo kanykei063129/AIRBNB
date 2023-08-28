@@ -1,4 +1,4 @@
-package peaksoft.house.airbnbb9.exceptoin;
+package peaksoft.house.airbnbb9.exception;
 
 public class BadRequestException extends RuntimeException{
 

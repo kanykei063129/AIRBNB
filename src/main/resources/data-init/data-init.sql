@@ -40,7 +40,6 @@ VALUES (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', 'Grajdanskaya 119', 'for sanatory',
        (12, 'APARTMENT', 25, 'BISHKEK', 'Bokonbaevo', 'Чуй 105', 'Cultural sites nearby', 'NOT_BOOKED',
         'apartment', 3, NOW(), NULL, 1, 'ACCEPTED',-33.6979513,-53.4556873);
 
-
 insert into announcement_images (announcement_id, images)
 values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),
        (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),
@@ -59,12 +58,12 @@ values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626
        (11, 'https://f.hubspotusercontent20.net/hubfs/4043727/pexels-max-vakhtbovych-7195322.jpg'),
        (12, 'https://www.myluxoria.com/storage/app/uploads/public/630/77d/9dd/63077d9dd7b37898060436.jpg');
 
-insert into bookings(id, check_in, check_out, date, user_id, announcement_id, position)
-values (1, '2023-08-14T10:30:00+00:00', '2023-08-15T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 1, 2, 1),
-       (2, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 2, 3, 1),
-       (3, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 3, 4, 2),
-       (4, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 4, 5, 2),
-       (5, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 5, 1, 2);
+insert into bookings(id, check_in, check_out, date, user_id, announcement_id, position, price_per_day)
+values (1, '2023-08-14', '2023-08-15', '2023-08-14', 1, 2, 'MODERATION', 0.0),
+       (2, '2023-09-14', '2023-09-17', '2023-08-14', 2, 3, 'REJECT', 0.0),
+       (3, '2023-09-14', '2023-09-17', '2023-08-14', 3, 4, 'MODERATION', 0.0),
+       (4, '2023-10-14', '2023-10-17', '2023-08-14', 4, 5, 'ACCEPTED', 0.0),
+       (5, '2023-10-14', '2023-10-17', '2023-08-14', 5, 1, 'ACCEPTED', 0.0);
 
 insert into favorites(id, user_id, announcement_id)
 values (1, 1, 2),
