@@ -12,8 +12,7 @@ values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$KfOMw3D17qamXwGRkYcAbOjSzXm
        (6, 'Rus', 'rusi.studio.kgz@gmail.com', '$2a$12$99Q6ccCQVhM.Rv6lbXza4uGUTiJLZkzBBDiLHopPN1niFwMVPsw8W',
         'default image', 'USER');
 
-INSERT INTO announcements
-(id, house_type, price, region, province, address, description, status, title, max_guests, create_date,
+INSERT INTO announcements(id, house_type, price, region, province, address, description, status, title, max_guests, create_date,
  message_from_admin, user_id, position)
 VALUES (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', '1-street 3', 'for sanatory', 'BOOKED', 'house', 3, NOW(), NULL, 1,
         'MODERATION'),
@@ -59,12 +58,12 @@ values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626
        (11, 'https://f.hubspotusercontent20.net/hubfs/4043727/pexels-max-vakhtbovych-7195322.jpg'),
        (12, 'https://www.myluxoria.com/storage/app/uploads/public/630/77d/9dd/63077d9dd7b37898060436.jpg');
 
-insert into bookings(id, check_in, check_out, date, user_id, announcement_id, position)
-values (1, '2023-08-14T10:30:00+00:00', '2023-08-15T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 1, 2, 1),
-       (2, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 2, 3, 1),
-       (3, '2023-09-14T10:30:00+00:00', '2023-09-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 3, 4, 2),
-       (4, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 4, 5, 2),
-       (5, '2023-10-14T10:30:00+00:00', '2023-10-17T10:30:00+00:00', '2023-08-14T10:30:00+00:00', 5, 1, 2);
+insert into bookings(id, check_in, check_out, date, user_id, announcement_id, position, price_per_day)
+values (1, '2023-08-14', '2023-08-15', '2023-08-14', 1, 2, 'MODERATION', 0.0),
+       (2, '2023-09-14', '2023-09-17', '2023-08-14', 2, 3, 'REJECT', 0.0),
+       (3, '2023-09-14', '2023-09-17', '2023-08-14', 3, 4, 'MODERATION', 0.0),
+       (4, '2023-10-14', '2023-10-17', '2023-08-14', 4, 5, 'ACCEPTED', 0.0),
+       (5, '2023-10-14', '2023-10-17', '2023-08-14', 5, 1, 'ACCEPTED', 0.0);
 
 insert into favorites(id, user_id, announcement_id)
 values (1, 1, 2),

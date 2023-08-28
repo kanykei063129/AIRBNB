@@ -23,10 +23,11 @@ public class Booking {
             allocationSize = 1,
             initialValue = 6)
     private Long id;
-    private java.time.LocalDate checkOut;
+    private LocalDate checkOut;
     private LocalDate checkIn;
     private BigDecimal pricePerDay;
     private LocalDate date;
+    @Enumerated(EnumType.STRING)
     private Position position;
 
     @ManyToOne(cascade = {
