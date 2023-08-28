@@ -20,29 +20,27 @@ import java.util.List;
 @RequestMapping("/api/feedbacks")
 @Tag(name = "Feedback api", description = "Only available for user")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@PreAuthorize("hasAnyAuthority('USER')")
 public class FeedbackApi {
 
     private final FeedbackService feedbackService;
 
     @Operation(summary = "Leave feedback", description = "Leave feedback to announcement")
-    @PreAuthorize("hasAnyAuthority('USER')")
-    @PostMapping("leave/{announcementId}")
+    @PostMapping("/{announcementId}")
     public FeedbackResponse leaveFeedback(@PathVariable Long announcementId, @RequestBody FeedbackRequest request) {
         return feedbackService.saveFeedback(announcementId, request);
     }
 
     @Operation(summary = "Get all feedback", description = "Get all feedback by announcement id")
-    @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/{announcementId}")
+    @GetMapping("/{announcementId}")
     public List<FeedbackResponse> getAllFeedback(@PathVariable Long announcementId) {
         return feedbackService.getAllFeedback(announcementId);
     }
 
-    @Operation(summary = "Like and dislike",
-            description = "The purpose of the method is to manage and update the number of likes and dislikes for a particular review based on user actions. " +
-                    "It is also necessary that each user can like or dislike a review only once")
+    @Operation(summary = "Like and dislike feedbacks",
+            description = "This method checks if user liked or disliked this feedback than counts them" +
+                    "Each user can like or dislike a feedback only once")
     @PostMapping("/likeAndDislike")
-    @PreAuthorize("hasAuthority('USER')")
     public QuantityLikeAndDisLikeResponse likeAndDisLike(
             @RequestParam Long feedbackId,
             @RequestParam String likeOrDislike) throws AlreadyExistsException {
@@ -51,8 +49,7 @@ public class FeedbackApi {
 
     @Operation(summary = "Update feedback",
             description = "Update feedback by id")
-    @PostMapping("/update/{feedbackId}")
-    @PreAuthorize("hasAuthority('USER')")
+    @PutMapping("/{feedbackId}")
     public SimpleResponse updateFeedback(@PathVariable Long feedbackId,
                                          @RequestBody FeedbackUpdateRequest feedbackUpdateRequest) {
         return feedbackService.updateFeedback(feedbackId, feedbackUpdateRequest);
@@ -60,8 +57,7 @@ public class FeedbackApi {
 
     @Operation(summary = "Deleted feedback",
             description = "Deleted feedback by id")
-    @PostMapping("/delete/{announcementId}/{feedbackId}")
-    @PreAuthorize("hasAuthority('USER')")
+    @DeleteMapping ("/{announcementId}/{feedbackId}")
     public SimpleResponse deleteFeedback(@PathVariable Long announcementId,
                                          @PathVariable Long feedbackId) {
         return feedbackService.deleteFeedback(announcementId,feedbackId);
