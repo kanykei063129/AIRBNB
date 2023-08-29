@@ -57,9 +57,8 @@ public class FeedbackApi {
 
     @Operation(summary = "Deleted feedback",
             description = "Deleted feedback by id")
-    @DeleteMapping ("/{announcementId}/{feedbackId}")
-    public SimpleResponse deleteFeedback(@PathVariable Long announcementId,
-                                         @PathVariable Long feedbackId) {
-        return feedbackService.deleteFeedback(announcementId,feedbackId);
+    @DeleteMapping ("/{feedbackId}")
+    public SimpleResponse deleteFeedback(@PathVariable Long feedbackId) {
+        return feedbackService.deleteFeedback(feedbackId);
     }
 }

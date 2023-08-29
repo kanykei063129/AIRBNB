@@ -49,4 +49,13 @@ public class GlobalException {
                 e.getClass().getSimpleName(),
                 e.getMessage());
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionResponse handlerForbidden(ForbiddenException e) {
+        return new ExceptionResponse(
+                HttpStatus.FORBIDDEN,
+                e.getClass().getSimpleName(),
+                e.getMessage());
+    }
 }
