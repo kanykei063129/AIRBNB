@@ -12,6 +12,7 @@ import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
+import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import java.util.ArrayList;
@@ -340,17 +341,18 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     }
 
     @Override
-    public GlobalSearchResponse search(String word, boolean isNearby, double latitude, double longitude) {
+    public GlobalSearchResponse search(String word, boolean isNearby, Double latitude, Double longitude) {
         if (isNearby) {
-            double earthRadius = 6371;
-            double distance = 5;
-            double latRange = Math.toDegrees(distance / earthRadius);
-            double longRange = Math.toDegrees(distance / (earthRadius * Math.cos(Math.toRadians(latitude))));
-            double minLat = latitude - latRange;
-            double maxLat = latitude + latRange;
-            double minLong = longitude - longRange;
-            double maxLong = longitude + longRange;
-            String query = """
+            if (latitude!=null && longitude!=null){
+                double earthRadius = 6371;
+                double distance = 5;
+                double latRange = Math.toDegrees(distance / earthRadius);
+                double longRange = Math.toDegrees(distance / (earthRadius * Math.cos(Math.toRadians(latitude))));
+                double minLat = latitude - latRange;
+                double maxLat = latitude + latRange;
+                double minLong = longitude - longRange;
+                double maxLong = longitude + longRange;
+                String query = """
                     SELECT a.id as id,
                            a.price as price,
                            a.max_guests as max_guests,
@@ -374,20 +376,24 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                       AND a.longitude BETWEEN ? AND ?
                     GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title;
                     """;
-            List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(query, (rs, rowNum) -> AnnouncementResponse
-                    .builder()
-                    .id(rs.getLong("id"))
-                    .price(rs.getInt("price"))
-                    .maxGuests(rs.getInt("max_guests"))
-                    .address(rs.getString("address"))
-                    .description(rs.getString("description"))
-                    .province(rs.getString("province"))
-                    .title(rs.getString("title"))
-                    .images(Collections.singletonList(rs.getString("images")))
-                    .rating(rs.getInt("rating"))
-                    .build(), word, word, word, word, minLat, maxLat, minLong, maxLong);
-            log.info(String.format("Performing global search with key word:%s and get nearby user's location",word));
-            return new GlobalSearchResponse(announcementResponses);
+                List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(query, (rs, rowNum) -> AnnouncementResponse
+                        .builder()
+                        .id(rs.getLong("id"))
+                        .price(rs.getInt("price"))
+                        .maxGuests(rs.getInt("max_guests"))
+                        .address(rs.getString("address"))
+                        .description(rs.getString("description"))
+                        .province(rs.getString("province"))
+                        .title(rs.getString("title"))
+                        .images(Collections.singletonList(rs.getString("images")))
+                        .rating(rs.getInt("rating"))
+                        .build(), word, word, word, word, minLat, maxLat, minLong, maxLong);
+                log.info(String.format("Performing global search with key word:%s and get nearby user's location",word));
+                return new GlobalSearchResponse(announcementResponses);
+            }else {
+                log.error("Latitude and longitude is null");
+                throw new BadCredentialException("Latitude and longitude is null");
+            }
         }
         String sql = """
                 SELECT a.id            as id,

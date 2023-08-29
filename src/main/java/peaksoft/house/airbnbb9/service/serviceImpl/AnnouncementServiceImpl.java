@@ -149,7 +149,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public GlobalSearchResponse search(String word, boolean isNearby, double latitude, double longitude) {
+    public GlobalSearchResponse search(String word, boolean isNearby, Double latitude, Double longitude) {
         return announcementTemplate.search(word, isNearby, latitude, longitude);
     }
 
