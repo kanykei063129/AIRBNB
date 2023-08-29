@@ -61,6 +61,8 @@ public class Announcement {
     private List<LocalDate> blockedDates;
     @ElementCollection
     private List<LocalDate> blockedDatesByUser;
+    private double latitude;
+    private double longitude;
 
     @OneToMany(mappedBy = "announcement", cascade = {
             CascadeType.DETACH,

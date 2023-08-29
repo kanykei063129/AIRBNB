@@ -45,12 +45,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 new NotFoundException("Announcement with id " + announcementId + " not found!"));
         viewMapper.updateAnnouncement(announcement, request);
         checkAdField(request, announcement);
-           announcementRepository.save(announcement);
+        announcementRepository.save(announcement);
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
                 .message(String.format("Announcement with id " + announcementId + ", successfully updated."))
                 .build();
     }
+
     private void checkAdField(AnnouncementRequest request, Announcement announcement) {
 
         if (request.getImages().size() <= 4) {
@@ -66,7 +67,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throw new BadRequestException("The ad price cannot be negative or zero!");
         }
     }
-
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncements() {
@@ -148,14 +148,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementTemplate.getPopularApartment();
     }
 
-    public GlobalSearchResponse search(String word) {
-        return announcementTemplate.search(word);
+    @Override
+    public GlobalSearchResponse search(String word, boolean isNearby, double latitude, double longitude) {
+        return announcementTemplate.search(word, isNearby, latitude, longitude);
     }
 
     @Override
     public SimpleResponse processAnnouncement(Long announcementId, String message, String messageFromAdminToUser) throws MessagingException {
         log.info("Processing announcement with id={} and action={}", announcementId, message);
-
         Announcement announcement = announcementRepository.findById(announcementId)
                 .orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
         if (announcement.getPosition() == Position.MODERATION) {
