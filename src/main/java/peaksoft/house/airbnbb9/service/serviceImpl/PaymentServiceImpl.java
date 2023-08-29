@@ -18,11 +18,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public SimpleResponse chargeCreditCard(CreatePaymentRequest createPaymentRequest) throws StripeException {
-        Map<String, Object> chargePrams = new HashMap<>();
-        chargePrams.put("amount", (int) (createPaymentRequest.getAmount() * 100));
-        chargePrams.put("currency", "USD");
-        chargePrams.put("source", createPaymentRequest.getToken());
-        Charge charge = Charge.create(chargePrams);
+        Map<String, Object> chargeParams = new HashMap<>();
+        chargeParams.put("amount", (int) (createPaymentRequest.getAmount() * 100));
+        chargeParams.put("currency", "USD");
+        chargeParams.put("source", createPaymentRequest.getToken());
+        Charge charge = Charge.create(chargeParams);
         return SimpleResponse
                 .builder()
                 .httpStatus(HttpStatus.OK)
