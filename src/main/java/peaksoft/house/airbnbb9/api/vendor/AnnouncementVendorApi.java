@@ -55,7 +55,7 @@ public class AnnouncementVendorApi {
             description = "You can search announcements by region,city,house and apartment")
     @GetMapping("/global-search")
     public GlobalSearchResponse search(@RequestParam String word, @RequestParam(required = false) boolean isNearby ,
-                                       @RequestParam(required = false) double latitude,@RequestParam(required = false) double longitude) {
+                                       @RequestParam(required = false) Double latitude,@RequestParam(required = false) Double longitude) {
         return announcementService.search(word, isNearby,latitude , longitude );
     }
 

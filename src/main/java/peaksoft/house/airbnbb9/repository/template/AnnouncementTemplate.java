@@ -27,7 +27,7 @@ public interface AnnouncementTemplate {
 
     PopularApartmentResponse getPopularApartment();
 
-    GlobalSearchResponse search(String word, boolean isNearby, double latitude,double longitude);
+    GlobalSearchResponse search(String word, boolean isNearby, Double latitude,Double longitude);
 
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
 

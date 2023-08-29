@@ -32,7 +32,7 @@ public interface AnnouncementService {
 
     PopularApartmentResponse getPopularApartment();
 
-    GlobalSearchResponse search(String word, boolean isNearby, double latitude,double longitude);
+    GlobalSearchResponse search(String word, boolean isNearby, Double latitude,Double longitude);
 
     SimpleResponse processAnnouncement(Long announcementId, String message, String messageFromAdminToUser) throws MessagingException;
 
