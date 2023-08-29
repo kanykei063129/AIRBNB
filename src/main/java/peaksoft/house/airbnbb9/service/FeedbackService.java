@@ -19,5 +19,5 @@ FeedbackService {
 
     SimpleResponse updateFeedback(Long feedbackId, FeedbackUpdateRequest feedbackUpdateRequest);
 
-    SimpleResponse deleteFeedback(Long announcementId,Long feedbackId);
+    SimpleResponse deleteFeedback(Long feedbackId);
 }

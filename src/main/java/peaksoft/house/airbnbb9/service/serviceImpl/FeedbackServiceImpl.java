@@ -102,15 +102,14 @@ public class FeedbackServiceImpl implements FeedbackService {
         List<Like> likeByFeedbackId = likeRepository.getLikeByFeedbackId(feedbackId);
 
         if (likeOrDislike.equalsIgnoreCase("Like")) {
-            boolean isTrue = false;
+            boolean likeStatus = false;
             for (Like l : likeByFeedbackId) {
                 if (l.getUser().getId().equals(user.getId())) {
-                    isTrue = true;
+                    likeStatus = true;
                     break;
                 }
             }
-            if (!isTrue) {
-                log.warn("Like if");
+            if (!likeStatus) {
                 Like like = Like
                         .builder()
                         .isLiked(true)
@@ -122,7 +121,6 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedback.setLikeCount(1 + likeOrDislikeCount);
                 likeRepository.save(like);
             } else {
-                log.warn("Like else");
                 Like like = likeRepository.getLikeByUserIdAndFeedbackId(user.getId(), feedbackId).orElseThrow(
                         () -> {
                             log.error("Like not found");
@@ -135,15 +133,14 @@ public class FeedbackServiceImpl implements FeedbackService {
             }
         } else if (likeOrDislike.equalsIgnoreCase("Dislike")) {
 
-            boolean isTrue = false;
+            boolean likeStatus = false;
             for (Like l : likeByFeedbackId) {
                 if (l.getUser().getId().equals(user.getId())) {
-                    isTrue = true;
+                    likeStatus = true;
                     break;
                 }
             }
-            if (!isTrue) {
-                log.warn("dislike if");
+            if (!likeStatus) {
                 Like like = Like
                         .builder()
                         .isLiked(false)
@@ -155,7 +152,6 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedback.setDisLikeCount(1 + likeOrDislikeCount);
                 likeRepository.save(like);
             } else {
-                log.warn("dislike else");
                 Like like = likeRepository.getLikeByUserIdAndFeedbackId(user.getId(), feedbackId).orElseThrow(
                         () -> {
                             log.error("Like not found");
@@ -169,10 +165,10 @@ public class FeedbackServiceImpl implements FeedbackService {
             }
         }
         feedbackRepository.save(feedback);
-        int a = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false);
-        int b = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true);
-        log.info(Integer.toString(a));
-        log.error(Integer.toString(b));
+        int dislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false);
+        int likeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true);
+        log.info(Integer.toString(dislikeCount));
+        log.error(Integer.toString(likeCount));
 
         return QuantityLikeAndDisLikeResponse
                 .builder()
@@ -183,10 +179,14 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public SimpleResponse updateFeedback(Long feedbackId, FeedbackUpdateRequest feedbackUpdateRequest) {
-        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(
+        User user = jwtService.getAuthentication();
+        if (!feedbackRepository.existsFeedbackById(feedbackId)) {
+            throw new NotFoundException("Feedback with id: %s not found".formatted(feedbackId));
+        }
+        Feedback feedback = feedbackRepository.getFeedbackByIdAndUserId(feedbackId, user.getId()).orElseThrow(
                 () -> {
-                    log.error("Feedback with %s not found".formatted(feedbackId));
-                    return new NotFoundException("Feedback with %s not found".formatted(feedbackId));
+                    log.error("This review is id: %s was not found.".formatted(feedbackId));
+                    return new ForbiddenException("This review is id: %s was not found.".formatted(feedbackId));
                 }
         );
         feedback.setComment(feedbackUpdateRequest.getComment());
@@ -201,24 +201,17 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public SimpleResponse deleteFeedback(Long announcementId, Long feedbackId) {
-        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> {
-                    log.error("Announcement with %s not found".formatted(announcementId));
-                    return new NotFoundException("Announcement with %s not found".formatted(announcementId));
-                }
-        );
-        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(
-                () -> {
-                    log.error("Feedback with %s not found".formatted(feedbackId));
-                    return new NotFoundException("Feedback with %s not found".formatted(feedbackId));
-                }
-        );
-        if (!announcement.getFeedbacks().contains(feedback)) {
-            log.error("Feedback with %s not found".formatted(feedbackId));
-            throw new NotFoundException("Feedback with %s not found".formatted(feedbackId));
-
+    public SimpleResponse deleteFeedback(Long feedbackId) {
+        User user = jwtService.getAuthentication();
+        if (!feedbackRepository.existsFeedbackById(feedbackId)) {
+            throw new NotFoundException("Feedback with id: %s not found".formatted(feedbackId));
         }
-        announcement.getFeedbacks().remove(feedback);
+        Feedback feedback = feedbackRepository.getFeedbackByIdAndUserId(feedbackId, user.getId()).orElseThrow(
+                () -> {
+                    log.error("This review is id: %s was not found.".formatted(feedbackId));
+                    return new ForbiddenException("This review is id: %s was not found.".formatted(feedbackId));
+                }
+        );
         feedbackRepository.delete(feedback);
         return SimpleResponse
                 .builder()
