@@ -134,7 +134,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         }
         log.info("Filtering announcements for vendors with SQL: " + sql);
 
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -145,7 +145,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .isFavorite(rs.getBoolean("is_favorite"))
-                .build());
+                .build(), params);
 
         log.info("Announcements filtered successfully for vendors!");
         return results;

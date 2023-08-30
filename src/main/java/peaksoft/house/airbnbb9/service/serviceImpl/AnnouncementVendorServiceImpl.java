@@ -18,7 +18,7 @@ import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Position;
-import peaksoft.house.airbnbb9.exceptoin.BadRequestException;
+import peaksoft.house.airbnbb9.exception.BadRequestException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.service.AnnouncementVendorService;
 
