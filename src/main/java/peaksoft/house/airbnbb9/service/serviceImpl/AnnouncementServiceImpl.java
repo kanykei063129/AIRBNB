@@ -16,7 +16,6 @@ import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadRequestException;
 import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
-import peaksoft.house.airbnbb9.mappers.BookingViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
@@ -37,7 +36,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementTemplate announcementTemplate;
     private final JavaMailSender javaMailSender;
     private final AnnouncementViewMapper viewMapper;
-    private final BookingViewMapper bookingViewMapper;
 
     @Override
     public SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest request) {
@@ -83,28 +81,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         return announcement;
     }
-
-    @Override
-    public AnnouncementInnerPageResponse getAnnouncementDetails(Long announcementId) {
-        log.info("Getting Announcement details for ID: " + announcementId);
-
-        Announcement announcementById = getAnnouncementById(announcementId);
-        announcementRepository.save(announcementById);
-
-        log.info("Announcement details for ID " + announcementId + " have been retrieved and saved.");
-        return getAnnouncementInnerPageResponse(announcementById);
-    }
-
-    private AnnouncementInnerPageResponse getAnnouncementInnerPageResponse(Announcement announcement) {
-        log.info("Creating AnnouncementInnerPageResponse for Announcement with ID: " + announcement.getId());
-
-        AnnouncementInnerPageResponse response = viewMapper.entityToDtoConverting(announcement);
-        response.setAnnouncementBookings(bookingViewMapper.viewBooked(announcement.getBookings()));
-
-        log.info("AnnouncementInnerPageResponse created for Announcement with ID: " + announcement.getId());
-        return response;
-    }
-
 
     public SimpleResponse deleteByIdAnnouncement(Long announcementId) {
         log.info("Deleting Announcement with ID: " + announcementId);

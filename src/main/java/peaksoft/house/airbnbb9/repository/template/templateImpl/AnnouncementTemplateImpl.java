@@ -633,4 +633,32 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
         return result;
     }
+
+    @Override
+    public GetAnnouncementResponse getAnnouncementById(Long announcementId) {
+        String query = """
+                select distinct a.id as id,
+                a.title as title,
+                ai.images as images,
+                a.house_type as houseType,
+                a.max_guests as maxGuests,
+                a.address as address,
+                a.description as description,
+                u.full_name as fullName,
+                u.email as email,
+                u.image as image from announcements a join users u on a.user_id = u.id join announcement_images ai on a.id = ai.announcement_id where a.id = ?;
+                """;
+        return jdbcTemplate.queryForObject(query, (rs, rowNum) -> GetAnnouncementResponse.builder()
+                .id(rs.getLong("id"))
+                .title(rs.getString("title"))
+                .images(Collections.singletonList(rs.getString("images")))
+                .houseType(HouseType.valueOf(rs.getString("houseType")))
+                .maxGuests(rs.getInt("maxGuests"))
+                .address(rs.getString("address"))
+                .description(rs.getString("description"))
+                .fullName("fullName")
+                .email("email")
+                .image("image")
+                .build(),announcementId);
+    }
 }

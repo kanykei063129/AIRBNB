@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import peaksoft.house.airbnbb9.config.security.JwtService;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-import peaksoft.house.airbnbb9.dto.response.GeocodingResponse;
-import peaksoft.house.airbnbb9.dto.response.GeocodingResult;
-import peaksoft.house.airbnbb9.dto.response.LatLng;
-import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
+import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
+import peaksoft.house.airbnbb9.entity.Booking;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Position;
 import peaksoft.house.airbnbb9.exception.BadRequestException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
+import peaksoft.house.airbnbb9.repository.BookingRepository;
+import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementVendorService;
 
 import java.time.LocalDate;
@@ -33,8 +33,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AnnouncementVendorServiceImpl implements AnnouncementVendorService {
+    private final BookingRepository bookingRepository;
 
     private final AnnouncementRepository announcementRepository;
+    private final AnnouncementTemplate announcementTemplate;
     private final JwtService jwtService;
     @Value("${google.api.key}")
     private String google_api_key;
@@ -103,5 +105,20 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
                 .httpStatus(HttpStatus.OK)
                 .message(String.format("announcement  with title: %s is successfully submit!", announcementRequest.getTitle()))
                 .build();
+    }
+
+    @Override
+    public GetAnnouncementResponse getAnnouncementById(Long announcementId) {
+        User user = jwtService.getAuthentication();
+        GetAnnouncementResponse announcement = announcementTemplate.getAnnouncementById(announcementId);
+        List<Booking> all = bookingRepository.findAll();
+        for (Booking b:all) {
+            if (b.getAnnouncement().getId().equals(announcementId) && b.getUser().equals(user)){
+               announcement.setBooked(true);
+               log.info("Get announcement by id");
+                return announcement;
+            }
+        }
+        return announcement;
     }
 }

@@ -48,13 +48,6 @@ public class AnnouncementApi {
         return announcementService.deleteByIdAnnouncement(announcementId);
     }
 
-    @Operation(summary = "Find an announcement by id", description = "Any user can find announcement by id")
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("{id}")
-    public AnnouncementInnerPageResponse getAnnouncementDetails(@PathVariable Long id) {
-        return announcementService.getAnnouncementDetails(id);
-    }
-
     @Operation(summary = "Filter and sort announcements",
             description = "Filter  announcements by status,house type,rating and price")
     @PreAuthorize("hasAuthority('ADMIN')")
