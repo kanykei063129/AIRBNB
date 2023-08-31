@@ -9,6 +9,7 @@ import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.request.BookRequest;
 import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.GetAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
@@ -73,5 +74,11 @@ public class AnnouncementVendorApi {
     @PutMapping
     public Map<String, String> updateRequestToBook(@RequestBody UpdateBookRequest request) {
         return bookingService.updateRequestToBook(request);
+    }
+    @Operation(summary = "Get announcement by id",description = "Get announcement by id into two position as request to book or update booking date")
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/getAnnouncement/{announcementId}")
+    public GetAnnouncementResponse getAnnouncementGetById(@PathVariable Long announcementId){
+        return announcementVendorService.getAnnouncementById(announcementId);
     }
 }
