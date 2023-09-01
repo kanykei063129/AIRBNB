@@ -15,6 +15,7 @@ import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,26 +85,25 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
-        String sql = "SELECT\n" +
-                "    a.id,\n" +
-                "    a.price,\n" +
-                "    a.max_guests,\n" +
-                "    a.address,\n" +
-                "    a.description,\n" +
-                "    a.province,\n" +
-                "    a.region,\n" +
-                "    a.title,\n" +
-                "    r.rating,\n" +
-                "    CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END as is_favorite,\n" +
-                "    (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images\n" +
-                "FROM\n" +
-                "    announcements a\n" +
-                "        LEFT JOIN\n" +
-                "    favorites f ON a.id = f.announcement_id\n" +
-                "        LEFT JOIN\n" +
-                "    feedbacks r ON a.id = r.announcement_id\n" +
-                "WHERE\n" +
-                "        1=1 ";
+        String sql = """
+                                SELECT a.id,
+                                       a.price,
+                                       a.max_guests,
+                                       a.address,
+                                       a.description,
+                                       a.province,
+                                       a.region,
+                                       a.title,
+                                       r.rating,
+                                       CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END                       as is_favorite,
+                                       (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                                FROM announcements a
+                                         LEFT JOIN
+                                     favorites f ON a.id = f.announcement_id
+                                         LEFT JOIN
+                                     feedbacks r ON a.id = r.announcement_id
+                                WHERE 1 = 1
+                """;
         log.info("Starting to filter announcements for vendors.");
 
         List<Object> params = new ArrayList<>();
@@ -135,7 +135,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         }
         log.info("Filtering announcements for vendors with SQL: " + sql);
 
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -146,7 +146,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .isFavorite(rs.getBoolean("is_favorite"))
-                .build(), params);
+                .build());
 
         log.info("Announcements filtered successfully for vendors!");
         return results;
@@ -343,7 +343,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public GlobalSearchResponse search(String word, boolean isNearby, Double latitude, Double longitude) {
         if (isNearby) {
-            if (latitude!=null && longitude!=null){
+            if (latitude != null && longitude != null) {
                 double earthRadius = 6371;
                 double distance = 5;
                 double latRange = Math.toDegrees(distance / earthRadius);
@@ -353,29 +353,29 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 double minLong = longitude - longRange;
                 double maxLong = longitude + longRange;
                 String query = """
-                    SELECT a.id as id,
-                           a.price as price,
-                           a.max_guests as max_guests,
-                           a.address as address,
-                           a.description as description,
-                           a.province as province,
-                           a.region as region,
-                           a.title as title,
-                           AVG(r.rating) as rating,
-                           (SELECT ai.images
-                            FROM announcement_images ai
-                            WHERE ai.announcement_id = a.id
-                            LIMIT 1) as images
-                    FROM announcements a
-                             LEFT JOIN feedbacks r ON a.id = r.announcement_id
-                    WHERE (a.region ILIKE lower(concat('%', ?, '%'))
-                           OR a.status ILIKE lower(concat('%', ?, '%'))
-                           OR a.house_type ILIKE lower(concat('%', ?, '%'))
-                           OR a.province ILIKE lower(concat('%', ?, '%')))
-                      AND a.latitude BETWEEN ? AND ?
-                      AND a.longitude BETWEEN ? AND ?
-                    GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title;
-                    """;
+                        SELECT a.id as id,
+                               a.price as price,
+                               a.max_guests as max_guests,
+                               a.address as address,
+                               a.description as description,
+                               a.province as province,
+                               a.region as region,
+                               a.title as title,
+                               AVG(r.rating) as rating,
+                               (SELECT ai.images
+                                FROM announcement_images ai
+                                WHERE ai.announcement_id = a.id
+                                LIMIT 1) as images
+                        FROM announcements a
+                                 LEFT JOIN feedbacks r ON a.id = r.announcement_id
+                        WHERE (a.region ILIKE lower(concat('%', ?, '%'))
+                               OR a.status ILIKE lower(concat('%', ?, '%'))
+                               OR a.house_type ILIKE lower(concat('%', ?, '%'))
+                               OR a.province ILIKE lower(concat('%', ?, '%')))
+                          AND a.latitude BETWEEN ? AND ?
+                          AND a.longitude BETWEEN ? AND ?
+                        GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title;
+                        """;
                 List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(query, (rs, rowNum) -> AnnouncementResponse
                         .builder()
                         .id(rs.getLong("id"))
@@ -388,9 +388,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .images(Collections.singletonList(rs.getString("images")))
                         .rating(rs.getInt("rating"))
                         .build(), word, word, word, word, minLat, maxLat, minLong, maxLong);
-                log.info(String.format("Performing global search with key word:%s and get nearby user's location",word));
+                log.info(String.format("Performing global search with key word:%s and get nearby user's location", word));
                 return new GlobalSearchResponse(announcementResponses);
-            }else {
+            } else {
                 log.error("Latitude and longitude is null");
                 throw new BadCredentialException("Latitude and longitude is null");
             }
@@ -422,17 +422,17 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                     a.title 
                 """;
         log.info("Performing global search with keyword: " + word);
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql,(rs, rowNum) -> AnnouncementResponse.builder()
-                        .id(rs.getLong("id"))
-                        .price(rs.getInt("price"))
-                        .maxGuests(rs.getInt("max_guests"))
-                        .address(rs.getString("address"))
-                        .description(rs.getString("description"))
-                        .province(rs.getString("province"))
-                        .title(rs.getString("title"))
-                        .images(Collections.singletonList(rs.getString("images")))
-                        .rating(rs.getInt("rating"))
-                        .build(),word, word, word, word);
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+                .id(rs.getLong("id"))
+                .price(rs.getInt("price"))
+                .maxGuests(rs.getInt("max_guests"))
+                .address(rs.getString("address"))
+                .description(rs.getString("description"))
+                .province(rs.getString("province"))
+                .title(rs.getString("title"))
+                .images(Collections.singletonList(rs.getString("images")))
+                .rating(rs.getInt("rating"))
+                .build(), word, word, word, word);
         log.info("Global search completed successfully!");
         return new GlobalSearchResponse(results);
     }
@@ -624,7 +624,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                 .role(Role.valueOf(rs.getString("role")))
                                 .build())
                         .build();
-            },id);
+            }, id);
 
             log.info("Retrieved announcement with ID {} successfully!", id);
         } catch (EmptyResultDataAccessException ex) {
@@ -659,6 +659,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .fullName("fullName")
                 .email("email")
                 .image("image")
-                .build(),announcementId);
+                .build(), announcementId);
     }
 }
