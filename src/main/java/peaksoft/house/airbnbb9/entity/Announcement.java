@@ -26,7 +26,7 @@ public class Announcement {
     @SequenceGenerator(name = "announcement_gen",
             sequenceName = "announcement_seq",
             allocationSize = 1,
-            initialValue = 6)
+            initialValue = 13)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -98,6 +98,7 @@ public class Announcement {
     public void removeBlockedDateByUser(LocalDate date) {
         this.blockedDatesByUser.remove(date);
     }
+
     public void releaseTakenDates(LocalDate checkin, LocalDate checkout) {
         while (checkin.isBefore(checkout)) {
             this.blockedDates.remove(checkin);
