@@ -12,6 +12,7 @@ import peaksoft.house.airbnbb9.dto.request.FeedbackRequest;
 import peaksoft.house.airbnbb9.dto.request.FeedbackUpdateRequest;
 import peaksoft.house.airbnbb9.dto.response.FeedbackResponse;
 import peaksoft.house.airbnbb9.dto.response.QuantityLikeAndDisLikeResponse;
+import peaksoft.house.airbnbb9.dto.response.RatingCountResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Feedback;
@@ -44,8 +45,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final JwtService jwtService;
 
     @Override
-    public FeedbackResponse saveFeedback(Long announcementId, FeedbackRequest request) {
-        Announcement announcement = getFindByAnnouncementId(announcementId);
+    public SimpleResponse saveFeedback(Long announcementId, FeedbackRequest request) {
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
+                new NotFoundException("Announcement whit id %s not found!".formatted(announcementId)));
         Feedback newFeedback = new Feedback();
         newFeedback.setImages(request.getImages());
         newFeedback.setRating(request.getRating());
@@ -55,27 +57,11 @@ public class FeedbackServiceImpl implements FeedbackService {
         newFeedback.setCreateDate((LocalDate.now()));
         newFeedback.setUser(getCurrentUser());
         feedbackRepository.save(newFeedback);
-        return getFeedbackResponse(newFeedback);
-    }
-
-    private FeedbackResponse getFeedbackResponse(Feedback feedback) {
-        User user = getCurrentUser();
-        FeedbackResponse feedbackResponse = new FeedbackResponse();
-        feedbackResponse.setId(feedback.getId());
-        feedbackResponse.setFeedbackUserImage(user.getImage());
-        feedbackResponse.setFeedbackUserFullName(user.getFullName());
-        feedbackResponse.setRating(feedback.getRating());
-        feedbackResponse.setImages(feedback.getImages());
-        feedbackResponse.setComment(feedback.getComment());
-        feedbackResponse.setCreatedAt((feedback.getCreateDate()));
-        feedbackResponse.setLikeCount(feedback.getLikeCount());
-        feedbackResponse.setDisLikeCount(feedback.getDisLikeCount());
-        return feedbackResponse;
-    }
-
-    private Announcement getFindByAnnouncementId(Long id) {
-        return announcementRepository.findById(id).orElseThrow(() ->
-                new NotFoundException("Announcement whit id = " + id + " not found!"));
+        return SimpleResponse
+                .builder()
+                .httpStatus(HttpStatus.OK)
+                .message("successfully saved")
+                .build();
     }
 
     private User getCurrentUser() {
@@ -90,92 +76,53 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackTemplate.getAllFeedback(announcementId);
     }
 
-    @Override
     public QuantityLikeAndDisLikeResponse likeAndDisLike(Long feedbackId, String likeOrDislike) throws AlreadyExistsException {
         User user = jwtService.getAuthentication();
-        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(
-                () -> {
-                    log.error("Feedback with %s not found".formatted(feedbackId));
-                    return new NotFoundException("Feedback with %s not found".formatted(feedbackId));
-                }
-        );
-        List<Like> likeByFeedbackId = likeRepository.getLikeByFeedbackId(feedbackId);
+        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> {
+            String errorMessage = String.format("Feedback with %s not found", feedbackId);
+            log.error(errorMessage);
+            return new NotFoundException(errorMessage);
+        });
 
-        if (likeOrDislike.equalsIgnoreCase("Like")) {
-            boolean likeStatus = false;
-            for (Like l : likeByFeedbackId) {
-                if (l.getUser().getId().equals(user.getId())) {
-                    likeStatus = true;
-                    break;
+        boolean isLike = likeOrDislike.equalsIgnoreCase("Like");
+        boolean isDislike = likeOrDislike.equalsIgnoreCase("Dislike");
+
+        Like existingLike = likeRepository.getLikeByUserIdAndFeedbackId(user.getId(), feedbackId).orElse(null);
+
+        if (isLike || isDislike) {
+            if (existingLike != null) {
+                if ((isLike && !existingLike.getIsLiked()) || (isDislike && existingLike.getIsLiked())) {
+                    existingLike.setIsLiked(isLike);
+                    likeRepository.save(existingLike);
+                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() + (isLike ? 1 : -1)));
+                } else {
+                    likeRepository.delete(existingLike);
+                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() - 1));
                 }
-            }
-            if (!likeStatus) {
-                Like like = Like
-                        .builder()
-                        .isLiked(true)
-                        .feedback(feedback)
-                        .user(user)
-                        .build();
-                feedback.getLikes().add(like);
-                int likeOrDislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true);
-                feedback.setLikeCount(1 + likeOrDislikeCount);
-                likeRepository.save(like);
             } else {
-                Like like = likeRepository.getLikeByUserIdAndFeedbackId(user.getId(), feedbackId).orElseThrow(
-                        () -> {
-                            log.error("Like not found");
-                            return new NotFoundException("Like not found");
-                        });
-                like.getFeedback().getLikes().remove(like);
-                likeRepository.delete(like);
-                int likeOrDislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true);
-                feedback.setLikeCount(likeOrDislikeCount);
+                Like newLike = Like.builder().isLiked(isLike).feedback(feedback).user(user).build();
+                feedback.getLikes().add(newLike);
+                likeRepository.save(newLike);
+                feedback.setLikeCount(feedback.getLikeCount() + (isLike ? 1 : 0));
+                feedback.setDisLikeCount(feedback.getDisLikeCount() + (isDislike ? 1 : 0));
             }
-        } else if (likeOrDislike.equalsIgnoreCase("Dislike")) {
-
-            boolean likeStatus = false;
-            for (Like l : likeByFeedbackId) {
-                if (l.getUser().getId().equals(user.getId())) {
-                    likeStatus = true;
-                    break;
-                }
-            }
-            if (!likeStatus) {
-                Like like = Like
-                        .builder()
-                        .isLiked(false)
-                        .feedback(feedback)
-                        .user(user)
-                        .build();
-                feedback.getLikes().add(like);
-                int likeOrDislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false);
-                feedback.setDisLikeCount(1 + likeOrDislikeCount);
-                likeRepository.save(like);
-            } else {
-                Like like = likeRepository.getLikeByUserIdAndFeedbackId(user.getId(), feedbackId).orElseThrow(
-                        () -> {
-                            log.error("Like not found");
-                            return new NotFoundException("Like not found");
-                        });
-                like.getFeedback().getLikes().remove(like);
-                likeRepository.delete(like);
-                int likeOrDislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false);
-                feedback.setLikeCount(likeOrDislikeCount - 1);
-
-            }
+        } else {
+            log.warn("Invalid likeOrDislike value");
         }
-        feedbackRepository.save(feedback);
+
         int dislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false);
         int likeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true);
+
         log.info(Integer.toString(dislikeCount));
         log.error(Integer.toString(likeCount));
 
-        return QuantityLikeAndDisLikeResponse
-                .builder()
-                .disLikeCount(likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false))
-                .likeCount(likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true))
+        return QuantityLikeAndDisLikeResponse.builder()
+                .disLikeCount(dislikeCount)
+                .likeCount(likeCount)
                 .build();
     }
+
+
 
     @Override
     public SimpleResponse updateFeedback(Long feedbackId, FeedbackUpdateRequest feedbackUpdateRequest) {
@@ -218,5 +165,10 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .httpStatus(HttpStatus.OK)
                 .message("Successfully deleted")
                 .build();
+    }
+
+    @Override
+    public RatingCountResponse countRating(Long announcementId) {
+        return feedbackTemplate.countRating(announcementId);
     }
 }

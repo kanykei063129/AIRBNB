@@ -2,6 +2,7 @@ package peaksoft.house.airbnbb9.api.vendor;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import peaksoft.house.airbnbb9.dto.request.FeedbackRequest;
 import peaksoft.house.airbnbb9.dto.request.FeedbackUpdateRequest;
 import peaksoft.house.airbnbb9.dto.response.FeedbackResponse;
 import peaksoft.house.airbnbb9.dto.response.QuantityLikeAndDisLikeResponse;
+import peaksoft.house.airbnbb9.dto.response.RatingCountResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.exception.AlreadyExistsException;
 import peaksoft.house.airbnbb9.service.FeedbackService;
@@ -27,7 +29,7 @@ public class FeedbackApi {
 
     @Operation(summary = "Leave feedback", description = "Leave feedback to announcement")
     @PostMapping("/{announcementId}")
-    public FeedbackResponse leaveFeedback(@PathVariable Long announcementId, @RequestBody FeedbackRequest request) {
+    public SimpleResponse leaveFeedback(@PathVariable Long announcementId,@Valid @RequestBody FeedbackRequest request) {
         return feedbackService.saveFeedback(announcementId, request);
     }
 
@@ -55,10 +57,17 @@ public class FeedbackApi {
         return feedbackService.updateFeedback(feedbackId, feedbackUpdateRequest);
     }
 
-    @Operation(summary = "Deleted feedback",
-            description = "Deleted feedback by id")
+    @Operation(summary = "Delete feedback",
+            description = "Delete feedback by id")
     @DeleteMapping ("/{feedbackId}")
     public SimpleResponse deleteFeedback(@PathVariable Long feedbackId) {
         return feedbackService.deleteFeedback(feedbackId);
+    }
+
+    @Operation(summary = "Count ratings",
+            description = "Count ratings ")
+    @GetMapping ("countRating/{announcementId}")
+    public RatingCountResponse countRating(@PathVariable Long announcementId) {
+        return feedbackService.countRating(announcementId);
     }
 }

@@ -1,11 +1,15 @@
 package peaksoft.house.airbnbb9.exception.handler;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import peaksoft.house.airbnbb9.dto.response.ExceptionResponse;
 import peaksoft.house.airbnbb9.exception.*;
+
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -57,5 +61,23 @@ public class GlobalException {
                 HttpStatus.FORBIDDEN,
                 e.getClass().getSimpleName(),
                 e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+        List<String> errors = e
+                .getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .toList();
+
+        return ExceptionResponse
+                .builder()
+                .message(errors.toString())
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .exceptionClassName(e.getClass().getSimpleName())
+                .build();
     }
 }
