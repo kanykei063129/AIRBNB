@@ -94,10 +94,10 @@ public class FeedbackServiceImpl implements FeedbackService {
                 if ((isLike && !existingLike.getIsLiked()) || (isDislike && existingLike.getIsLiked())) {
                     existingLike.setIsLiked(isLike);
                     likeRepository.save(existingLike);
-                    feedback.setLikeCount(feedback.getLikeCount() + (isLike ? 1 : -1));
+                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() + (isLike ? 1 : -1)));
                 } else {
                     likeRepository.delete(existingLike);
-                    feedback.setLikeCount(feedback.getLikeCount() - 1);
+                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() - 1));
                 }
             } else {
                 Like newLike = Like.builder().isLiked(isLike).feedback(feedback).user(user).build();
