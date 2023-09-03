@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.request.BookRequest;
 import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.GetAnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
-import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
+import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
@@ -55,9 +52,9 @@ public class AnnouncementVendorApi {
     @Operation(summary = "Global search",
             description = "You can search announcements by region,city,house and apartment")
     @GetMapping("/global-search")
-    public GlobalSearchResponse search(@RequestParam String word, @RequestParam(required = false) boolean isNearby ,
-                                       @RequestParam(required = false) Double latitude,@RequestParam(required = false) Double longitude) {
-        return announcementService.search(word, isNearby,latitude , longitude );
+    public GlobalSearchResponse search(@RequestParam String word, @RequestParam(required = false) boolean isNearby,
+                                       @RequestParam(required = false) Double latitude, @RequestParam(required = false) Double longitude) {
+        return announcementService.search(word, isNearby, latitude, longitude);
     }
 
     @Operation(summary = "Request to book",
@@ -75,10 +72,11 @@ public class AnnouncementVendorApi {
     public Map<String, String> updateRequestToBook(@RequestBody UpdateBookRequest request) {
         return bookingService.updateRequestToBook(request);
     }
-    @Operation(summary = "Get announcement by id",description = "Get announcement by id into two position as request to book or update booking date")
+
+    @Operation(summary = "Get announcement by id", description = "Get announcement by id into two position as request to book or update booking date")
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/getAnnouncement/{announcementId}")
-    public GetAnnouncementResponse getAnnouncementGetById(@PathVariable Long announcementId){
+    public GetAnnouncementResponse getAnnouncementGetById(@PathVariable Long announcementId) {
         return announcementVendorService.getAnnouncementById(announcementId);
     }
 }

@@ -3,8 +3,10 @@ package peaksoft.house.airbnbb9.api.vendor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.AnnouncementsResponseProfile;
 import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.PriceType;
@@ -29,6 +31,7 @@ public class ProfileApi {
     public UserProfileResponse getUserBookingsAndAnnouncements() {
         return userService.getUserProfile();
     }
+
     @Operation(summary = "Any registered user can filter announcements in the profile",
             description = "Filter accepted announcements by popular,house type, and price low to high and high to low")
     @GetMapping("/filter")
@@ -37,5 +40,12 @@ public class ProfileApi {
             @RequestParam(required = false) String rating,
             @RequestParam(required = false) PriceType price) {
         return announcementService.getAllAnnouncementsFilters(houseType, rating, price);
+    }
+
+    @Operation(summary = "Get announcement by id", description = "Get announcement by id into two position as request to book or update booking date")
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/getAnnouncementProfile")
+    private AnnouncementsResponseProfile getAnnouncementsByIdProfile(@RequestParam Long announcementId) {
+        return announcementService.getAnnouncementsByIdProfile(announcementId);
     }
 }

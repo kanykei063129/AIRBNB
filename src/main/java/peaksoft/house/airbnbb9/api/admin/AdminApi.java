@@ -37,6 +37,7 @@ public class AdminApi {
         return announcementService.getApplicationById(applicationId);
     }
 
+
     @Operation(summary = "Get all announcements application and pagination",
             description = "Get all  announcements by status 'MODERATION' and added pagination")
     @PreAuthorize("hasAuthority('ADMIN')")

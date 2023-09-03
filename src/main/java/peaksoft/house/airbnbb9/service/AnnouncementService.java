@@ -39,6 +39,7 @@ public interface AnnouncementService {
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
 
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
+    AnnouncementsResponseProfile getAnnouncementsByIdProfile(Long announcementId);
 
 
 }

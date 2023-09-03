@@ -27,12 +27,15 @@ public interface AnnouncementTemplate {
 
     PopularApartmentResponse getPopularApartment();
 
-    GlobalSearchResponse search(String word, boolean isNearby, Double latitude,Double longitude);
+    GlobalSearchResponse search(String word, boolean isNearby, Double latitude, Double longitude);
 
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
 
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
 
-    AnnouncementResponse  getApplicationById(Long id);
+    AnnouncementResponse getApplicationById(Long id);
+
     GetAnnouncementResponse getAnnouncementById(Long announcementId);
+
+    AnnouncementsResponseProfile getAnnouncementsByIdProfile(Long announcementId);
 }

@@ -51,13 +51,13 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         return restTemplate;
     }
 
-    private peaksoft.house.airbnbb9.dto.response.LatLng getGeoCoordinateForAddress(String address){
+    private peaksoft.house.airbnbb9.dto.response.LatLng getGeoCoordinateForAddress(String address) {
         String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + google_api_key;
         GeocodingResponse response = restTemplate().getForObject(url, GeocodingResponse.class);
-        if (response != null && response.getResults().size() > 0){
+        if (response != null && response.getResults().size() > 0) {
             GeocodingResult result = response.getResults().get(0);
             return result.getGeometry().getLocation();
-        }else throw new BadRequestException("Address not found");
+        } else throw new BadRequestException("Address not found");
     }
 
     @Override
@@ -112,13 +112,14 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         User user = jwtService.getAuthentication();
         GetAnnouncementResponse announcement = announcementTemplate.getAnnouncementById(announcementId);
         List<Booking> all = bookingRepository.findAll();
-        for (Booking b:all) {
-            if (b.getAnnouncement().getId().equals(announcementId) && b.getUser().equals(user)){
-               announcement.setBooked(true);
-               log.info("Get announcement by id");
+        for (Booking b : all) {
+            if (b.getAnnouncement().getId().equals(announcementId) && b.getUser().equals(user)) {
+                announcement.setBooked(true);
+                log.info("Get announcement by id");
                 return announcement;
             }
         }
         return announcement;
     }
+
 }
