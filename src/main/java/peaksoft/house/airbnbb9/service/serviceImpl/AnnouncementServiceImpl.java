@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import peaksoft.house.airbnbb9.config.security.JwtService;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
+import peaksoft.house.airbnbb9.entity.Favorite;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadRequestException;
@@ -19,6 +21,7 @@ import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
+import peaksoft.house.airbnbb9.repository.FavoriteRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -36,6 +39,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementTemplate announcementTemplate;
     private final JavaMailSender javaMailSender;
     private final AnnouncementViewMapper viewMapper;
+    private final JwtService jwtService;
+    private final FavoriteRepository favoriteRepository;
 
     @Override
     public SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest request) {
@@ -204,4 +209,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementTemplate.pagination(page, size);
     }
 
+    @Override
+    public AnnouncementsResponseProfile getAnnouncementsByIdProfile(Long announcementId) {
+        return announcementTemplate.getAnnouncementsByIdProfile(announcementId);
+    }
 }
