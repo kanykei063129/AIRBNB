@@ -73,6 +73,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
+        announcementRepository.findById(announcementId).orElseThrow(() ->
+                new NotFoundException("Announcement whit id %s not found!".formatted(announcementId)));
         return feedbackTemplate.getAllFeedback(announcementId);
     }
 
@@ -121,7 +123,6 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .likeCount(likeCount)
                 .build();
     }
-
 
 
     @Override
