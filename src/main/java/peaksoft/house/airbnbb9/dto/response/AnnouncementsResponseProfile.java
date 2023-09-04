@@ -15,16 +15,16 @@ public class AnnouncementsResponseProfile {
     private Long id;
     private String title;
     private List<String> images;
-    private HouseType houseType;
+    private String houseType;
     private int maxGuests;
     private String address;
     private String description;
     private String fullName;
     private String email;
     private String image;
-    private User user;
     private List<String> bookedByFullName;
     private List<String> bookedByEmail;
     private List<String> favoriteByFullName;
     private List<String> favoriteByEmail;
+
 }

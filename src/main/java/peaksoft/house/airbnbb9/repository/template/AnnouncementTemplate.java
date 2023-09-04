@@ -37,5 +37,5 @@ public interface AnnouncementTemplate {
 
     GetAnnouncementResponse getAnnouncementById(Long announcementId);
 
-    AnnouncementsResponseProfile getAnnouncementsByIdProfile(Long announcementId);
+    AnnouncementsResponseProfile getAnnouncementByIdProfile(Long announcementId);
 }

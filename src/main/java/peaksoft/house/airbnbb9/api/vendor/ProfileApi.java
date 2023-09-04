@@ -10,6 +10,7 @@ import peaksoft.house.airbnbb9.dto.response.AnnouncementsResponseProfile;
 import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.PriceType;
+import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import peaksoft.house.airbnbb9.service.UserService;
 
@@ -24,6 +25,7 @@ public class ProfileApi {
 
     private final UserService userService;
     private final AnnouncementService announcementService;
+    private final AnnouncementTemplate announcementTemplate;
 
     @Operation(summary = "User profile",
             description = "Any registered user can access their own profile")
@@ -43,9 +45,9 @@ public class ProfileApi {
     }
 
     @Operation(summary = "Get announcement by id", description = "Get announcement by id into two position as request to book or update booking date")
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/getAnnouncementProfile")
-    private AnnouncementsResponseProfile getAnnouncementsByIdProfile(@RequestParam Long announcementId) {
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @GetMapping("/getAnnouncementProfile/{announcementId}")
+    public AnnouncementsResponseProfile getAnnouncementByIdProfile(@PathVariable Long announcementId) {
         return announcementService.getAnnouncementsByIdProfile(announcementId);
     }
 }
