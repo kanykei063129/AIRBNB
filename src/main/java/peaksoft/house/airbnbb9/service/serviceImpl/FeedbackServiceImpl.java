@@ -73,8 +73,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
-        announcementRepository.findById(announcementId).orElseThrow(() ->
-                new NotFoundException("Announcement whit id %s not found!".formatted(announcementId)));
+        if (!announcementRepository.existsAnnouncementById(announcementId)){
+            throw new NotFoundException("Announcement with id: %s not found".formatted(announcementId));
+        }
         return feedbackTemplate.getAllFeedback(announcementId);
     }
 

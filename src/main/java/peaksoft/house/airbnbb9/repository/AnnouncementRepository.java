@@ -6,4 +6,6 @@ import peaksoft.house.airbnbb9.entity.Announcement;
 
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
+
+    boolean existsAnnouncementById(Long announcementId);
 }
