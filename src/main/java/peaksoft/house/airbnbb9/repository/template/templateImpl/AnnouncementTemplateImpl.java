@@ -1,11 +1,10 @@
 package peaksoft.house.airbnbb9.repository.template.templateImpl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
@@ -14,20 +13,18 @@ import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.exception.NotFoundException;
+import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-@Repository
-@Transactional
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     private final JdbcTemplate jdbcTemplate;
+    private final AnnouncementRepository announcementRepository;
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
@@ -673,23 +670,22 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     }
 
     @Override
-    public AnnouncementsResponseProfile getAnnouncementsByIdProfile(Long announcementId) {
+    public AnnouncementsResponseProfile getAnnouncementByIdProfile(Long announcementId) {
         String query = """
-                SELECT
-                    a.id AS announcement_id,
-                    a.title,
-                    ai.images,
-                    a.house_type,
-                    a.max_guests,
-                    a.address,
-                    a.description,
-                    u.full_name AS owner_full_name,
-                    u.email AS owner_email,
-                    u.image AS owner_image,
-                    STRING_AGG(DISTINCT u2.full_name, ', ') AS booked_by_full_name,
-                    STRING_AGG(DISTINCT u2.email, ', ') AS booked_by_email,
-                    STRING_AGG(DISTINCT u3.full_name, ', ') AS favorited_by_full_name,
-                    STRING_AGG(DISTINCT u3.email, ', ') AS favorited_by_email
+                SELECT a.id AS id,                                   
+                       a.title                                 AS title,
+                       ai.images                               AS images,
+                       a.house_type                            AS houseType,
+                       a.max_guests                            AS maxGuests,
+                       a.address                               AS address,
+                       a.description                           AS description,
+                       u.full_name                             AS fullName,
+                       u.email                                 AS email,
+                       u.image                                 AS image,
+                       STRING_AGG(DISTINCT u2.full_name, ', ') AS bookedByFullName,
+                       STRING_AGG(DISTINCT u2.email, ', ')     AS bookedByEmail,
+                       STRING_AGG(DISTINCT u3.full_name, ', ') AS favoriteByFullName,
+                       STRING_AGG(DISTINCT u3.email, ', ')     AS favoriteByEmail
                 FROM announcements a
                          JOIN users u ON a.user_id = u.id
                          JOIN announcement_images ai ON a.id = ai.announcement_id
@@ -698,24 +694,23 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                          LEFT JOIN favorites f ON a.id = f.announcement_id
                          LEFT JOIN users u3 ON f.user_id = u3.id
                 WHERE a.id = ?
-                GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;;
-                                """;
-
+                GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
+                      """;
         return jdbcTemplate.queryForObject(query, (rs, rowNum) -> AnnouncementsResponseProfile.builder()
-                .id(rs.getLong("announcement_id"))
+                .id(rs.getLong("id"))
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
-                .houseType(HouseType.valueOf(rs.getString("house_type")))
-                .maxGuests(rs.getInt("max_guests"))
+                .houseType(rs.getString("houseType"))
+                .maxGuests(rs.getInt("maxGuests"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
-                .fullName(rs.getString("owner_full_name"))
-                .email(rs.getString("owner_email"))
-                .image(rs.getString("owner_image"))
-                .bookedByFullName(Collections.singletonList(rs.getString("booked_by_full_name")))
-                .bookedByEmail(Collections.singletonList(rs.getString("booked_by_email")))
-                .favoriteByFullName(Collections.singletonList(rs.getString("favorited_by_full_name")))
-                .favoriteByEmail(Collections.singletonList(rs.getString("favorited_by_email")))
+                .fullName(rs.getString("fullName"))
+                .email(rs.getString("email"))
+                .image(rs.getString("image"))
+                .bookedByFullName(Collections.singletonList(rs.getString("bookedByFullName")))
+                .bookedByEmail(Collections.singletonList(rs.getString("bookedByEmail")))
+                .favoriteByFullName(Collections.singletonList(rs.getString("favoriteByFullName")))
+                .favoriteByEmail(Collections.singletonList(rs.getString("favoriteByEmail")))
                 .build(), announcementId);
     }
 

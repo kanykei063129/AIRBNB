@@ -36,7 +36,7 @@ public class AnnouncementApi {
     @PutMapping("/{announcementId}")
     @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse update(@PathVariable Long announcementId,
-                                       @RequestBody @Valid AnnouncementRequest announcementRequest) {
+                                 @RequestBody @Valid AnnouncementRequest announcementRequest) {
         return announcementService.updateAnnouncement(announcementId, announcementRequest);
     }
 

@@ -12,7 +12,6 @@ import peaksoft.house.airbnbb9.config.security.JwtService;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
-import peaksoft.house.airbnbb9.entity.Favorite;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadRequestException;
@@ -211,6 +210,21 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public AnnouncementsResponseProfile getAnnouncementsByIdProfile(Long announcementId) {
-        return announcementTemplate.getAnnouncementsByIdProfile(announcementId);
+        return announcementTemplate.getAnnouncementByIdProfile(announcementId);
+    }
+
+    @Override
+    public SimpleResponse blockedAnnouncementById(Long announcementId) {
+        Announcement announcement = announcementRepository.findById(announcementId)
+                .orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " does not exist!"));
+        if (announcement.getPosition() == Position.ACCEPTED) {
+            announcement.setPosition(Position.BLOCK);
+            return SimpleResponse.builder().
+                    message("Announcement Blocked!!!").httpStatus(HttpStatus.OK).
+                    build();
+        }
+        return SimpleResponse.builder().
+                message("Announcement item not accepted or pending !!!").httpStatus(HttpStatus.OK).
+                build();
     }
 }
