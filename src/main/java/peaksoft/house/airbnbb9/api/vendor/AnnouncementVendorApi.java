@@ -1,5 +1,6 @@
 package peaksoft.house.airbnbb9.api.vendor;
 
+import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.request.BookRequest;
+import peaksoft.house.airbnbb9.dto.request.CreatePaymentRequest;
 import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.enums.HouseType;
@@ -61,7 +63,7 @@ public class AnnouncementVendorApi {
             description = "Any registered user can submit a booking request.")
     @PreAuthorize("hasAnyAuthority('USER')")
     @PostMapping
-    public Map<String, String> sendRequestToBook(@RequestBody BookRequest request) {
+    public SimpleResponse sendRequestToBook(@RequestBody BookRequest request) throws StripeException{
         return bookingService.requestToBook(request);
     }
 
@@ -69,7 +71,7 @@ public class AnnouncementVendorApi {
             description = "The user can change the booking date.")
     @PreAuthorize("hasAnyAuthority('USER')")
     @PutMapping
-    public Map<String, String> updateRequestToBook(@RequestBody UpdateBookRequest request) {
+    public SimpleResponse updateRequestToBook(@RequestBody UpdateBookRequest request) throws StripeException{
         return bookingService.updateRequestToBook(request);
     }
 

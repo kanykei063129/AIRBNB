@@ -57,10 +57,6 @@ public class Announcement {
     private String messageFromAdmin;
     @Enumerated(EnumType.STRING)
     private Position position;
-    @ElementCollection
-    private List<LocalDate> blockedDates;
-    @ElementCollection
-    private List<LocalDate> blockedDatesByUser;
     private double latitude;
     private double longitude;
 
@@ -90,20 +86,4 @@ public class Announcement {
             CascadeType.MERGE,
             CascadeType.REMOVE})
     private List<Booking> bookings;
-
-    public void addBlockedDateByUser(LocalDate date) {
-        this.blockedDatesByUser.add(date);
-    }
-
-    public void removeBlockedDateByUser(LocalDate date) {
-        this.blockedDatesByUser.remove(date);
-    }
-
-    public void releaseTakenDates(LocalDate checkin, LocalDate checkout) {
-        while (checkin.isBefore(checkout)) {
-            this.blockedDates.remove(checkin);
-            checkin = checkin.plusDays(1L);
-        }
-        this.blockedDates.remove(checkout);
-    }
 }
