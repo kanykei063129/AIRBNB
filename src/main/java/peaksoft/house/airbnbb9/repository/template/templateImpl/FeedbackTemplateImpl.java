@@ -11,6 +11,7 @@ import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.template.FeedbackTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                        f.create_date              AS createdAt,
                        f.like_count               AS likeCount,
                        f.dis_like_count           AS disLikeCount,
-                       string_agg(fi.images, ',') AS images
+                       fi.images
                 FROM feedbacks f
                          LEFT JOIN
                      feedback_images fi ON fi.feedback_id = f.id
@@ -56,7 +57,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                 .feedbackUserFullName(rs.getString("feedbackUserFullName"))
                 .rating(rs.getInt("rating"))
                 .comment(rs.getString("comment"))
-                .images(Arrays.asList(rs.getString("images").split(",")))
+                .images(Collections.singletonList(rs.getString("images")))
                 .createdAt(rs.getDate("createdAt"))
                 .likeCount(rs.getInt("likeCount"))
                 .disLikeCount(rs.getInt("disLikeCount"))
