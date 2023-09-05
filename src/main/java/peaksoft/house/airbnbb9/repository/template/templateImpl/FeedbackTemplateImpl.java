@@ -52,8 +52,8 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse
                 .builder()
                 .id(rs.getLong("id"))
+                .feedbackUserFullName(rs.getString("feedback_user_full_name"))
                 .feedbackUserImage(rs.getString("feedback_user_image"))
-                .feedbackUserFullName(rs.getString("feedback_user_full_image"))
                 .rating(rs.getInt("rating"))
                 .comment(rs.getString("comment"))
                 .images(Collections.singletonList(rs.getString("images")))
