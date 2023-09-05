@@ -9,6 +9,7 @@ public class AirbnbB9Application {
 
     public static void main(String[] args) {
         SpringApplication.run(AirbnbB9Application.class, args);
+        System.out.println("Airbnb");
     }
 
     @GetMapping

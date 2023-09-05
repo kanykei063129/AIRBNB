@@ -26,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
         return SimpleResponse
                 .builder()
                 .httpStatus(HttpStatus.OK)
-                .message(charge.getCustomer())
+                .message(charge.getDescription())
                 .build();
     }
 }

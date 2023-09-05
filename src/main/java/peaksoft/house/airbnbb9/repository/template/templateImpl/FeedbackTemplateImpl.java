@@ -48,6 +48,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                          f.like_count,
                          f.dis_like_count
                  """;
+
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse
                 .builder()
                 .id(rs.getLong("id"))
