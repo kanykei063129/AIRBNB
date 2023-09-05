@@ -14,7 +14,7 @@ import peaksoft.house.airbnbb9.service.PaymentService;
 @RequiredArgsConstructor
 @RequestMapping("/api/payments")
 @CrossOrigin(origins = "*", maxAge = 3600)
-@Tag(name = "Payment API",description = "API for payment management")
+@Tag(name = "Payment API", description = "API for payment management")
 public class PaymentApi {
 
     private final PaymentService paymentService;

@@ -14,6 +14,7 @@ import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,24 +42,27 @@ public class FavoriteTemplateImpl implements FavoriteTemplate {
 
     @Override
     public List<FavoriteAnnouncementsResponse> getAllFavoriteAnnouncements() {
+        List<FavoriteAnnouncementsResponse> favorites = new ArrayList<>();
         if (getAuthentication().getFavorites().isEmpty()) {
-            throw new NotFoundException("Unfortunately you dont have favorite announcements ");
+            return favorites;
         }
-        String sql = "select a.id,\n" +
-                "       (select ai.images\n" +
-                "        from announcement_images ai\n" +
-                "        where ai.announcement_id = a.id\n" +
-                "        limit 1),\n" +
-                "       a.price,\n" +
-                "       (select sum(f.rating) / count(f) from feedbacks f where f.announcement_id = a.id) as rating,\n" +
-                "       a.description,\n" +
-                "       a.address,\n" +
-                "       a.max_guests,\n" +
-                "       a.status,\n" +
-                "       case when f.announcement_id is not null then true else false end as is_favorite\n" +
-                "from announcements a\n" +
-                "         join favorites f on f.announcement_id = a.id\n" +
-                "         and f.user_id = ?";
+        String sql = """
+                select a.id,
+                       (select ai.images
+                        from announcement_images ai
+                        where ai.announcement_id = a.id
+                        limit 1),
+                       a.price,
+                       (select sum(f.rating) / count(f) from feedbacks f where f.announcement_id = a.id) as rating,
+                       a.description,
+                       a.address,
+                       a.max_guests,
+                       a.status,
+                       case when f.announcement_id is not null then true else false end                  as is_favorite
+                from announcements a
+                         join favorites f on f.announcement_id = a.id
+                    and f.user_id = ?;
+                """;
 
         log.info("Fetching all favorite announcements.");
 

@@ -46,4 +46,12 @@ public class AdminApi {
                                                                                      @RequestParam(defaultValue = "15") int pageSize) {
         return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }
+
+    @Operation(summary = "Blocking announcements",
+            description = "Only admin can block announcements ")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/blockedAnnouncementsById")
+    public SimpleResponse blockedAnnouncementById(Long announcementId) {
+        return announcementService.blockedAnnouncementById(announcementId);
+    }
 }
