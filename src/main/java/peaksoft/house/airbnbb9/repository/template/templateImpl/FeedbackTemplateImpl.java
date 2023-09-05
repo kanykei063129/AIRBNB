@@ -26,13 +26,13 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
         String sql = """
                 SELECT f.id,
-                       u.full_name                AS feedbackUserFullName,
-                       u.image                    AS feedbackUserImage,
-                       f.rating                    AS rating ,
+                       u.full_name                AS feedback_user_image,
+                       u.image                    AS feedback_user_full_image,
+                       f.rating                   AS rating ,
                        f.comment                  AS comment,
-                       f.create_date              AS createdAt,
-                       f.like_count               AS likeCount,
-                       f.dis_like_count           AS disLikeCount,
+                       f.create_date              AS created_at,
+                       f.like_count               AS like_count,
+                       f.dis_like_count           AS dis_like_count,
                        fi.images
                 FROM feedbacks f
                          LEFT JOIN
@@ -53,14 +53,14 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse
                 .builder()
                 .id(rs.getLong("id"))
-                .feedbackUserImage(rs.getString("feedbackUserImage"))
-                .feedbackUserFullName(rs.getString("feedbackUserFullName"))
+                .feedbackUserImage(rs.getString("feedback_user_image"))
+                .feedbackUserFullName(rs.getString("feedback_user_full_image"))
                 .rating(rs.getInt("rating"))
                 .comment(rs.getString("comment"))
                 .images(Collections.singletonList(rs.getString("images")))
-                .createdAt(rs.getDate("createdAt"))
-                .likeCount(rs.getInt("likeCount"))
-                .disLikeCount(rs.getInt("disLikeCount"))
+                .createdAt(rs.getDate("created_at"))
+                .likeCount(rs.getInt("like_count"))
+                .disLikeCount(rs.getInt("dis_like_count"))
                 .build(), announcementId);
     }
 
