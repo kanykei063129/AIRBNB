@@ -26,8 +26,8 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
         String sql = """
                 SELECT f.id,
-                       u.full_name AS feedback_user_name,
-                       u.image AS feedback_user_full_image,
+                       u.full_name AS feedback_user_full_name,
+                       u.image AS feedback_user_image,
                        f.rating AS rating,
                        f.comment AS comment,
                        f.create_date AS created_at,
