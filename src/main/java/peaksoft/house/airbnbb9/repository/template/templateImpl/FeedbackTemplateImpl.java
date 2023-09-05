@@ -57,7 +57,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                 .rating(rs.getInt("rating"))
                 .comment(rs.getString("comment"))
                 .images(Arrays.asList(rs.getString("images").split(",")))
-                .createdAt(rs.getDate("createdAt").toLocalDate())
+                .createdAt(rs.getDate("createdAt"))
                 .likeCount(rs.getInt("likeCount"))
                 .disLikeCount(rs.getInt("disLikeCount"))
                 .build(), announcementId);
