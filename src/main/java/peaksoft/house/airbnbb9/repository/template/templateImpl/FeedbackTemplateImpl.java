@@ -26,7 +26,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
         String sql = """
                 SELECT f.id,
-                       u.full_name AS feedback_user_image,
+                       u.full_name AS feedback_user_name,
                        u.image AS feedback_user_full_image,
                        f.rating AS rating,
                        f.comment AS comment,
@@ -52,7 +52,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse
                 .builder()
                 .id(rs.getLong("id"))
-                .feedbackUserFullName(rs.getString("feedback_user_full_image"))
+                .feedbackUserFullName(rs.getString("feedback_user_full_name"))
                 .feedbackUserImage(rs.getString("feedback_user_image"))
                 .rating(rs.getInt("rating"))
                 .comment(rs.getString("comment"))

@@ -11,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class FeedbackResponse {
     private Long id;
-    private String feedbackUserImage;
     private String feedbackUserFullName;
+    private String feedbackUserImage;
     private Integer rating;
     private String comment;
     private List<String> images;
