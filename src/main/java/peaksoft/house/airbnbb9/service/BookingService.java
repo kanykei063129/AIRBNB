@@ -1,12 +1,15 @@
 package peaksoft.house.airbnbb9.service;
 
+import com.stripe.exception.StripeException;
 import peaksoft.house.airbnbb9.dto.request.BookRequest;
+import peaksoft.house.airbnbb9.dto.request.CreatePaymentRequest;
 import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 
 import java.util.Map;
 
 public interface BookingService {
-    Map<String, String> requestToBook(BookRequest request);
+    SimpleResponse requestToBook(BookRequest request) throws StripeException;
 
-    Map<String, String> updateRequestToBook(UpdateBookRequest request);
+    SimpleResponse updateRequestToBook(UpdateBookRequest request) throws StripeException;
 }

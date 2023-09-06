@@ -1,20 +1,26 @@
 package peaksoft.house.airbnbb9.service.serviceImpl;
 
+import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.request.BookRequest;
 import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
+import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Booking;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Position;
 import peaksoft.house.airbnbb9.enums.Role;
+import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.exception.BadRequestException;
 import peaksoft.house.airbnbb9.exception.ForbiddenException;
+import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.BookingRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;
@@ -22,6 +28,7 @@ import peaksoft.house.airbnbb9.service.BookingService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,71 +53,74 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Map<String, String> requestToBook(BookRequest request) {
+    public SimpleResponse requestToBook(BookRequest request) throws StripeException {
         User user = getAuthenticatedRoleUser();
-        Announcement announcement = announcementRepository.findById(request.getAnnouncementId()).orElseThrow(BadRequestException::new);
+        Announcement announcement = announcementRepository.findById(request.getAnnouncementId())
+                .orElseThrow(() -> new NotFoundException("Announcement with id " + request.getAnnouncementId() + " not found!"));
 
-        if (request.getAnnouncementId() == null || request.getCheckIn() == null || request.getCheckOut() == null) {
-            throw new BadRequestException("Incomplete information!!!");
+        if (!announcement.getPosition().equals(Position.ACCEPTED)) {
+            throw new BadRequestException("You cannot book this announcement!");
         }
-
-        if (request.getCheckIn().isAfter(request.getCheckOut()) ||
-                request.getCheckIn().equals(request.getCheckOut()) || request.getCheckIn().isBefore(LocalDate.now())) {
-            throw new BadRequestException("Dates are incorrect!!!");
+        if (request.getAnnouncementId() == 0 || request.getCheckIn() == null || request.getCheckOut() == null || request.getAmount() <= 0) {
+            throw new BadRequestException("Invalid or incomplete information!");
         }
-        findTakenDates(request.getCheckIn(), request.getCheckOut(), announcement.getBlockedDates(), announcement.getBlockedDatesByUser());
-
+        if (request.getCheckIn().isAfter(request.getCheckOut()) || request.getCheckIn().equals(request.getCheckOut())) {
+            throw new BadRequestException("Check-in date must be before check-out date!");
+        }
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setAnnouncement(announcement);
-        booking.setCheckIn((request.getCheckIn()));
-        booking.setCheckOut((request.getCheckOut()));
+        booking.setCheckIn(request.getCheckIn());
+        booking.setCheckOut(request.getCheckOut());
         booking.setPricePerDay(BigDecimal.valueOf(announcement.getPrice()));
+        booking.setPosition(Position.ACCEPTED);
+
+        Map<String, Object> chargeParams = new HashMap<>();
+        chargeParams.put("amount", (int) (request.getAmount() * 100)); // Сумма в центах
+        chargeParams.put("currency", "USD");
+        chargeParams.put("source", request.getToken());
+        Charge charge = Charge.create(chargeParams);
         booking.setDate(LocalDate.now());
+        announcement.setStatus(Status.BOOKED);
         bookingRepository.save(booking);
-        return Map.of("massage", "Booking request sent");
+        return SimpleResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .message("Booking successful! Customer: " + charge.getCustomer())
+                .build();
     }
 
     @Override
-    public Map<String, String> updateRequestToBook(UpdateBookRequest request) {
+    public SimpleResponse updateRequestToBook(UpdateBookRequest request) throws StripeException {
         if (request.getCheckIn().isAfter(request.getCheckOut()) ||
-                request.getCheckIn().equals(request.getCheckOut()) ||
-                request.getCheckIn().isBefore(LocalDate.now())) {
+                request.getCheckIn().equals(request.getCheckOut())) {
             throw new BadRequestException("Date is incorrect!");
         }
-
-        Booking booking = bookingRepository.findById(request.getBookingId()).orElseThrow(BadRequestException::new);
-        Announcement announcement = announcementRepository.findById(request.getAnnouncementId()).orElseThrow(BadRequestException::new);
+        Booking booking = bookingRepository.findById(request.getBookingId())
+                .orElseThrow(() -> new NotFoundException("Booking with id " + request.getBookingId() + " not found!"));
+        Announcement announcement = announcementRepository.findById(request.getAnnouncementId())
+                .orElseThrow(() -> new NotFoundException("Announcement with id " + request.getAnnouncementId() + " not found!"));
         User user = getAuthenticatedRoleUser();
-
-        if (!booking.getUser().getId().equals(user.getId()) ||
-                !booking.getAnnouncement().getId().equals(request.getAnnouncementId())) {
+        if (!booking.getUser().getId().equals(user.getId()) || !booking.getAnnouncement().getId().equals(request.getAnnouncementId())) {
             throw new ForbiddenException("incorrect id");
         }
-
-        findTakenDates(booking.getCheckIn(), booking.getCheckOut(), announcement.getBlockedDates(), announcement.getBlockedDatesByUser());
-
         if (booking.getPosition().equals(Position.ACCEPTED)) {
             booking.setDate(LocalDate.now());
-            announcement.releaseTakenDates(booking.getCheckIn(), booking.getCheckOut());
         }
+        booking.setPricePerDay(BigDecimal.valueOf(announcement.getPrice()));
         booking.setCheckIn(request.getCheckIn());
         booking.setCheckOut(request.getCheckOut());
+
+        Map<String, Object> chargeParams = new HashMap<>();
+        chargeParams.put("amount", (int) (request.getAmount() * 100)); // Сумма в центах
+        chargeParams.put("currency", "USD");
+        chargeParams.put("source", request.getToken());
+        Charge charge = Charge.create(chargeParams);
+        booking.setDate(LocalDate.now());
         bookingRepository.save(booking);
         announcementRepository.save(announcement);
-        return Map.of("massage", "The dates has been updated!");
-    }
-
-    private void findTakenDates(LocalDate checkIn, LocalDate checkOut, List<LocalDate> takenDates, List<LocalDate> takenDatesByUser) {
-        takenDates.addAll(takenDatesByUser);
-        while (checkIn.isBefore(checkOut)) {
-            if (takenDates.contains(checkIn)) {
-                throw new BadRequestException("Intermediate dates of your booking are busy!");
-            }
-            checkIn = checkIn.plusDays(1L);
-        }
-        if (takenDates.contains(checkOut)) {
-            throw new BadRequestException("Intermediate dates of your booking are busy!");
-        }
+        return SimpleResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .message("The dates has been updated! Customer: " + charge.getCustomer())
+                .build();
     }
 }
