@@ -11,7 +11,6 @@ import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.template.FeedbackTemplate;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,47 +24,45 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
     @Override
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
         String sql = """
-                SELECT f.id,
-                       u.full_name                AS feedbackUserFullName,
-                       u.image                    AS feedbackUserImage,
-                       f.rating                   AS rating,
-                       f.comment                  AS comment,
-                       f.create_date              AS createdAt,
-                       f.like_count               AS likeCount,
-                       f.dis_like_count           AS disLikeCount,
-                       (SELECT string_agg(fi.images, ',')
-                        FROM feedback_images fi
-                        WHERE fi.feedback_id= f.id) AS images
-                FROM feedbacks f
-                         LEFT JOIN
-                     feedback_images fi ON fi.feedback_id = f.id
-                         LEFT JOIN
-                     users u ON u.id = f.user_id
-                WHERE f.announcement_id = 6
-                GROUP BY f.id,
-                         u.full_name,
-                         u.image,
-                         f.rating,
-                         f.comment,
-                         f.create_date,
-                         f.like_count,
-                         f.dis_like_count,
-                         fi.images        
-                 """;
+      SELECT f.id,
+             u.full_name           AS feedbackUserFullName,
+             u.image               AS feedbackUserImage,
+             f.rating              AS rating,
+             f.comment             AS comment,
+             f.create_date         AS createdAt,
+             f.like_count          AS likeCount,
+             f.dis_like_count      AS disLikeCount,
+             array_agg(fi.images) AS images
+      FROM feedbacks f
+               LEFT JOIN
+           feedback_images fi ON fi.feedback_id = f.id
+               LEFT JOIN
+           users u ON u.id = f.user_id
+      WHERE f.announcement_id = ?
+      GROUP BY f.id,
+               u.full_name,
+               u.image,
+               f.rating,
+               f.comment,
+               f.create_date,
+               f.like_count,
+               f.dis_like_count
+    """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse
                 .builder()
                 .id(rs.getLong("id"))
-                .feedbackUserFullName(rs.getString("feedback_user_full_name"))
-                .feedbackUserImage(rs.getString("feedback_user_image"))
+                .feedbackUserFullName(rs.getString("feedbackUserFullName"))
+                .feedbackUserImage(rs.getString("feedbackUserImage"))
                 .rating(rs.getInt("rating"))
                 .comment(rs.getString("comment"))
-                .images(Arrays.asList(rs.getString("images").split(",")))
-                .createdAt(rs.getDate("created_at"))
-                .likeCount(rs.getInt("like_count"))
-                .disLikeCount(rs.getInt("dis_like_count"))
+                .images(Arrays.asList((String[]) rs.getArray("images").getArray()))
+                .createdAt(rs.getDate("createdAt"))
+                .likeCount(rs.getInt("likeCount"))
+                .disLikeCount(rs.getInt("disLikeCount"))
                 .build(), announcementId);
     }
+
 
     @Override
     public RatingCountResponse countRating(Long announcementId) {
