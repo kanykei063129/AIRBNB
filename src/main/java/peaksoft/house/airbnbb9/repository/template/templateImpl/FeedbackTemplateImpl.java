@@ -33,7 +33,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                        f.create_date AS created_at,
                        f.like_count AS like_count,
                        f.dis_like_count AS dis_like_count,
-                       fi.images
+                       fi.images AS images
                 FROM feedbacks f
                 LEFT JOIN feedback_images fi ON fi.feedback_id = f.id
                 LEFT JOIN users u ON u.id = f.user_id
@@ -46,7 +46,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                          f.create_date,
                          f.like_count,
                          f.dis_like_count,
-                         fi.images;           
+                         fi.images;         
                  """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse
@@ -56,7 +56,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                 .feedbackUserImage(rs.getString("feedback_user_image"))
                 .rating(rs.getInt("rating"))
                 .comment(rs.getString("comment"))
-                .images(Collections.singletonList(rs.getString("images")))
+                .images(Arrays.asList(rs.getString("images").split(",")))
                 .createdAt(rs.getDate("created_at"))
                 .likeCount(rs.getInt("like_count"))
                 .disLikeCount(rs.getInt("dis_like_count"))
