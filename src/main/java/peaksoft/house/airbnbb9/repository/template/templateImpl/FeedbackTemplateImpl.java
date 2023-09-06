@@ -26,18 +26,22 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
         String sql = """
                 SELECT f.id,
-                       u.full_name AS feedback_user_full_name,
-                       u.image AS feedback_user_image,
-                       f.rating AS rating,
-                       f.comment AS comment,
-                       f.create_date AS created_at,
-                       f.like_count AS like_count,
-                       f.dis_like_count AS dis_like_count,
-                       fi.images AS images
+                       u.full_name                AS feedbackUserFullName,
+                       u.image                    AS feedbackUserImage,
+                       f.rating                   AS rating,
+                       f.comment                  AS comment,
+                       f.create_date              AS createdAt,
+                       f.like_count               AS likeCount,
+                       f.dis_like_count           AS disLikeCount,
+                       (SELECT string_agg(fi.images, ',')
+                        FROM feedback_images fi
+                        WHERE fi.feedback_id= f.id) AS images
                 FROM feedbacks f
-                LEFT JOIN feedback_images fi ON fi.feedback_id = f.id
-                LEFT JOIN users u ON u.id = f.user_id
-                WHERE f.announcement_id = ?
+                         LEFT JOIN
+                     feedback_images fi ON fi.feedback_id = f.id
+                         LEFT JOIN
+                     users u ON u.id = f.user_id
+                WHERE f.announcement_id = 6
                 GROUP BY f.id,
                          u.full_name,
                          u.image,
@@ -46,7 +50,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                          f.create_date,
                          f.like_count,
                          f.dis_like_count,
-                         fi.images;         
+                         fi.images        
                  """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse
