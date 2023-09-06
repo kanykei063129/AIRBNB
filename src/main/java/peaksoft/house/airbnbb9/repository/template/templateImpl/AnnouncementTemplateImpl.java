@@ -714,4 +714,37 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .build(), announcementId);
     }
 
+    @Override
+    public AnnouncementsResponseProfile getAnnouncementsByIdAdmin(Long announcementId) {
+        String query = """
+                SELECT a.id          AS id,
+                       a.title       AS title,
+                       ai.images     AS images,
+                       a.house_type  AS houseType,
+                       a.max_guests  AS maxGuests,
+                       a.address     AS address,
+                       a.description AS description,
+                       u.full_name   AS fullName,
+                       u.email       AS email,
+                       u.image       AS image
+                FROM announcements a
+                         JOIN users u ON a.user_id = u.id
+                         JOIN announcement_images ai ON a.id = ai.announcement_id
+                WHERE a.id = ?
+                GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
+                """;
+        return jdbcTemplate.queryForObject(query, (rs, rowNum) -> AnnouncementsResponseProfile.builder()
+                .id(rs.getLong("id"))
+                .title(rs.getString("title"))
+                .images(Collections.singletonList(rs.getString("images")))
+                .houseType(rs.getString("houseType"))
+                .maxGuests(rs.getInt("maxGuests"))
+                .address(rs.getString("address"))
+                .description(rs.getString("description"))
+                .fullName(rs.getString("fullName"))
+                .email(rs.getString("email"))
+                .image(rs.getString("image"))
+                .build(), announcementId);
+    }
+
 }

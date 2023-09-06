@@ -38,4 +38,6 @@ public interface AnnouncementTemplate {
     GetAnnouncementResponse getAnnouncementById(Long announcementId);
 
     AnnouncementsResponseProfile getAnnouncementByIdProfile(Long announcementId);
+
+    AnnouncementsResponseProfile getAnnouncementsByIdAdmin(Long announcementId);
 }

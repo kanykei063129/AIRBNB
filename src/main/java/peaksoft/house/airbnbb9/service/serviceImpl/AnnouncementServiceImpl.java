@@ -227,4 +227,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 message("Announcement item not accepted or pending !!!").httpStatus(HttpStatus.OK).
                 build();
     }
+
+    @Override
+    public AnnouncementsResponseProfile getAnnouncementByIdAdmin(Long announcementId) {
+        return announcementTemplate.getAnnouncementsByIdAdmin(announcementId);
+    }
 }
