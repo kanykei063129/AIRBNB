@@ -122,35 +122,31 @@ public class UserTemplateImpl implements UserTemplate {
         return announcementResponses;
     }
 
-    private BookingResponse createBookingResponse(ResultSet rs, int rowNum) throws SQLException {
-        long bookingId = rs.getLong("id");
-        Long userId = rs.getLong("userId");
-
-        log.info("Creating BookingResponse for booking ID: " + bookingId);
-
-        List<AnnouncementResponse> announcements = getAnnouncementByUserId(userId);
-
-        log.info("Created BookingResponse successfully for booking ID: " + bookingId);
-
-        return BookingResponse.builder()
-                .bookingId(bookingId)
-                .announcementResponse(announcements)
-                .build();
-    }
-
     private List<BookingResponse> getBookingAnnouncementsByUserId(Long userId) {
         String sql = """
-                SELECT b.id as id, b.user_id as userId
-                FROM bookings as b
-                join users u on u.id = b.user_id
-                where u.id = ?;
-                """;
+                SELECT a.id as id, a.price as price, a.max_guests as max_guests, a.address as address,
+                    a.description as description, a.province as province, a.region as region, a.title as title,
+                    AVG(r.rating) as rating,
+                    (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                FROM announcements a
+                LEFT JOIN feedbacks r ON a.id = r.announcement_id
+                JOIN bookings b ON a.id = b.announcement_id 
+                WHERE b.user_id = ?
+                GROUP BY a.id, a.price, a.max_guests, a.address,
+                    a.description, a.province, a.region, a.title
+                                """;
 
-        log.info("Fetching bookings and announcements by user ID: " + userId);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> BookingResponse.builder()
+                .id(rs.getLong("id"))
+                .price(rs.getInt("price"))
+                .maxGuests(rs.getInt("max_guests"))
+                .address(rs.getString("address"))
+                .description(rs.getString("description"))
+                .province(rs.getString("province"))
+                .title(rs.getString("title"))
+                .images(Collections.singletonList(rs.getString("images")))
+                .rating(rs.getInt("rating"))
+                .build(), userId);
 
-        List<BookingResponse> bookingResponses = jdbcTemplate.query(sql, this::createBookingResponse, userId);
-
-        log.info("Fetched bookings and announcements by user ID: " + userId + " successfully!");
-        return bookingResponses;
     }
 }
