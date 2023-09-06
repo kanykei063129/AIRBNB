@@ -25,7 +25,6 @@ public class ProfileApi {
 
     private final UserService userService;
     private final AnnouncementService announcementService;
-    private final AnnouncementTemplate announcementTemplate;
 
     @Operation(summary = "User profile",
             description = "Any registered user can access their own profile")

@@ -28,6 +28,7 @@ import peaksoft.house.airbnbb9.service.BookingService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +66,11 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Invalid or incomplete information!");
         }
         if (request.getCheckIn().isAfter(request.getCheckOut()) || request.getCheckIn().equals(request.getCheckOut())) {
-            throw new BadRequestException("Check-in date must be before check-out date!");
+            throw new BadRequestException("Dates are incorrect!");
         }
+        List<Booking> existingBookings = bookingRepository.findByAnnouncementId(request.getAnnouncementId());
+
+        findTakenDates(request.getCheckIn(), request.getCheckOut(), existingBookings);
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setAnnouncement(announcement);
@@ -106,12 +110,15 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getPosition().equals(Position.ACCEPTED)) {
             booking.setDate(LocalDate.now());
         }
+        List<Booking> existingBookings = bookingRepository.findByAnnouncementId(request.getAnnouncementId());
+
+        findTakenDates(request.getCheckIn(), request.getCheckOut(), existingBookings);
         booking.setPricePerDay(BigDecimal.valueOf(announcement.getPrice()));
         booking.setCheckIn(request.getCheckIn());
         booking.setCheckOut(request.getCheckOut());
 
         Map<String, Object> chargeParams = new HashMap<>();
-        chargeParams.put("amount", (int) (request.getAmount() * 100)); // Сумма в центах
+        chargeParams.put("amount", (int) (request.getAmount() * 100));
         chargeParams.put("currency", "USD");
         chargeParams.put("source", request.getToken());
         Charge charge = Charge.create(chargeParams);
@@ -122,5 +129,12 @@ public class BookingServiceImpl implements BookingService {
                 .httpStatus(HttpStatus.OK)
                 .message("The dates has been updated! Customer: " + charge.getCustomer())
                 .build();
+    }
+    private void findTakenDates(LocalDate checkIn, LocalDate checkOut, List<Booking> bookings) {
+        for (Booking booking : bookings) {
+            if (booking.getCheckOut().isAfter(checkIn) && booking.getCheckIn().isBefore(checkOut)) {
+                throw new BadRequestException("Intermediate dates of your booking are taken!");
+            }
+        }
     }
 }
