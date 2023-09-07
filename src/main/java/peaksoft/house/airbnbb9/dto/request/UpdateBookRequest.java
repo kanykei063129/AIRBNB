@@ -9,11 +9,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class UpdateBookRequest {
+    @Min(1)
+    private double amount;
     private Long announcementId;
     private LocalDate checkIn;
     private LocalDate checkOut;
     private Long bookingId;
-    @Min(1)
-    private double amount;
     private String token;
 }

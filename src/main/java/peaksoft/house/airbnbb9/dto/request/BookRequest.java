@@ -9,10 +9,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class BookRequest {
+    @Min(1)
+    private double amount;
     private Long announcementId;
     private LocalDate checkIn;
     private LocalDate checkOut;
-    @Min(1)
-    private double amount;
     private String token;
 }
