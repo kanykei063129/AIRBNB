@@ -1,4 +1,4 @@
-<!--<configuration>-->
+<configuration>
 <!--    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>-->
 <!--    <appender name="LogzioLogbackAppender" class="io.logz.logback.LogzioLogbackAppender">-->
 <!--        <token>WMNfjyRAvvCIqrgcAsnFydVrsXpfhuVv</token>-->
@@ -12,4 +12,4 @@
 <!--    <root level="debug">-->
 <!--        <appender-ref ref="LogzioLogbackAppender"/>-->
 <!--    </root>-->
-<!--</configuration>-->
+</configuration>
