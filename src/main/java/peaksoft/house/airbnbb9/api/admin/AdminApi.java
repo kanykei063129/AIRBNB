@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
+import peaksoft.house.airbnbb9.dto.response.AnnouncementsResponseProfile;
 import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
@@ -46,6 +47,15 @@ public class AdminApi {
                                                                                      @RequestParam(defaultValue = "15") int pageSize) {
         return announcementService.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
     }
+
+    @Operation(summary = "Get By Id announcements",
+            description = "Get By Id  announcements")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/getByIdAnnouncements")
+    public AnnouncementsResponseProfile getAnnouncementByIdAdmin(@RequestParam Long announcementId) {
+        return announcementService.getAnnouncementByIdAdmin(announcementId);
+    }
+
 
     @Operation(summary = "Blocking announcements",
             description = "Only admin can block announcements ")

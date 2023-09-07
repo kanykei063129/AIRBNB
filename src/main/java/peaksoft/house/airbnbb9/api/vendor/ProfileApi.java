@@ -45,7 +45,7 @@ public class ProfileApi {
     }
 
     @Operation(summary = "Get announcement by id", description = "Get announcement by id into two position as request to book or update booking date")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER')")
     @GetMapping("/getAnnouncementProfile/{announcementId}")
     public AnnouncementsResponseProfile getAnnouncementByIdProfile(@PathVariable Long announcementId) {
         return announcementService.getAnnouncementsByIdProfile(announcementId);
