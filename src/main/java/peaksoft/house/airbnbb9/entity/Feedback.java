@@ -23,6 +23,7 @@ public class Feedback {
             allocationSize = 1,
             initialValue = 6)
     private Long id;
+    @Column(length = 1000)
     private String comment;
     @ElementCollection
     private List<String> images;
