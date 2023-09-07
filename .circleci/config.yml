@@ -20,14 +20,7 @@ jobs:
           command: |
             ssh -o "StrictHostKeyChecking=no" -i ./privateKey.pem ubuntu@$HOST '
             if [[ ! $(sudo docker -v) ]]; then
-            sudo snap install docker &
-               while true; do
-                  if sudo docker -v >/dev/null 2>&1; then
-                     echo "Docker installation completed."
-                     break
-                  fi
-                  sleep 10
-               done
+               sudo snap install docker
             fi'
   build-image:
     docker:
