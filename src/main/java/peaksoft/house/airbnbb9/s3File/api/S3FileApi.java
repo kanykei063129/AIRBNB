@@ -25,7 +25,6 @@ public class S3FileApi {
     public Map<String, String> uploadFile(@RequestParam MultipartFile file) {
         return s3FileService.uploadFile(file);
     }
-
     @Operation(summary = "Delete file", description = "This is delete file ")
     @DeleteMapping
     public Map<String, String> deleteFile(@RequestParam String fileName) {

@@ -141,7 +141,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "ORDER BY a.price " + (price.equalsIgnoreCase("asc") ? "ASC" : "DESC");
         }
         log.info("Filtering announcements for vendors with SQL: " + sql);
-
         List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
