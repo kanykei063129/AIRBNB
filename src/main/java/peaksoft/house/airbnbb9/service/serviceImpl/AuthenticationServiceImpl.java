@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +37,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    @Value("${stripe.apiKey}")
+    private String STRIPE_API;
 
 
     @PostConstruct
@@ -49,7 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private void setUp(){
-        Stripe.apiKey = "sk_test_51NdWEALAAx1GCzR7I1XAEu92hke6xAF6AkpHCy52uX94MvdPVgjlCVmpxXXJwUMnNtTpTBjDJTMo95HF0FmZqgN600px1alzRQ";
+        Stripe.apiKey = STRIPE_API;
     }
 
     @Override
