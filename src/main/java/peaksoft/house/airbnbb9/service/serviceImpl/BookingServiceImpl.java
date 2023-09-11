@@ -1,10 +1,12 @@
 package peaksoft.house.airbnbb9.service.serviceImpl;
 
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +30,6 @@ import peaksoft.house.airbnbb9.service.BookingService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +39,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingServiceImpl implements BookingService {
+
     private final AnnouncementRepository announcementRepository;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
+    private final AuthenticationServiceImpl authenticationService;
 
-    private User getAuthenticatedRoleUser() {
+
+    public User getAuthenticatedRoleUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
         User user = userRepository.getUserByEmail(login).orElseThrow(() ->
@@ -79,6 +83,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setPricePerDay(BigDecimal.valueOf(announcement.getPrice()));
         booking.setPosition(Position.ACCEPTED);
 
+        setUp();
         Map<String, Object> chargeParams = new HashMap<>();
         chargeParams.put("amount", (int) (request.getAmount() * 100)); // Сумма в центах
         chargeParams.put("currency", "USD");
@@ -117,6 +122,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setCheckIn(request.getCheckIn());
         booking.setCheckOut(request.getCheckOut());
 
+        setUp();
         Map<String, Object> chargeParams = new HashMap<>();
         chargeParams.put("amount", (int) (request.getAmount() * 100));
         chargeParams.put("currency", "USD");
@@ -130,7 +136,10 @@ public class BookingServiceImpl implements BookingService {
                 .message("The dates has been updated! Customer: " + charge.getCustomer())
                 .build();
     }
-    private void findTakenDates(LocalDate checkIn, LocalDate checkOut, List<Booking> bookings) {
+    private void setUp(){
+        Stripe.apiKey = "sk_test_51NdWEALAAx1GCzR7I1XAEu92hke6xAF6AkpHCy52uX94MvdPVgjlCVmpxXXJwUMnNtTpTBjDJTMo95HF0FmZqgN600px1alzRQ";
+    }
+    public void findTakenDates(LocalDate checkIn, LocalDate checkOut, List<Booking> bookings) {
         for (Booking booking : bookings) {
             if (booking.getCheckOut().isAfter(checkIn) && booking.getCheckIn().isBefore(checkOut)) {
                 throw new BadRequestException("Intermediate dates of your booking are taken!");
