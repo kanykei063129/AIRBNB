@@ -10,7 +10,6 @@ import peaksoft.house.airbnbb9.dto.response.AnnouncementsResponseProfile;
 import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.PriceType;
-import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import peaksoft.house.airbnbb9.service.UserService;
 

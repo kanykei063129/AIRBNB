@@ -2,6 +2,7 @@ package peaksoft.house.airbnbb9.repository.template.templateImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -671,30 +673,46 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public AnnouncementsResponseProfile getAnnouncementByIdProfile(Long announcementId) {
         String query = """
-                SELECT a.id AS id,                                   
-                       a.title                                 AS title,
-                       ai.images                               AS images,
-                       a.house_type                            AS houseType,
-                       a.max_guests                            AS maxGuests,
-                       a.address                               AS address,
-                       a.description                           AS description,
-                       u.full_name                             AS fullName,
-                       u.email                                 AS email,
-                       u.image                                 AS image,
-                       STRING_AGG(DISTINCT u2.full_name, ', ') AS bookedByFullName,
-                       STRING_AGG(DISTINCT u2.email, ', ')     AS bookedByEmail,
-                       STRING_AGG(DISTINCT u3.full_name, ', ') AS favoriteByFullName,
-                       STRING_AGG(DISTINCT u3.email, ', ')     AS favoriteByEmail
+                SELECT a.id                                                       AS id,
+                       a.title                                                    AS title,
+                       ai.images                                                  AS images,
+                       a.house_type                                               AS houseType,
+                       a.max_guests                                               AS maxGuests,
+                       a.address                                                  AS address,
+                       a.description                                              AS description,
+                       u.full_name                                                AS fullName,
+                       u.email                                                    AS email,
+                       u.image                                                    AS image,
+                       STRING_AGG(DISTINCT u2.full_name, ', ')                    AS bookedByFullName,
+                       STRING_AGG(DISTINCT CAST(bu.price_per_day AS TEXT), ', ')  AS priceDay,
+                       STRING_AGG(DISTINCT CAST(bu.check_in AS TEXT), ', ')       AS checkIn,
+                       STRING_AGG(DISTINCT CAST(bu.check_out AS TEXT), ', ')      AS checkOut,
+                       STRING_AGG(DISTINCT u2.email, ', ')                        AS bookedByEmail,
+                       STRING_AGG(DISTINCT u3.full_name, ', ')                    AS favoriteByFullName,
+                       STRING_AGG(DISTINCT u3.email, ', ')                        AS favoriteByEmail,
+                       STRING_AGG(DISTINCT u4.full_name, ', ')                    AS bookedByUserFullName,
+                       STRING_AGG(DISTINCT u4.email, ', ')                        AS bookedByEmail,
+                       STRING_AGG(DISTINCT fb.comment, ', ')                      AS comments,
+                       STRING_AGG(DISTINCT CAST(fb.create_date AS text), ', ')    AS createDateFeedback,
+                       STRING_AGG(DISTINCT CAST(fb.rating AS text), ', ')         AS feedbackRating,
+                       STRING_AGG(DISTINCT CAST(fb.like_count AS text), ', ')     AS likeCount,
+                       STRING_AGG(DISTINCT CAST(fb.dis_like_count AS text), ', ') AS disLikeCount,
+                       STRING_AGG(DISTINCT u5.full_name, ', ')                    AS feedbacksUserName,
+                       STRING_AGG(DISTINCT u5.image, ', ')                        AS feedbacksImages
                 FROM announcements a
                          JOIN users u ON a.user_id = u.id
                          JOIN announcement_images ai ON a.id = ai.announcement_id
                          LEFT JOIN bookings b ON a.id = b.announcement_id
+                         LEFT JOIN bookings bu ON u.id = bu.announcement_id
                          LEFT JOIN users u2 ON b.user_id = u2.id
                          LEFT JOIN favorites f ON a.id = f.announcement_id
                          LEFT JOIN users u3 ON f.user_id = u3.id
+                         LEFT JOIN feedbacks fb ON a.id = fb.announcement_id
+                         LEFT JOIN users u4 ON f.user_id = u4.id
+                         LEFT JOIN users u5 ON fb.user_id = u5.id
                 WHERE a.id = ?
                 GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
-                      """;
+                                                      """;
         return jdbcTemplate.queryForObject(query, (rs, rowNum) -> AnnouncementsResponseProfile.builder()
                 .id(rs.getLong("id"))
                 .title(rs.getString("title"))
@@ -706,10 +724,20 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .fullName(rs.getString("fullName"))
                 .email(rs.getString("email"))
                 .image(rs.getString("image"))
-                .bookedByFullName(Collections.singletonList(rs.getString("bookedByFullName")))
-                .bookedByEmail(Collections.singletonList(rs.getString("bookedByEmail")))
-                .favoriteByFullName(Collections.singletonList(rs.getString("favoriteByFullName")))
-                .favoriteByEmail(Collections.singletonList(rs.getString("favoriteByEmail")))
+                .bookedByFullName(rs.getString("bookedByUserFullName"))
+                .bookedByEmail(rs.getString("bookedByEmail"))
+                .priceDay(rs.getInt("priceDay"))
+                .checkIn(rs.getDate("checkIn").toLocalDate())
+                .checkOut(rs.getDate("checkOut").toLocalDate())
+                .createDateFeedback(rs.getDate("createDateFeedback").toLocalDate())
+                .favoriteByFullName(rs.getString("favoriteByFullName"))
+                .favoriteByEmail(rs.getString("favoriteByEmail"))
+                .comments(rs.getString("comments"))
+                .feedbackRating(rs.getInt("feedbackRating"))
+                .likeCount(rs.getInt("likeCount"))
+                .disLikeCount(rs.getInt("disLikeCount"))
+                .feedbacksUserName(rs.getString("feedbacksUserName"))
+                .feedbacksImages(rs.getString("feedbacksImages"))
                 .build(), announcementId);
     }
 
