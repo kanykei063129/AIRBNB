@@ -74,7 +74,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         }
         log.info("Filtering announcements with SQL: " + sql);
 
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -84,7 +84,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
-                .build());
+                .build(),params.toArray());
 
         log.info("Announcements filtered successfully!");
         return results;
@@ -141,7 +141,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "ORDER BY a.price " + (price.equalsIgnoreCase("asc") ? "ASC" : "DESC");
         }
         log.info("Filtering announcements for vendors with SQL: " + sql);
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -152,7 +152,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .isFavorite(rs.getBoolean("is_favorite"))
-                .build());
+                .build(),params.toArray());
 
         log.info("Announcements filtered successfully for vendors!");
         return results;
@@ -471,14 +471,14 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         if (rating != null && !rating.isEmpty()) {
             sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
         } else if (price != null && !price.equals(PriceType.LOW_TO_HIGH)) {
-            sql += "ORDER BY a.price " + (price.equals("LOW_TO_HIGH") ? "ASC" : "DESC");
-        } else if (price != null && !price.equals(PriceType.HIGH_TO_LOW)) {
-            sql += "ORDER BY a.price " + (price.equals("HIGH_TO_LOW") ? "DESC" : "ASC");
+            sql += "ORDER BY a.price " + "DESC";
+        } else if (price != null) {
+            sql += "ORDER BY a.price " + "ASC";
         }
 
         log.info("Fetching announcements with filters: HouseType - " + houseType + ", Rating - " + rating + ", PriceType - " + price);
 
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql, params.toArray(), (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -488,7 +488,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
-                .build());
+                .build(),params.toArray());
 
         log.info("Fetched announcements with filters successfully!");
         return results;

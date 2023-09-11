@@ -1,9 +1,6 @@
 package peaksoft.house.airbnbb9.dto.response;
 
 import lombok.*;
-import peaksoft.house.airbnbb9.entity.User;
-import peaksoft.house.airbnbb9.enums.HouseType;
-
 import java.util.List;
 
 @Getter
