@@ -40,11 +40,10 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.region,
                        a.title,
                        r.rating,
-                       (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id ) as images
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
-                WHERE 1 = 1
-                """;
+                                """;
         log.info("Starting to filter announcements.");
 
         List<Object> params = new ArrayList<>();
@@ -86,7 +85,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
-                .build(),params.toArray());
+                .build(), params.toArray());
 
         log.info("Announcements filtered successfully!");
         return results;
@@ -105,7 +104,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                        a.title,
                                        r.rating,
                                        CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END                       as is_favorite,
-                                       (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
                                 FROM announcements a
                                          LEFT JOIN
                                      favorites f ON a.id = f.announcement_id
@@ -154,7 +153,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .isFavorite(rs.getBoolean("is_favorite"))
-                .build(),params.toArray());
+                .build(), params.toArray());
 
         log.info("Announcements filtered successfully for vendors!");
         return results;
@@ -172,8 +171,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.region        as region,
                        a.title         as title,
                        AVG(r.rating)   as rating,
-                       (SELECT ai.images FROM announcement_images ai
-                        WHERE ai.announcement_id = a.id LIMIT 1) as images
+                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                          WHERE a.position ='ACCEPTED'
@@ -211,10 +209,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.title       AS title,
                        a.position    AS position,
                        AVG(r.rating) AS rating,
-                       (SELECT ai.images
-                        FROM announcement_images ai
-                        WHERE ai.announcement_id = a.id
-                        LIMIT 1)     AS images
+                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id)     AS images
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                 WHERE a.position = 'MODERATION'
@@ -283,10 +278,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.title,     
                        a.price,
                        AVG(f.rating) AS rating,   
-                       (SELECT ai.images 
-                       FROM announcement_images ai 
-                       WHERE ai.announcement_id = a.id 
-                       LIMIT 1) AS image
+                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) AS image
                 FROM announcements a  
                 LEFT JOIN feedbacks f 
                 ON a.id = f.announcement_id 
@@ -370,10 +362,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                a.region as region,
                                a.title as title,
                                AVG(r.rating) as rating,
-                               (SELECT ai.images
-                                FROM announcement_images ai
-                                WHERE ai.announcement_id = a.id
-                                LIMIT 1) as images
+                               (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
                         WHERE (a.region ILIKE lower(concat('%', ?, '%'))
@@ -413,7 +402,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.region        as region,
                        a.title         as title,
                        AVG(r.rating)   as rating,
-                       (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                 WHERE 
@@ -448,7 +437,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
         String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, "
-                + "(SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images "
+                + "(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images "
                 + "FROM announcements a "
                 + "LEFT JOIN feedbacks r ON a.id = r.announcement_id "
                 + "WHERE 1=1 ";
@@ -490,7 +479,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
-                .build(),params.toArray());
+                .build(), params.toArray());
 
         log.info("Fetched announcements with filters successfully!");
         return results;
@@ -509,7 +498,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                a.region        as region,
                                a.title         as title,
                                AVG(r.rating)   as rating,
-                               (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                               (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
                         GROUP BY a.id, a.price, a.max_guests, a.address,
@@ -551,7 +540,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                a.region        as region,
                                a.title         as title,
                                AVG(r.rating)   as rating,
-                               (SELECT ai.images FROM announcement_images ai WHERE ai.announcement_id = a.id LIMIT 1) as images
+                               (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
                         GROUP BY a.id, a.price, a.max_guests, a.address,
