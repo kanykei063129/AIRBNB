@@ -1,6 +1,8 @@
 package peaksoft.house.airbnbb9.dto.response;
 
 import lombok.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -19,9 +21,18 @@ public class AnnouncementsResponseProfile {
     private String fullName;
     private String email;
     private String image;
-    private List<String> bookedByFullName;
-    private List<String> bookedByEmail;
-    private List<String> favoriteByFullName;
-    private List<String> favoriteByEmail;
-
+    private String bookedByFullName;
+    private String bookedByEmail;
+    private Integer priceDay;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
+    private String favoriteByFullName;
+    private String favoriteByEmail;
+    private String comments;
+    private LocalDate createDateFeedback;
+    private Integer feedbackRating;
+    private Integer likeCount;
+    private Integer disLikeCount;
+    private String feedbacksUserName;
+    private String feedbacksImages;
 }
