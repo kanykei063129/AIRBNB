@@ -1,24 +1,13 @@
 package peaksoft.house.airbnbb9.mappers;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementInnerPageResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
-import peaksoft.house.airbnbb9.enums.HouseType;
-import peaksoft.house.airbnbb9.enums.Region;
-import peaksoft.house.airbnbb9.enums.Status;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -44,6 +33,7 @@ public class AnnouncementViewMapper {
 
         return averageRating;
     }
+
     public Double calculateRating2() {
         String sql = """
                  SELECT
@@ -62,28 +52,7 @@ public class AnnouncementViewMapper {
 
         return averageRating;
     }
-    public AnnouncementInnerPageResponse entityToDtoConverting(Announcement announcement) {
-        if (announcement == null) {
-            return null;
-        }
-        log.info("Converting Announcement entity to AnnouncementInnerPageResponse");
 
-        AnnouncementInnerPageResponse response = new AnnouncementInnerPageResponse();
-        response.setId(announcement.getId());
-        response.setImages(announcement.getImages());
-        response.setHouseType(announcement.getHouseType());
-        response.setMaxGuests(announcement.getMaxGuests());
-        response.setAddress(announcement.getAddress());
-        response.setDescription(announcement.getDescription());
-        response.setPrice(BigDecimal.valueOf(announcement.getPrice()));
-        response.setUserID(announcement.getUser().getId());
-        response.setUserImage(announcement.getUser().getImage());
-        response.setUserFullName(announcement.getUser().getFullName());
-        response.setUserEmail(announcement.getUser().getEmail());
-
-        log.info("Converted Announcement entity to AnnouncementInnerPageResponse successfully");
-        return response;
-    }
     private void dtoToEntityConverting(AnnouncementRequest request, Announcement announcement) {
         announcement.setTitle(request.getTitle());
         announcement.setDescription(request.getDescription());

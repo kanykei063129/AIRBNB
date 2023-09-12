@@ -10,9 +10,6 @@ import peaksoft.house.airbnbb9.dto.response.BookingResponse;
 import peaksoft.house.airbnbb9.dto.response.UserResponse;
 import peaksoft.house.airbnbb9.repository.template.UserTemplate;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

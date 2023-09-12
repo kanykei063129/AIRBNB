@@ -38,7 +38,6 @@ public class AdminApi {
         return announcementService.getApplicationById(applicationId);
     }
 
-
     @Operation(summary = "Get all announcements application and pagination",
             description = "Get all  announcements by status 'MODERATION' and added pagination")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -55,7 +54,6 @@ public class AdminApi {
     public AnnouncementsResponseProfile getAnnouncementByIdAdmin(@RequestParam Long announcementId) {
         return announcementService.getAnnouncementByIdAdmin(announcementId);
     }
-
 
     @Operation(summary = "Blocking announcements",
             description = "Only admin can block announcements ")

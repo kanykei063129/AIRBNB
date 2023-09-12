@@ -43,6 +43,7 @@ public interface AnnouncementService {
     AnnouncementsResponseProfile getAnnouncementsByIdProfile(Long announcementId);
 
     SimpleResponse blockedAnnouncementById(Long announcementId);
+
     AnnouncementsResponseProfile getAnnouncementByIdAdmin(Long announcementId);
 
 }

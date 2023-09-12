@@ -38,8 +38,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementTemplate announcementTemplate;
     private final JavaMailSender javaMailSender;
     private final AnnouncementViewMapper viewMapper;
-    private final JwtService jwtService;
-    private final FavoriteRepository favoriteRepository;
 
     @Override
     public SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest request) {
@@ -61,7 +59,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         } else {
             throw new BadRequestException(" You can upload up to 4 photos !");
         }
-
         if (request.getMaxGuests() <= 0) {
             throw new BadRequestException("The number of guests cannot be negative and equal to zero!");
         }

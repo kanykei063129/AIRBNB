@@ -26,11 +26,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>io.logz.log4j2</groupId>-->
-<!--      <artifactId>logzio-log4j2-appender</artifactId>-->
-<!--      <version>1.0.18</version>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -41,27 +36,19 @@
       <version>6.1.1</version>
     </dependency>
     <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.200</version> <!-- Замените версию на актуальную -->
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
     <dependency>
-
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
       <version>6.1.1</version>
     </dependency>
-
-<!--    <dependency>-->
-<!--      <groupId>io.swagger.core.v3</groupId>-->
-<!--      <artifactId>swagger-core</artifactId>-->
-<!--      <version>2.1.4</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>jakarta.platform</groupId>-->
-<!--      <artifactId>jakarta.jakartaee-api</artifactId>-->
-<!--      <version>9.0.0</version> &lt;!&ndash; Replace with the version compatible with your project &ndash;&gt;-->
-<!--      <scope>provided</scope>-->
-<!--    </dependency>-->
     <dependency>
 
       <groupId>org.springframework.boot</groupId>
@@ -143,21 +130,16 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
       </dependency>
-<!--    <dependency>-->
-<!--      <groupId>software.amazon.awssdk</groupId>-->
-<!--      <artifactId>s3</artifactId>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-s3</artifactId>
-      <version>1.12.146</version>
+      <version>1.12.232</version>
     </dependency>
     <dependency>
       <groupId>com.stripe</groupId>
       <artifactId>stripe-java</artifactId>
       <version>22.0.0</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -168,7 +150,6 @@
 <!--      <artifactId>flyway-core</artifactId>-->
 <!--      <version>9.16.0</version>-->
 <!--    </dependency>-->
-
   </dependencies>
   <build>
     <plugins>
