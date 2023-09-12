@@ -33,8 +33,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AnnouncementVendorServiceImpl implements AnnouncementVendorService {
-    private final BookingRepository bookingRepository;
 
+    private final BookingRepository bookingRepository;
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementTemplate announcementTemplate;
     private final JwtService jwtService;

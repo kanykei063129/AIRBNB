@@ -13,6 +13,5 @@ public class FeedbackRequest {
 
     @Max(value = 5,message = "Maximum score 5")
     private int rating;
-
     private String comment;
 }

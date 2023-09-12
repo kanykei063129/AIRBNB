@@ -10,8 +10,8 @@ public interface UserService {
     List<UserResponse> getAllUsers();
 
     SimpleResponse deleteUserById(Long userId);
+
     UserProfileResponse getUserProfile();
 
     UserResponse getByIdUser(Long userId,String value);
-
 }

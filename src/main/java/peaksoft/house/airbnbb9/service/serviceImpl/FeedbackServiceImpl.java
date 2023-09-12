@@ -129,7 +129,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public SimpleResponse updateFeedback(Long feedbackId, FeedbackUpdateRequest feedbackUpdateRequest) {
         User user = jwtService.getAuthentication();
-        if (!feedbackRepository.existsFeedbackById(feedbackId)) {
+        if (feedbackRepository.existsFeedbackById(feedbackId)) {
             throw new NotFoundException("Feedback with id: %s not found".formatted(feedbackId));
         }
         Feedback feedback = feedbackRepository.getFeedbackByIdAndUserId(feedbackId, user.getId()).orElseThrow(
@@ -152,7 +152,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public SimpleResponse deleteFeedback(Long feedbackId) {
         User user = jwtService.getAuthentication();
-        if (!feedbackRepository.existsFeedbackById(feedbackId)) {
+        if (feedbackRepository.existsFeedbackById(feedbackId)) {
             throw new NotFoundException("Feedback with id: %s not found".formatted(feedbackId));
         }
         Feedback feedback = feedbackRepository.getFeedbackByIdAndUserId(feedbackId, user.getId()).orElseThrow(

@@ -16,10 +16,8 @@ public class BookedResponse {
 
     @JsonFormat(pattern = "dd.MM.yy")
     private LocalDate checkIn;
-
     @JsonFormat(pattern = "dd.MM.yy")
     private LocalDate checkOut;
-
     private String userName;
     private String userEmail;
     private String userImage;
