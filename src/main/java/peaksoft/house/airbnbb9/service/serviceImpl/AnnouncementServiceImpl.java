@@ -196,7 +196,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
+    public FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
         return announcementTemplate.getAllAnnouncementsFilters(houseType, rating, price);
     }
 

@@ -435,7 +435,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
+    public FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
         String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, "
                 + "(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images "
                 + "FROM announcements a "
@@ -469,7 +469,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
         log.info("Fetching announcements with filters: HouseType - " + houseType + ", Rating - " + rating + ", PriceType - " + price);
 
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -478,11 +478,13 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
                 .images(Collections.singletonList(rs.getString("images")))
-                .rating(rs.getInt("rating"))
+                .rating(rs.getDouble("rating"))
                 .build(), params.toArray());
 
+        FilterResponse filterResponse = new FilterResponse(announcementResponses);
+
         log.info("Fetched announcements with filters successfully!");
-        return results;
+        return filterResponse;
     }
 
     @Override
