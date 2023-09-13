@@ -2,7 +2,6 @@ package peaksoft.house.airbnbb9.repository.template.templateImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,7 @@ import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 
-import java.time.LocalDate;
+
 import java.util.*;
 
 @Component
@@ -26,7 +25,6 @@ import java.util.*;
 public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     private final JdbcTemplate jdbcTemplate;
-    private final AnnouncementRepository announcementRepository;
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
@@ -39,8 +37,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province,
                        a.region,
                        a.title,
-                       r.rating,
-                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id ) as images
+                       r.rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                                 """;
@@ -66,7 +63,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "AND a.price IS NOT NULL ";
         }
 
-        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ";
+        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating";
 
         if (rating != null && !rating.isEmpty()) {
             sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
@@ -83,7 +80,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build(), params.toArray());
 
@@ -103,8 +99,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                        a.region,
                                        a.title,
                                        r.rating,
-                                       CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END                       as is_favorite,
-                                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
+                                       CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END                       as is_favorite
                                 FROM announcements a
                                          LEFT JOIN
                                      favorites f ON a.id = f.announcement_id
@@ -134,7 +129,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "AND a.price IS NOT NULL ";
         }
 
-        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images,is_favorite ";
+        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating,is_favorite ";
 
         if (rating != null && !rating.isEmpty()) {
             sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
@@ -150,7 +145,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .isFavorite(rs.getBoolean("is_favorite"))
                 .build(), params.toArray());
@@ -158,6 +152,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         log.info("Announcements filtered successfully for vendors!");
         return results;
     }
+
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncements() {
@@ -170,8 +165,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province      as province,
                        a.region        as region,
                        a.title         as title,
-                       AVG(r.rating)   as rating,
-                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
+                       AVG(r.rating)   as rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                          WHERE a.position ='ACCEPTED'
@@ -189,7 +183,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build());
 
@@ -208,8 +201,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province    AS province,
                        a.title       AS title,
                        a.position    AS position,
-                       AVG(r.rating) AS rating,
-                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id)     AS images
+                       AVG(r.rating) AS rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                 WHERE a.position = 'MODERATION'
@@ -230,7 +222,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build(), pageSize, offset);
 
@@ -277,8 +268,10 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.description, 
                        a.title,     
                        a.price,
-                       AVG(f.rating) AS rating,   
-                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) AS image
+                       AVG(f.rating) AS rating,
+                           (SELECT string_agg(ai.images, ',')
+                           FROM announcement_images ai
+                           WHERE ai.announcement_id = a.id) AS images
                 FROM announcements a  
                 LEFT JOIN feedbacks f 
                 ON a.id = f.announcement_id 
@@ -296,8 +289,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
         List<PopularHouseResponse> popularHouses = jdbcTemplate.query(sql, (rs, rowNum) -> PopularHouseResponse.builder()
                 .title(rs.getString("title"))
-                .image(rs.getString("image"))
                 .address(rs.getString("address"))
+                .images(Arrays.asList(rs.getString("images").split(",")))
                 .price(rs.getInt("price"))
                 .rating(rs.getDouble("rating"))
                 .build());
@@ -361,8 +354,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                a.province as province,
                                a.region as region,
                                a.title as title,
-                               AVG(r.rating) as rating,
-                               (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
+                               AVG(r.rating) as rating
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
                         WHERE (a.region ILIKE lower(concat('%', ?, '%'))
@@ -382,7 +374,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .description(rs.getString("description"))
                         .province(rs.getString("province"))
                         .title(rs.getString("title"))
-                        .images(Collections.singletonList(rs.getString("images")))
                         .rating(rs.getInt("rating"))
                         .build(), word, word, word, word, minLat, maxLat, minLong, maxLong);
                 log.info(String.format("Performing global search with key word:%s and get nearby user's location", word));
@@ -401,8 +392,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province      as province,
                        a.region        as region,
                        a.title         as title,
-                       AVG(r.rating)   as rating,
-                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
+                       AVG(r.rating)   as rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
                 WHERE 
@@ -427,7 +417,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build(), word, word, word, word);
         log.info("Global search completed successfully!");
@@ -436,11 +425,13 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
-        String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, "
-                + "(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images "
-                + "FROM announcements a "
-                + "LEFT JOIN feedbacks r ON a.id = r.announcement_id "
-                + "WHERE 1=1 ";
+
+        String sql = """
+                SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating
+                                FROM announcements a
+                                LEFT JOIN feedbacks r ON a.id = r.announcement_id
+                                WHERE 1=1
+                """;
 
         List<Object> params = new ArrayList<>();
 
@@ -457,7 +448,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "AND a.price IS NOT NULL ";
         }
 
-        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ";
+        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating";
 
         if (rating != null && !rating.isEmpty()) {
             sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
@@ -477,7 +468,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build(), params.toArray());
 
@@ -497,8 +487,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                a.province      as province,
                                a.region        as region,
                                a.title         as title,
-                               AVG(r.rating)   as rating,
-                               (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
+                               AVG(r.rating)   as rating
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
                         GROUP BY a.id, a.price, a.max_guests, a.address,
@@ -521,7 +510,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                             .description(rs.getString("description"))
                             .province(rs.getString("province"))
                             .title(rs.getString("title"))
-                            .images(Collections.singletonList(rs.getString("images")))
                             .rating(rs.getInt("rating"))
                             .build(),
                     size, offset
@@ -539,8 +527,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                a.province      as province,
                                a.region        as region,
                                a.title         as title,
-                               AVG(r.rating)   as rating,
-                               (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images
+                               AVG(r.rating)   as rating
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
                         GROUP BY a.id, a.price, a.max_guests, a.address,
@@ -560,7 +547,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                             .description(rs.getString("description"))
                             .province(rs.getString("province"))
                             .title(rs.getString("title"))
-                            .images(Collections.singletonList(rs.getString("images")))
                             .rating(rs.getInt("rating"))
                             .build()
             );
@@ -573,7 +559,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     }
 
     @Override
-    public AnnouncementResponse getApplicationById(Long id) {
+    public List<AnnouncementResponse> getApplicationById(Long id) {
         String sql = """
                 SELECT a.id            as id,
                        a.position      as position,
@@ -598,9 +584,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 """;
         log.info("Retrieving announcement with ID: {}", id);
 
-        AnnouncementResponse result;
+        List<AnnouncementResponse> result;
         try {
-            result = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+            result = Collections.singletonList(jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
                 String position = rs.getString("position");
                 if (!"MODERATION".equals(position)) {
                     throw new NotFoundException("Application with ID " + id + " not found.");
@@ -613,7 +599,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .description(rs.getString("description"))
                         .province(rs.getString("province"))
                         .title(rs.getString("title"))
-                        .images(Collections.singletonList(rs.getString("images")))
                         .user(User.builder()
                                 .id(rs.getLong("user_id"))
                                 .fullName(rs.getString("username"))
@@ -621,7 +606,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                 .role(Role.valueOf(rs.getString("role")))
                                 .build())
                         .build();
-            }, id);
+            }, id));
 
             log.info("Retrieved announcement with ID {} successfully!", id);
         } catch (EmptyResultDataAccessException ex) {

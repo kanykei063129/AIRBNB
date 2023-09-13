@@ -18,7 +18,7 @@ import java.util.List;
 public class AnnouncementResponse {
     private Long id;
     private HouseType houseType;
-    private List<String> images;
+    private AnnouncementImagesResponse images;
     private int price;
     private Region region;
     private String address;
@@ -33,7 +33,7 @@ public class AnnouncementResponse {
     private boolean isFavorite;
 
 
-    public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
+    public AnnouncementResponse(Long id, HouseType houseType, AnnouncementImagesResponse images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
         this.id = id;
         this.houseType = houseType;
         this.images = images;
@@ -47,7 +47,7 @@ public class AnnouncementResponse {
         this.province = province;
     }
 
-    public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status) {
+    public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, AnnouncementImagesResponse images, Status status) {
         this.id = id;
         this.address = address;
         this.images = images;
@@ -57,7 +57,7 @@ public class AnnouncementResponse {
         this.status = status;
     }
 
-    public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, List<String> images, Status status, double rating) {
+    public AnnouncementResponse(long id, int price, int maxGuests, String address, String title, AnnouncementImagesResponse images, Status status, double rating) {
         this.id = id;
         this.address = address;
         this.images = images;
@@ -68,7 +68,7 @@ public class AnnouncementResponse {
         this.rating = rating;
     }
 
-    public AnnouncementResponse(Long id, List<String> images, int price, Region region, String address, String description, int maxGuests) {
+    public AnnouncementResponse(Long id, AnnouncementImagesResponse images, int price, Region region, String address, String description, int maxGuests) {
         this.id = id;
         this.images = images;
         this.price = price;
@@ -78,7 +78,7 @@ public class AnnouncementResponse {
         this.maxGuests = maxGuests;
     }
 
-    public AnnouncementResponse(Long id, List<String> images, int price, Region region, String address, String description, String title, int maxGuests, String province, double rating) {
+    public AnnouncementResponse(Long id, AnnouncementImagesResponse images, int price, Region region, String address, String description, String title, int maxGuests, String province, double rating) {
         this.id = id;
         this.images = images;
         this.price = price;
@@ -91,7 +91,7 @@ public class AnnouncementResponse {
         this.rating = rating;
     }
 
-    public AnnouncementResponse(Long id, HouseType houseType, List<String> images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province, double rating, User user, boolean isFavorite) {
+    public AnnouncementResponse(Long id, HouseType houseType, AnnouncementImagesResponse images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province, double rating, User user, boolean isFavorite) {
         this.id = id;
         this.houseType = houseType;
         this.images = images;

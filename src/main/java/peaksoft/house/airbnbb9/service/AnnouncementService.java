@@ -34,7 +34,7 @@ public interface AnnouncementService {
 
     SimpleResponse processAnnouncement(Long announcementId, String message, String messageFromAdminToUser) throws MessagingException;
 
-    AnnouncementResponse getApplicationById(Long applicationId);
+    List<AnnouncementResponse> getApplicationById(Long applicationId);
 
     List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
 

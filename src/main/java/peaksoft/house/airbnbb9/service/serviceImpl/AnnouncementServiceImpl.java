@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import peaksoft.house.airbnbb9.config.security.JwtService;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Announcement;
@@ -20,7 +19,6 @@ import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
-import peaksoft.house.airbnbb9.repository.FavoriteRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -69,7 +67,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncements() {
-        return announcementTemplate.getAllAnnouncements();
+        List<AnnouncementResponse> allAnnouncements = announcementTemplate.getAllAnnouncements();
+        for (AnnouncementResponse a : allAnnouncements) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return allAnnouncements;
     }
 
     protected Announcement getAnnouncementById(Long announcementId) {
@@ -98,17 +103,38 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
-        return announcementTemplate.getAllAnnouncementsFilter(status, houseType, rating, price);
+        List<AnnouncementResponse> allAnnouncements = announcementTemplate.getAllAnnouncementsFilter(status, houseType, rating, price);
+        for (AnnouncementResponse a : allAnnouncements) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return allAnnouncements;
     }
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
-        return announcementTemplate.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
+        List<AnnouncementResponse> allAnnouncements = announcementTemplate.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
+        for (AnnouncementResponse a : allAnnouncements) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return allAnnouncements;
     }
 
     @Override
     public PaginationAnnouncementResponse getAllAnnouncementsModerationAndPagination(int currentPage, int pageSize) {
-        return announcementTemplate.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
+        PaginationAnnouncementResponse paginationAnnouncementResponse = announcementTemplate.getAllAnnouncementsModerationAndPagination(currentPage, pageSize);
+        for (AnnouncementResponse a : paginationAnnouncementResponse.getAnnouncementResponses()) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return paginationAnnouncementResponse;
     }
 
     @Override
@@ -127,7 +153,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public GlobalSearchResponse search(String word, boolean isNearby, Double latitude, Double longitude) {
-        return announcementTemplate.search(word, isNearby, latitude, longitude);
+        GlobalSearchResponse globalSearchResponse = announcementTemplate.search(word, isNearby, latitude, longitude);
+        for (AnnouncementResponse a : globalSearchResponse.getAnnouncementResponses()) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return globalSearchResponse;
     }
 
     @Override
@@ -191,18 +224,39 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public AnnouncementResponse getApplicationById(Long applicationId) {
-        return announcementTemplate.getApplicationById(applicationId);
+    public List<AnnouncementResponse> getApplicationById(Long applicationId) {
+        List<AnnouncementResponse> allAnnouncements = announcementTemplate.getApplicationById(applicationId);
+        for (AnnouncementResponse a : allAnnouncements) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return allAnnouncements;
     }
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
-        return announcementTemplate.getAllAnnouncementsFilters(houseType, rating, price);
+        List<AnnouncementResponse> allAnnouncements = announcementTemplate.getAllAnnouncementsFilters(houseType, rating, price);
+        for (AnnouncementResponse a : allAnnouncements) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return allAnnouncements;
     }
 
     @Override
     public PaginationAnnouncementResponse pagination(Integer page, Integer size) {
-        return announcementTemplate.pagination(page, size);
+        PaginationAnnouncementResponse paginationAnnouncementResponse = announcementTemplate.pagination(page, size);
+        for (AnnouncementResponse a : paginationAnnouncementResponse.getAnnouncementResponses()) {
+            List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
+            AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
+            ai.setImages(announcementImages);
+            a.setImages(ai);
+        }
+        return paginationAnnouncementResponse;
     }
 
     @Override
