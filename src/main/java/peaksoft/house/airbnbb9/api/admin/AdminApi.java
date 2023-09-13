@@ -12,6 +12,8 @@ import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
@@ -34,7 +36,7 @@ public class AdminApi {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @Operation(summary = "getById-application", description = "Admin at accepted,deleted,rejected application")
     @GetMapping("/applicationById")
-    public AnnouncementResponse getByIdApplication(@RequestParam Long applicationId) {
+    public List<AnnouncementResponse> getByIdApplication(@RequestParam Long applicationId) {
         return announcementService.getApplicationById(applicationId);
     }
 

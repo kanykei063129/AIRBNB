@@ -1,15 +1,25 @@
 package peaksoft.house.airbnbb9.dto.response;
 
-import lombok.Builder;
+import lombok.*;
+
 import java.util.List;
 
 @Builder
-public record PaginationAnnouncementResponse(
-        List<AnnouncementResponse>announcementResponses,
-        int currentPage,
-        int pageSize
-) {
+@Getter
+@Setter
+@NoArgsConstructor
+public class PaginationAnnouncementResponse {
+    private List<AnnouncementResponse> announcementResponses;
+    private int currentPage;
+    private int pageSize;
+
+    public PaginationAnnouncementResponse(List<AnnouncementResponse> announcementResponses, int currentPage, int pageSize) {
+        this.announcementResponses = announcementResponses;
+        this.currentPage = currentPage;
+        this.pageSize = pageSize;
+    }
+
     public PaginationAnnouncementResponse(List<AnnouncementResponse> announcementResponses) {
-        this(announcementResponses, 0, 0);
+        this.announcementResponses = announcementResponses;
     }
 }

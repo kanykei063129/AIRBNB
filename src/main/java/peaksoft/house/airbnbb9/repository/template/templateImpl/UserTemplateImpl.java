@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import peaksoft.house.airbnbb9.dto.response.AnnouncementImagesResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.BookingResponse;
 import peaksoft.house.airbnbb9.dto.response.UserResponse;
@@ -111,7 +112,7 @@ public class UserTemplateImpl implements UserTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
+                .images(rs.getObject("images", AnnouncementImagesResponse.class))
                 .rating(rs.getInt("rating"))
                 .build(), userID);
 
