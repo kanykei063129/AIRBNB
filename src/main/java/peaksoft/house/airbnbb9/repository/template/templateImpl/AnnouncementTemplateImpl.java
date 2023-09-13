@@ -656,8 +656,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
                 .fullName(rs.getString("fullName"))
-                .email(rs.getString("email"))
-                .image(rs.getString("image"))
+                .email(rs.getString("email "))
+                .image(rs.getString("image "))
                 .build(), announcementId);
     }
 
