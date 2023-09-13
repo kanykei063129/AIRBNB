@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementsResponseProfile;
 import peaksoft.house.airbnbb9.dto.response.FilterResponse;
 import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
@@ -13,8 +12,6 @@ import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.PriceType;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import peaksoft.house.airbnbb9.service.UserService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")

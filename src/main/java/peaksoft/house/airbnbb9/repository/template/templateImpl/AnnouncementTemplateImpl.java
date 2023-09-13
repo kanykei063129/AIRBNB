@@ -427,14 +427,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         return new GlobalSearchResponse(results);
     }
 
-    @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
-        String sql = """
-                SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating
-                                FROM announcements a
-                                LEFT JOIN feedbacks r ON a.id = r.announcement_id
-                                WHERE 1=1
-                """;
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
@@ -450,7 +442,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         sql.append("(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images ");
         sql.append("FROM announcements a ");
         sql.append("LEFT JOIN feedbacks r ON a.id = r.announcement_id ");
-        sql.append("WHERE a.user_id = ? "); // Добавляем условие, что объявление принадлежит текущему пользователю
+        sql.append("WHERE a.user_id = ? ");
         List<Object> params = new ArrayList<>();
         params.add(user.getId());
 
@@ -466,9 +458,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         if (price != null) {
             sql.append("AND a.price IS NOT NULL ");
         }
-      
+
         sql.append("GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ");
-      
+
         if (rating != null && !rating.isEmpty()) {
             sql.append("ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC"));
         } else if (price != null && !price.equals(PriceType.LOW_TO_HIGH)) {
@@ -487,7 +479,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
                 .rating(rs.getInt("rating"))
-                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getDouble("rating"))
                 .build(), params.toArray());
 
