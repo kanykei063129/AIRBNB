@@ -22,5 +22,6 @@ public class GetAnnouncementResponse {
     private String fullName;
     private String email;
     private String image;
+    private int price;
     private boolean isBooked;
 }

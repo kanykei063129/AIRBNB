@@ -647,21 +647,26 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public GetAnnouncementResponse getAnnouncementById(Long announcementId) {
         String query = """
-                select distinct a.id as id,
+                select a.id as id,
                 a.title as title,
-                ai.images as images,
                 a.house_type as houseType,
                 a.max_guests as maxGuests,
                 a.address as address,
                 a.description as description,
                 u.full_name as fullName,
                 u.email as email,
-                u.image as image from announcements a join users u on a.user_id = u.id join announcement_images ai on a.id = ai.announcement_id where a.id = ?;
+                u.image as image,
+                a.price as price ,
+                (SELECT string_agg(ai.images, ',')
+                        FROM announcement_images ai
+                        WHERE ai.announcement_id = a.id) as images
+                from announcements a join users u on a.user_id = u.id left join announcement_images ai on a.id = ai.announcement_id where a.id = ?
+                group by a.id, a.title, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
                 """;
         return jdbcTemplate.queryForObject(query, (rs, rowNum) -> GetAnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
+                .images(Arrays.asList(rs.getString("images").split(",")))
                 .houseType(HouseType.valueOf(rs.getString("houseType")))
                 .maxGuests(rs.getInt("maxGuests"))
                 .address(rs.getString("address"))
@@ -669,6 +674,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .fullName(rs.getString("fullName"))
                 .email(rs.getString("email"))
                 .image(rs.getString("image"))
+                .price(rs.getInt("price"))
                 .build(), announcementId);
     }
 
