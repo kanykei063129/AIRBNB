@@ -655,9 +655,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .maxGuests(rs.getInt("maxGuests"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
-                .fullName("fullName")
-                .email("email")
-                .image("image")
+                .fullName(rs.getString("fullName"))
+                .email(rs.getString("email"))
+                .image(rs.getString("image"))
                 .build(), announcementId);
     }
 
