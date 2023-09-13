@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
@@ -15,6 +17,7 @@ import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
+import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 
 import java.time.LocalDate;
@@ -26,7 +29,7 @@ import java.util.*;
 public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     private final JdbcTemplate jdbcTemplate;
-    private final AnnouncementRepository announcementRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
@@ -434,42 +437,50 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         return new GlobalSearchResponse(results);
     }
 
+    private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        log.info("Getting authenticated user with email: {}", login);
+        return userRepository.getUserByEmail(login).orElseThrow(() ->
+                new BadCredentialException("An unregistered user cannot write comment for this announcement!"));
+    }
+
     @Override
     public FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
-        String sql = "SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, "
-                + "(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images "
-                + "FROM announcements a "
-                + "LEFT JOIN feedbacks r ON a.id = r.announcement_id "
-                + "WHERE 1=1 ";
-
+        User user = getAuthenticatedUser();
+        StringBuilder sql = new StringBuilder("SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, ");
+        sql.append("(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images ");
+        sql.append("FROM announcements a ");
+        sql.append("LEFT JOIN feedbacks r ON a.id = r.announcement_id ");
+        sql.append("WHERE a.user_id = ? "); // Добавляем условие, что объявление принадлежит текущему пользователю
         List<Object> params = new ArrayList<>();
+        params.add(user.getId());
 
         if (houseType != null) {
-            sql += "AND a.house_type = ? ";
+            sql.append("AND a.house_type = ? ");
             params.add(houseType.name());
         }
 
         if (rating != null && !rating.isEmpty()) {
-            sql += "AND r.rating IS NOT NULL ";
+            sql.append("AND r.rating IS NOT NULL ");
         }
 
         if (price != null) {
-            sql += "AND a.price IS NOT NULL ";
+            sql.append("AND a.price IS NOT NULL ");
         }
 
-        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ";
+        sql.append("GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ");
 
         if (rating != null && !rating.isEmpty()) {
-            sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
+            sql.append("ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC"));
         } else if (price != null && !price.equals(PriceType.LOW_TO_HIGH)) {
-            sql += "ORDER BY a.price " + "DESC";
+            sql.append("ORDER BY a.price DESC");
         } else if (price != null) {
-            sql += "ORDER BY a.price " + "ASC";
+            sql.append("ORDER BY a.price ASC");
         }
 
         log.info("Fetching announcements with filters: HouseType - " + houseType + ", Rating - " + rating + ", PriceType - " + price);
-
-        List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql.toString(), (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
