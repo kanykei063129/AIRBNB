@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
@@ -14,6 +16,7 @@ import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.exception.NotFoundException;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
+import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 
 
@@ -25,6 +28,7 @@ import java.util.*;
 public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     private final JdbcTemplate jdbcTemplate;
+    private final UserRepository userRepository;
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
@@ -425,42 +429,56 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
     @Override
     public List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
-
         String sql = """
                 SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating
                                 FROM announcements a
                                 LEFT JOIN feedbacks r ON a.id = r.announcement_id
                                 WHERE 1=1
                 """;
+    private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        log.info("Getting authenticated user with email: {}", login);
+        return userRepository.getUserByEmail(login).orElseThrow(() ->
+                new BadCredentialException("An unregistered user cannot write comment for this announcement!"));
+    }
 
+    @Override
+    public FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
+        User user = getAuthenticatedUser();
+        StringBuilder sql = new StringBuilder("SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, ");
+        sql.append("(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images ");
+        sql.append("FROM announcements a ");
+        sql.append("LEFT JOIN feedbacks r ON a.id = r.announcement_id ");
+        sql.append("WHERE a.user_id = ? "); // Добавляем условие, что объявление принадлежит текущему пользователю
         List<Object> params = new ArrayList<>();
+        params.add(user.getId());
 
         if (houseType != null) {
-            sql += "AND a.house_type = ? ";
+            sql.append("AND a.house_type = ? ");
             params.add(houseType.name());
         }
 
         if (rating != null && !rating.isEmpty()) {
-            sql += "AND r.rating IS NOT NULL ";
+            sql.append("AND r.rating IS NOT NULL ");
         }
 
         if (price != null) {
-            sql += "AND a.price IS NOT NULL ";
+            sql.append("AND a.price IS NOT NULL ");
         }
-
-        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating";
-
+      
+        sql.append("GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ");
+      
         if (rating != null && !rating.isEmpty()) {
-            sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
+            sql.append("ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC"));
         } else if (price != null && !price.equals(PriceType.LOW_TO_HIGH)) {
-            sql += "ORDER BY a.price " + "DESC";
+            sql.append("ORDER BY a.price DESC");
         } else if (price != null) {
-            sql += "ORDER BY a.price " + "ASC";
+            sql.append("ORDER BY a.price ASC");
         }
 
         log.info("Fetching announcements with filters: HouseType - " + houseType + ", Rating - " + rating + ", PriceType - " + price);
-
-        List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql.toString(), (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -469,10 +487,14 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
                 .rating(rs.getInt("rating"))
+                .images(Collections.singletonList(rs.getString("images")))
+                .rating(rs.getDouble("rating"))
                 .build(), params.toArray());
 
+        FilterResponse filterResponse = new FilterResponse(announcementResponses);
+
         log.info("Fetched announcements with filters successfully!");
-        return results;
+        return filterResponse;
     }
 
     @Override
@@ -619,28 +641,34 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public GetAnnouncementResponse getAnnouncementById(Long announcementId) {
         String query = """
-                select distinct a.id as id,
+                select a.id as id,
                 a.title as title,
-                ai.images as images,
                 a.house_type as houseType,
                 a.max_guests as maxGuests,
                 a.address as address,
                 a.description as description,
                 u.full_name as fullName,
                 u.email as email,
-                u.image as image from announcements a join users u on a.user_id = u.id join announcement_images ai on a.id = ai.announcement_id where a.id = ?;
+                u.image as image,
+                a.price as price ,
+                (SELECT string_agg(ai.images, ',')
+                        FROM announcement_images ai
+                        WHERE ai.announcement_id = a.id) as images
+                from announcements a join users u on a.user_id = u.id left join announcement_images ai on a.id = ai.announcement_id where a.id = ?
+                group by a.id, a.title, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
                 """;
         return jdbcTemplate.queryForObject(query, (rs, rowNum) -> GetAnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
+                .images(Arrays.asList(rs.getString("images").split(",")))
                 .houseType(HouseType.valueOf(rs.getString("houseType")))
                 .maxGuests(rs.getInt("maxGuests"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
-                .fullName("fullName")
-                .email("email")
-                .image("image")
+                .fullName(rs.getString("fullName"))
+                .email(rs.getString("email"))
+                .image(rs.getString("image"))
+                .price(rs.getInt("price"))
                 .build(), announcementId);
     }
 

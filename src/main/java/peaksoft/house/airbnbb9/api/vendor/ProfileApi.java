@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementsResponseProfile;
+import peaksoft.house.airbnbb9.dto.response.FilterResponse;
 import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.PriceType;
@@ -35,7 +36,7 @@ public class ProfileApi {
     @Operation(summary = "Any registered user can filter announcements in the profile",
             description = "Filter accepted announcements by popular,house type, and price low to high and high to low")
     @GetMapping("/filter")
-    public List<AnnouncementResponse> getAllAnnouncementsFilters(
+    public FilterResponse getAllAnnouncementsFilters(
             @RequestParam(required = false) HouseType houseType,
             @RequestParam(required = false) String rating,
             @RequestParam(required = false) PriceType price) {

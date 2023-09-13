@@ -29,7 +29,7 @@ public interface AnnouncementTemplate {
 
     GlobalSearchResponse search(String word, boolean isNearby, Double latitude, Double longitude);
 
-    List<AnnouncementResponse> getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
+    FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
 
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
 
