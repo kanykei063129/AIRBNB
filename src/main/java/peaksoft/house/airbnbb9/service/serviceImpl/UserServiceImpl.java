@@ -9,9 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
-import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
-import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
-import peaksoft.house.airbnbb9.dto.response.UserResponse;
+import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Like;
 import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.Role;
@@ -73,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getByIdUser(Long userId, String value) {
-        return userTemplate.getByIdUser(userId,value);
+        return userTemplate.getByIdUser(userId, value);
     }
 
 
