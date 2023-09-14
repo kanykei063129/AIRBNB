@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementImagesResponse;
-import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
-import peaksoft.house.airbnbb9.dto.response.BookingResponse;
-import peaksoft.house.airbnbb9.dto.response.UserResponse;
+import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.repository.template.UserTemplate;
 
 import java.util.Collections;
@@ -73,7 +70,7 @@ public class UserTemplateImpl implements UserTemplate {
             assert userResponse != null;
             userResponse.setBookingUser(bookingResponses);
         } else if ("announcement".equalsIgnoreCase(values)) {
-            List<AnnouncementResponse> announcementResponses = getAnnouncementByUserId(userId);
+            List<AnnouncementResponseUser> announcementResponses = getAnnouncementByUserId(userId);
             assert userResponse != null;
             userResponse.setAnnouncementResponses(announcementResponses);
         }
@@ -81,7 +78,7 @@ public class UserTemplateImpl implements UserTemplate {
         return userResponse;
     }
 
-    private List<AnnouncementResponse> getAnnouncementByUserId(Long userID) {
+    private List<AnnouncementResponseUser> getAnnouncementByUserId(Long userID) {
         String sql = """
                 SELECT a.id            as id,
                        a.price         as price,
@@ -104,7 +101,7 @@ public class UserTemplateImpl implements UserTemplate {
 
         log.info("Fetching announcements by user ID: " + userID);
 
-        List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
+        List<AnnouncementResponseUser> announcementResponses = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponseUser.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
@@ -112,7 +109,7 @@ public class UserTemplateImpl implements UserTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
-                .images(rs.getObject("images", AnnouncementImagesResponse.class))
+                .images(Collections.singletonList(rs.getString("images")))
                 .rating(rs.getInt("rating"))
                 .build(), userID);
 
