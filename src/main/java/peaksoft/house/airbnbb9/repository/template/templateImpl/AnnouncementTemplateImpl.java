@@ -706,32 +706,37 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 WHERE a.id = ?
                 GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
                                                       """;
-        return jdbcTemplate.queryForObject(query, (rs, rowNum) -> AnnouncementsResponseProfile.builder()
-                .id(rs.getLong("id"))
-                .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .houseType(rs.getString("houseType"))
-                .maxGuests(rs.getInt("maxGuests"))
-                .address(rs.getString("address"))
-                .description(rs.getString("description"))
-                .fullName(rs.getString("fullName"))
-                .email(rs.getString("email"))
-                .image(rs.getString("image"))
-                .bookedByFullName(rs.getString("bookedByUserFullName"))
-                .bookedByEmail(rs.getString("bookedByEmail"))
-                .priceDay(rs.getInt("priceDay"))
-                .checkIn(rs.getDate("checkIn").toLocalDate())
-                .checkOut(rs.getDate("checkOut").toLocalDate())
-                .createDateFeedback(rs.getDate("createDateFeedback").toLocalDate())
-                .favoriteByFullName(rs.getString("favoriteByFullName"))
-                .favoriteByEmail(rs.getString("favoriteByEmail"))
-                .comments(rs.getString("comments"))
-                .feedbackRating(rs.getInt("feedbackRating"))
-                .likeCount(rs.getInt("likeCount"))
-                .disLikeCount(rs.getInt("disLikeCount"))
-                .feedbacksUserName(rs.getString("feedbacksUserName"))
-                .feedbacksImages(rs.getString("feedbacksImages"))
-                .build(), announcementId);
+        return jdbcTemplate.queryForObject(query, (rs, rowNum) -> {
+            AnnouncementsResponseProfile.AnnouncementsResponseProfileBuilder builder = AnnouncementsResponseProfile.builder()
+                    .id(rs.getLong("id"))
+                    .title(rs.getString("title"))
+                    .images(Collections.singletonList(rs.getString("images")))
+                    .houseType(rs.getString("houseType"))
+                    .maxGuests(rs.getInt("maxGuests"))
+                    .address(rs.getString("address"))
+                    .description(rs.getString("description"))
+                    .fullName(rs.getString("fullName"))
+                    .email(rs.getString("email"))
+                    .image(rs.getString("image"))
+                    .bookedByFullName(rs.getString("bookedByUserFullName"))
+                    .bookedByEmail(rs.getString("bookedByEmail"))
+                    .priceDay(rs.getInt("priceDay"));
+
+            if (!rs.wasNull()) {
+                builder.checkIn(rs.getDate("checkIn").toLocalDate())
+                        .checkOut(rs.getDate("checkOut").toLocalDate())
+                        .createDateFeedback(rs.getDate("createDateFeedback").toLocalDate())
+                        .favoriteByFullName(rs.getString("favoriteByFullName"))
+                        .favoriteByEmail(rs.getString("favoriteByEmail"))
+                        .comments(rs.getString("comments"))
+                        .feedbackRating(rs.getInt("feedbackRating"))
+                        .likeCount(rs.getInt("likeCount"))
+                        .disLikeCount(rs.getInt("disLikeCount"))
+                        .feedbacksUserName(rs.getString("feedbacksUserName"))
+                        .feedbacksImages(rs.getString("feedbacksImages"));
+            }
+            return builder.build();
+        }, announcementId);
     }
 
     @Override
