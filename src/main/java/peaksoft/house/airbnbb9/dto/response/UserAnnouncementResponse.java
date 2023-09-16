@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 
 import java.util.List;
@@ -26,4 +27,5 @@ public class UserAnnouncementResponse {
     private Status status;
     private Integer bookingsCountAnnouncement;
     private String messagesFromAdmin;
+    private Region region;
 }
