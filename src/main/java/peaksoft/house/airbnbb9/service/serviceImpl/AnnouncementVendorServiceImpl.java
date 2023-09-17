@@ -51,7 +51,7 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         return restTemplate;
     }
 
-    private peaksoft.house.airbnbb9.dto.response.LatLng getGeoCoordinateForAddress(String address) {
+    public peaksoft.house.airbnbb9.dto.response.LatLng getGeoCoordinateForAddress(String address) {
         String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + google_api_key;
         GeocodingResponse response = restTemplate().getForObject(url, GeocodingResponse.class);
         if (response != null && response.getResults().size() > 0) {
