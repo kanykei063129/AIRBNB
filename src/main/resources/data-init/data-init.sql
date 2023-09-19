@@ -38,7 +38,16 @@ VALUES (1, 'HOUSE', 23, 'CHUI', 'Yssyk-Ata', 'Grajdanskaya 119', 'for sanatory',
        (11, 'HOUSE', 22, 'TALAS', 'Ala-Bel', 'Чуй 111', 'Panoramic views', 'BOOKED', 'house', 4, NOW(), NULL, 6,
         'REJECT',-33.6979513,-53.4556873),
        (12, 'APARTMENT', 25, 'BISHKEK', 'Bokonbaevo', 'Чуй 105', 'Cultural sites nearby', 'NOT_BOOKED',
-        'apartment', 3, NOW(), NULL, 1, 'ACCEPTED',-33.6979513,-53.4556873);
+        'apartment', 3, NOW(), NULL, 1, 'ACCEPTED',-33.6979513,-53.4556873),
+       (13, 'HOUSE', 56, 'TALAS', 'Lenin', 'Ибраимова 113', 'Market access', 'NOT_BOOKED', 'house', 4, NOW(), NULL,
+        2, 'REJECT',42.9433557,74.62554089999999),
+       (14, 'HOUSE', 44, 'TALAS', 'Ala-Bel', 'Чуй 111', 'Panoramic views', 'BOOKED', 'house', 4, NOW(), NULL, 2,
+        'REJECT',-33.6979513,-53.4556873),
+       (15, 'APARTMENT', 12, 'BISHKEK', 'ALAMIDIN-1', 'Усенбаева 106', 'for long time', 'BOOKED', 'apartment', 2, NOW(),
+        NULL, 2, 'REJECT',42.8856298,74.61489209999999),
+       (16, 'APARTMENT', 89, 'BISHKEK', 'Chui Prospect', 'Малдыбаева 6', 'Central location', 'NOT_BOOKED', 'apartment',
+        5, NOW(), NULL, 2, 'MODERATION',42.8470298,74.5972297);
+
 
 insert into announcement_images (announcement_id, images)
 values (1, 'https://www.myluxoria.com/storage/app/uploads/public/626/699/e07/626699e077a24792592533.jpg'),

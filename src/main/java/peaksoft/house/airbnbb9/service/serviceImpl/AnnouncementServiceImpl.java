@@ -36,13 +36,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementTemplate announcementTemplate;
     private final JavaMailSender javaMailSender;
     private final AnnouncementViewMapper viewMapper;
+    private final AnnouncementVendorServiceImpl announcementVendorService;
 
     @Override
     public SimpleResponse updateAnnouncement(Long announcementId, AnnouncementRequest request) {
         Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
                 new NotFoundException("Announcement with id " + announcementId + " not found!"));
+        LatLng coordinate = announcementVendorService.getGeoCoordinateForAddress(request.getAddress());
+        double latitude = coordinate.getLat();
+        double longitude = coordinate.getLng();
         viewMapper.updateAnnouncement(announcement, request);
         checkAdField(request, announcement);
+        announcement.setLatitude(latitude);
+        announcement.setLongitude(longitude);
         announcementRepository.save(announcement);
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
@@ -75,17 +81,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             a.setImages(ai);
         }
         return allAnnouncements;
-    }
-
-    protected Announcement getAnnouncementById(Long announcementId) {
-        log.info("Getting Announcement with ID: " + announcementId);
-
-        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() ->
-                new NotFoundException("Announcement with id " + announcementId + " not found!"));
-
-        log.info("Announcement with ID " + announcementId + " has been retrieved.");
-
-        return announcement;
     }
 
     public SimpleResponse deleteByIdAnnouncement(Long announcementId) {

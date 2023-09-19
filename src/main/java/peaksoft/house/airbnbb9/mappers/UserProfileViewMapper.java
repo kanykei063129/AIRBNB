@@ -9,6 +9,7 @@ import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Booking;
 import peaksoft.house.airbnbb9.entity.User;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class UserProfileViewMapper {
         announcementsResponse.setAddress(announcement.getAddress());
         announcementsResponse.setMaxGuests(announcement.getMaxGuests());
         announcementsResponse.setStatus(announcement.getStatus());
+        announcementsResponse.setRegion(announcement.getRegion());
         announcementsResponse.setMessagesFromAdmin(announcement.getMessageFromAdmin());
         announcementsResponse.setBookingsCountAnnouncement(announcement.getBookings().size());
 
@@ -106,6 +108,7 @@ public class UserProfileViewMapper {
         log.info("Converted Booking to UserBookingsResponse successfully for booking ID: " + booking.getId());
         return bookingsResponse;
     }
+
     public UserAnnouncementResponse announcementToAnnouncementsResponseModeration(Announcement announcement) {
         if (announcement == null) {
             return null;
