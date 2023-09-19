@@ -91,40 +91,37 @@ public class FeedbackServiceImpl implements FeedbackService {
         boolean isLike = likeOrDislike.equalsIgnoreCase("Like");
         boolean isDislike = likeOrDislike.equalsIgnoreCase("Dislike");
 
-        if (!isLike && !isDislike) {
-            log.warn("Invalid likeOrDislike value");
-            return null;
-        }
-
         Like existingLike = likeRepository.getLikeByUserIdAndFeedbackId(user.getId(), feedbackId).orElse(null);
 
-        if (existingLike != null) {
-            if ((isLike && !existingLike.getIsLiked()) || (isDislike && existingLike.getIsLiked())) {
-                existingLike.setIsLiked(isLike);
-                likeRepository.save(existingLike);
-                feedback.setLikeCount(Math.max(0, feedback.getLikeCount() + (isLike ? 1 : -1)));
+        if (isLike || isDislike) {
+            if (existingLike != null) {
+                if ((isLike && !existingLike.getIsLiked()) || (isDislike && existingLike.getIsLiked())) {
+                    existingLike.setIsLiked(isLike);
+                    likeRepository.save(existingLike);
+                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() + (isLike ? 1 : -1)));
+                } else {
+                    likeRepository.delete(existingLike);
+                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() - 1));
+                }
             } else {
-                likeRepository.delete(existingLike);
-                feedback.setLikeCount(Math.max(0, feedback.getLikeCount() - 1));
+                Like newLike = Like.builder().isLiked(isLike).feedback(feedback).user(user).build();
+                feedback.getLikes().add(newLike);
+                likeRepository.save(newLike);
             }
         } else {
-            Like newLike = Like.builder().isLiked(isLike).feedback(feedback).user(user).build();
-            feedback.getLikes().add(newLike);
-            likeRepository.save(newLike);
-            feedback.setLikeCount(feedback.getLikeCount() + 1);
+            log.warn("Invalid likeOrDislike value");
         }
 
         int dislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false);
         int likeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true);
+        feedback.setLikeCount(likeCount);
         feedback.setDisLikeCount(dislikeCount);
         feedbackRepository.save(feedback);
-
         return QuantityLikeAndDisLikeResponse.builder()
                 .disLikeCount(dislikeCount)
                 .likeCount(likeCount)
                 .build();
     }
-
 
 
     @Override
