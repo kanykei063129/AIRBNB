@@ -17,5 +17,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @Query("SELECT COUNT(l.id) FROM Like l JOIN l.feedback f WHERE f.id = ?1 AND l.isLiked = ?2")
     int getCountLikeOrDislikeByFeedbackId(Long feedbackId, boolean isLike);
 
+    boolean existsLikeByUserIdAndFeedbackId (Long userId,Long feedbackId);
+
     Optional<Like> getLikeByUserIdAndFeedbackId(Long userId,Long feedbackId);
 }

@@ -73,12 +73,13 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public List<FeedbackResponse> getAllFeedback(Long announcementId) {
-        if (!announcementRepository.existsAnnouncementById(announcementId)){
+        if (!announcementRepository.existsAnnouncementById(announcementId)) {
             throw new NotFoundException("Announcement with id: %s not found".formatted(announcementId));
         }
         return feedbackTemplate.getAllFeedback(announcementId);
     }
 
+    @Override
     public QuantityLikeAndDisLikeResponse likeAndDisLike(Long feedbackId, String likeOrDislike) throws AlreadyExistsException {
         User user = jwtService.getAuthentication();
         Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> {
@@ -90,40 +91,40 @@ public class FeedbackServiceImpl implements FeedbackService {
         boolean isLike = likeOrDislike.equalsIgnoreCase("Like");
         boolean isDislike = likeOrDislike.equalsIgnoreCase("Dislike");
 
+        if (!isLike && !isDislike) {
+            log.warn("Invalid likeOrDislike value");
+            return null;
+        }
+
         Like existingLike = likeRepository.getLikeByUserIdAndFeedbackId(user.getId(), feedbackId).orElse(null);
 
-        if (isLike || isDislike) {
-            if (existingLike != null) {
-                if ((isLike && !existingLike.getIsLiked()) || (isDislike && existingLike.getIsLiked())) {
-                    existingLike.setIsLiked(isLike);
-                    likeRepository.save(existingLike);
-                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() + (isLike ? 1 : -1)));
-                } else {
-                    likeRepository.delete(existingLike);
-                    feedback.setLikeCount(Math.max(0, feedback.getLikeCount() - 1));
-                }
+        if (existingLike != null) {
+            if ((isLike && !existingLike.getIsLiked()) || (isDislike && existingLike.getIsLiked())) {
+                existingLike.setIsLiked(isLike);
+                likeRepository.save(existingLike);
+                feedback.setLikeCount(Math.max(0, feedback.getLikeCount() + (isLike ? 1 : -1)));
             } else {
-                Like newLike = Like.builder().isLiked(isLike).feedback(feedback).user(user).build();
-                feedback.getLikes().add(newLike);
-                likeRepository.save(newLike);
-                feedback.setLikeCount(feedback.getLikeCount() + (isLike ? 1 : 0));
-                feedback.setDisLikeCount(feedback.getDisLikeCount() + (isDislike ? 1 : 0));
+                likeRepository.delete(existingLike);
+                feedback.setLikeCount(Math.max(0, feedback.getLikeCount() - 1));
             }
         } else {
-            log.warn("Invalid likeOrDislike value");
+            Like newLike = Like.builder().isLiked(isLike).feedback(feedback).user(user).build();
+            feedback.getLikes().add(newLike);
+            likeRepository.save(newLike);
+            feedback.setLikeCount(feedback.getLikeCount() + 1);
         }
 
         int dislikeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, false);
         int likeCount = likeRepository.getCountLikeOrDislikeByFeedbackId(feedbackId, true);
-
-        log.info(Integer.toString(dislikeCount));
-        log.error(Integer.toString(likeCount));
+        feedback.setDisLikeCount(dislikeCount);
+        feedbackRepository.save(feedback);
 
         return QuantityLikeAndDisLikeResponse.builder()
                 .disLikeCount(dislikeCount)
                 .likeCount(likeCount)
                 .build();
     }
+
 
 
     @Override
