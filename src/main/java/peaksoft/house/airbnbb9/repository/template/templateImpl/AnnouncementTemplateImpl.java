@@ -102,14 +102,15 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                        a.province,
                                        a.region,
                                        a.title,
+                                       a.house_type,
                                        r.rating,
-                                       CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END                       as is_favorite
+                                       CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END as is_favorite
                                 FROM announcements a
                                          LEFT JOIN
                                      favorites f ON a.id = f.announcement_id
                                          LEFT JOIN
                                      feedbacks r ON a.id = r.announcement_id
-                                WHERE 1 = 1
+                                WHERE 1 = 1 AND a.position = 'ACCEPTED'
                 """;
         log.info("Starting to filter announcements for vendors.");
 
@@ -133,7 +134,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql += "AND a.price IS NOT NULL ";
         }
 
-        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating,is_favorite ";
+        sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating,a.house_type,is_favorite ";
 
         if (rating != null && !rating.isEmpty()) {
             sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
@@ -151,6 +152,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .title(rs.getString("title"))
                 .rating(rs.getInt("rating"))
                 .isFavorite(rs.getBoolean("is_favorite"))
+                .region(Region.valueOf(rs.getString("region")))
+                .houseType(HouseType.valueOf(rs.getString("house_type")))
                 .build(), params.toArray());
 
         log.info("Announcements filtered successfully for vendors!");
@@ -379,6 +382,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .province(rs.getString("province"))
                         .title(rs.getString("title"))
                         .rating(rs.getInt("rating"))
+                        .region(Region.valueOf(rs.getString("region")))
                         .build(), word, word, word, word, minLat, maxLat, minLong, maxLong);
                 log.info(String.format("Performing global search with key word:%s and get nearby user's location", word));
                 return new GlobalSearchResponse(announcementResponses);
@@ -422,6 +426,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
                 .rating(rs.getInt("rating"))
+                .region(Region.valueOf(rs.getString("region")))
                 .build(), word, word, word, word);
         log.info("Global search completed successfully!");
         return new GlobalSearchResponse(results);
