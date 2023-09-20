@@ -1,6 +1,7 @@
 package peaksoft.house.airbnbb9.dto.response;
 
 import lombok.*;
+import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class UserBookingsResponse {
     private String title;
     private String address;
     private Integer maxGuests;
+    private Region region;
     private String checkIn;
     private String checkOut;
-    private Status status;
 }

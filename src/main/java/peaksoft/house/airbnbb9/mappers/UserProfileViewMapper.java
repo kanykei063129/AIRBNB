@@ -9,6 +9,7 @@ import peaksoft.house.airbnbb9.dto.response.UserProfileResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Booking;
 import peaksoft.house.airbnbb9.entity.User;
+import peaksoft.house.airbnbb9.enums.Position;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class UserProfileViewMapper {
     public UserAnnouncementResponse announcementToAnnouncementsResponse(Announcement announcement) {
         if (announcement == null) {
             return null;
+        }
+        if (announcement.getPosition().equals(Position.ACCEPTED)) {
+
         }
         log.info("Converting Announcement to UserAnnouncementResponse for announcement ID: " + announcement.getId());
 
@@ -52,9 +56,12 @@ public class UserProfileViewMapper {
         log.info("Converting a list of Announcements to UserAnnouncementResponses");
 
         for (Announcement announcement : announcements) {
-            responses.add(announcementToAnnouncementsResponse(announcement));
+            if (announcement.getPosition() == Position.ACCEPTED) {
+                responses.add(announcementToAnnouncementsResponse(announcement));
+            }
         }
-        log.info("Converted the list of Announcements to UserAnnouncementResponses successfully");
+
+        log.info("Converted the list of Accepted Announcements to UserAnnouncementResponses successfully");
         return responses;
     }
 
@@ -71,7 +78,7 @@ public class UserProfileViewMapper {
         response.setMessageFromAdmin(user.getMessagesFromAdmin());
         response.setBookings(listUserBookings(user.getBookings()));
         response.setAnnouncements(listUserAnnouncements(user.getAnnouncements()));
-        response.setAnnouncements(listUserAnnouncementsModeration(user.getAnnouncements()));
+        response.setModerations(listUserAnnouncementsModeration(user.getAnnouncements()));
 
         log.info("Converted User entity to UserProfileResponse successfully for user ID: " + user.getId());
         return response;
@@ -98,6 +105,7 @@ public class UserProfileViewMapper {
         UserBookingsResponse bookingsResponse = new UserBookingsResponse();
         bookingsResponse.setAnnouncementId(booking.getAnnouncement().getId());
         bookingsResponse.setImages(booking.getAnnouncement().getImages());
+        bookingsResponse.setRegion(booking.getAnnouncement().getRegion());
         bookingsResponse.setRating(announcementViewMapper.calculateRating());
         bookingsResponse.setTitle(booking.getAnnouncement().getTitle());
         bookingsResponse.setAddress(booking.getAnnouncement().getAddress());
@@ -119,6 +127,7 @@ public class UserProfileViewMapper {
         announcementsResponse.setId(announcement.getId());
         announcementsResponse.setImages(announcement.getImages());
         announcementsResponse.setHouseType(announcement.getHouseType());
+        announcementsResponse.setRegion(announcement.getRegion());
         announcementsResponse.setPrice(announcement.getPrice());
         announcementsResponse.setRating(announcementViewMapper.calculateRating2());
         announcementsResponse.setTitle(announcement.getTitle());
@@ -138,7 +147,9 @@ public class UserProfileViewMapper {
         log.info("Converting a list of Announcements to UserAnnouncementResponses");
 
         for (Announcement announcement : announcements) {
-            responses.add(announcementToAnnouncementsResponseModeration(announcement));
+            if (announcement.getPosition() == Position.MODERATION) {
+                responses.add(announcementToAnnouncementsResponseModeration(announcement));
+            }
         }
         log.info("Converted the list of Announcements to UserAnnouncementResponses successfully");
         return responses;
