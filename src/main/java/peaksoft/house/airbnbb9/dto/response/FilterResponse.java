@@ -7,9 +7,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 public class FilterResponse {
-    private List<AnnouncementResponse> responses;
+    private List<ProfileAnnouncementResponse> responses;
 
-    public FilterResponse(List<AnnouncementResponse> responses) {
+    public FilterResponse(List<ProfileAnnouncementResponse> responses) {
         this.responses = responses;
     }
 }
