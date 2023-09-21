@@ -18,12 +18,14 @@ public class AnnouncementViewMapper {
 
     public Double calculateRating() {
         String sql = """
-                 SELECT
-                     AVG(f.rating) AS rating
-                 FROM users u
-                          JOIN announcements a ON u.id = a.user_id
-                          JOIN feedbacks f ON a.id = f.announcement_id
-                 """;
+        SELECT
+            AVG(f.rating) AS rating
+        FROM users u
+        JOIN announcements a ON u.id = a.user_id
+        JOIN feedbacks f ON a.id = f.announcement_id
+        WHERE a.position =
+                'ACCEPTED' OR a.status = 'BOOKED'
+        """;
 
         log.info("Calculating average rating for announcements");
 
@@ -32,7 +34,7 @@ public class AnnouncementViewMapper {
         log.info("Calculated average rating successfully: " + averageRating);
 
         return averageRating;
-    }
+        }
 
     public Double calculateRating2() {
         String sql = """

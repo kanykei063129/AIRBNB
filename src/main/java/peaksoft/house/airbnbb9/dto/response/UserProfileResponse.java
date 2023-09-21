@@ -13,4 +13,5 @@ public class UserProfileResponse {
     private List<String> messageFromAdmin;
     private List<UserBookingsResponse> bookings;
     private List<UserAnnouncementResponse> announcements;
+    private List<UserAnnouncementResponse> moderations;
 }

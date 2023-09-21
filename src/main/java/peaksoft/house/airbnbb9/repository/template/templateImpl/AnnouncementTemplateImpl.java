@@ -443,7 +443,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
         User user = getAuthenticatedUser();
-        StringBuilder sql = new StringBuilder("SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, ");
+        StringBuilder sql = new StringBuilder("SELECT a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region,  a.house_type, a.status, a.title, COALESCE(r.rating, 0) as rating, ");
         sql.append("(SELECT ARRAY_AGG(ai.images) FROM announcement_images ai WHERE ai.announcement_id = a.id) as images ");
         sql.append("FROM announcements a ");
         sql.append("LEFT JOIN feedbacks r ON a.id = r.announcement_id ");
@@ -464,10 +464,10 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             sql.append("AND a.price IS NOT NULL ");
         }
 
-        sql.append("GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating, images ");
+        sql.append("GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.house_type, a.status, a.region, a.title, rating, images ");
 
         if (rating != null && !rating.isEmpty()) {
-            sql.append("ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC"));
+            sql.append("ORDER BY rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC"));
         } else if (price != null && !price.equals(PriceType.LOW_TO_HIGH)) {
             sql.append("ORDER BY a.price DESC");
         } else if (price != null) {
@@ -479,12 +479,14 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
+                .houseType(HouseType.valueOf(rs.getString("house_type")))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
                 .rating(rs.getInt("rating"))
-                .rating(rs.getDouble("rating"))
+                .status(Status.valueOf(rs.getString("status")))
+                .region(Region.valueOf(rs.getString("region")))
                 .build(), params.toArray());
 
         FilterResponse filterResponse = new FilterResponse(announcementResponses);
