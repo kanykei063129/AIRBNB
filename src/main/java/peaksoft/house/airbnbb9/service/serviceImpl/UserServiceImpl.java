@@ -12,6 +12,8 @@ import org.webjars.NotFoundException;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.entity.Like;
 import peaksoft.house.airbnbb9.entity.User;
+import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.PriceType;
 import peaksoft.house.airbnbb9.enums.Role;
 import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.mappers.UserProfileViewMapper;
@@ -67,6 +69,11 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
         log.info("Retrieving user profile for user with id: {}", user.getId());
         return userProfileViewMapper.entityToDto(user);
+    }
+
+    @Override
+    public FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price) {
+        return userTemplate.getAllAnnouncementsFilters(houseType, rating, price);
     }
 
     @Override

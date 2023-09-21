@@ -37,7 +37,7 @@ public class ProfileApi {
             @RequestParam(required = false) HouseType houseType,
             @RequestParam(required = false) String rating,
             @RequestParam(required = false) PriceType price) {
-        return announcementService.getAllAnnouncementsFilters(houseType, rating, price);
+        return userService.getAllAnnouncementsFilters(houseType, rating, price);
     }
 
     @Operation(summary = "Get announcement by id", description = "Get announcement by id into two position as request to book or update booking date")

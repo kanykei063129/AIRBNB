@@ -29,8 +29,6 @@ public interface AnnouncementTemplate {
 
     GlobalSearchResponse search(String word, boolean isNearby, Double latitude, Double longitude);
 
-    FilterResponse getAllAnnouncementsFilters(HouseType houseType, String rating, PriceType price);
-
     PaginationAnnouncementResponse pagination(Integer page, Integer size);
 
     List<AnnouncementResponse> getApplicationById(Long id);
