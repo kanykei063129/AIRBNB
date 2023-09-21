@@ -29,6 +29,7 @@ public class AnnouncementResponse {
     private double rating;
     private User user;
     private boolean isFavorite;
+    private boolean card;
 
 
     public AnnouncementResponse(Long id, HouseType houseType, AnnouncementImagesResponse images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province) {
@@ -104,5 +105,23 @@ public class AnnouncementResponse {
         this.rating = rating;
         this.user = user;
         this.isFavorite = isFavorite;
+    }
+
+    public AnnouncementResponse(Long id, HouseType houseType, AnnouncementImagesResponse images, int price, Region region, String address, String description, Status status, String title, int maxGuests, String province, double rating, User user, boolean isFavorite, boolean card) {
+        this.id = id;
+        this.houseType = houseType;
+        this.images = images;
+        this.price = price;
+        this.region = region;
+        this.address = address;
+        this.description = description;
+        this.status = status;
+        this.title = title;
+        this.maxGuests = maxGuests;
+        this.province = province;
+        this.rating = rating;
+        this.user = user;
+        this.isFavorite = isFavorite;
+        this.card = card;
     }
 }

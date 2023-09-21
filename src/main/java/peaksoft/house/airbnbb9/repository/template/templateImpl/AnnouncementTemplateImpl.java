@@ -41,6 +41,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province,
                        a.region,
                        a.title,
+                       a.card
                        r.rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
@@ -85,6 +86,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
                 .rating(rs.getInt("rating"))
+                .card(rs.getBoolean("card"))
                 .build(), params.toArray());
 
         log.info("Announcements filtered successfully!");
@@ -103,6 +105,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                        a.region,
                                        a.title,
                                        a.house_type,
+                                       a.card,
                                        r.rating,
                                        CASE WHEN f.announcement_id IS NOT NULL THEN true ELSE false END as is_favorite
                                 FROM announcements a
@@ -153,6 +156,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .rating(rs.getInt("rating"))
                 .isFavorite(rs.getBoolean("is_favorite"))
                 .region(Region.valueOf(rs.getString("region")))
+                .card(rs.getBoolean("card"))
                 .houseType(HouseType.valueOf(rs.getString("house_type")))
                 .build(), params.toArray());
 
@@ -172,6 +176,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province      as province,
                        a.region        as region,
                        a.title         as title,
+                       a.card          as card,
                        AVG(r.rating)   as rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
@@ -191,6 +196,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
                 .rating(rs.getInt("rating"))
+                .card(rs.getBoolean("card"))
                 .build());
 
         log.info("Retrieved all accepted announcements successfully!");
@@ -208,6 +214,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province    AS province,
                        a.title       AS title,
                        a.position    AS position,
+                       a.card        as card,
                        AVG(r.rating) AS rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
@@ -229,6 +236,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .province(rs.getString("province"))
                 .title(rs.getString("title"))
+                .card(rs.getBoolean("card"))
                 .rating(rs.getInt("rating"))
                 .build(), pageSize, offset);
 
@@ -361,6 +369,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                a.province as province,
                                a.region as region,
                                a.title as title,
+                               a.card as card,
                                AVG(r.rating) as rating
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
@@ -381,6 +390,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .description(rs.getString("description"))
                         .province(rs.getString("province"))
                         .title(rs.getString("title"))
+                        .card(rs.getBoolean("card"))
                         .rating(rs.getInt("rating"))
                         .region(Region.valueOf(rs.getString("region")))
                         .build(), word, word, word, word, minLat, maxLat, minLong, maxLong);
@@ -589,6 +599,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.description   as description,
                        a.province      as province,
                        a.title         as title,
+                       a.card          as card,
                        u.role          as role,
                        u.id            as user_id,
                        u.full_name     as username,
@@ -616,6 +627,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                         .price(rs.getInt("price"))
                         .maxGuests(rs.getInt("max_guests"))
                         .address(rs.getString("address"))
+                        .card(rs.getBoolean("card"))
                         .description(rs.getString("description"))
                         .province(rs.getString("province"))
                         .title(rs.getString("title"))
@@ -645,6 +657,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 a.max_guests as maxGuests,
                 a.address as address,
                 a.description as description,
+                a.region as region,
+                a.province as province,
                 u.full_name as fullName,
                 u.email as email,
                 u.image as image,
@@ -665,6 +679,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .description(rs.getString("description"))
                 .fullName(rs.getString("fullName"))
                 .email(rs.getString("email"))
+                .region(Region.valueOf(rs.getString("region")))
+                .province(rs.getString("province"))
                 .image(rs.getString("image"))
                 .price(rs.getInt("price"))
                 .build(), announcementId);

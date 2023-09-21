@@ -40,4 +40,5 @@ public class AnnouncementRequest {
     private String title;
     private int maxGuests;
     private String province;
+    private boolean card;
 }

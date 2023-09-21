@@ -26,6 +26,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -89,8 +92,15 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         announcement.setPosition(Position.MODERATION);
         announcement.setLatitude(latitude);
         announcement.setLongitude(longitude);
+        announcement.setCard(true);
         try {
             announcementRepository.save(announcement);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.schedule(() -> {
+                announcement.setCard(false);
+                announcementRepository.save(announcement);
+            }, 1, TimeUnit.HOURS);
+            scheduler.shutdown();
             log.info("Advertisement with title: {} successfully submitted", announcementRequest.getTitle());
         } catch (Exception e) {
             log.error("Error while saving the advertisement: {}", e.getMessage(), e);
