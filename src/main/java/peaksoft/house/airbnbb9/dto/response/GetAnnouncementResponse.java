@@ -2,6 +2,7 @@ package peaksoft.house.airbnbb9.dto.response;
 
 import lombok.*;
 import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.Region;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class GetAnnouncementResponse {
     private String fullName;
     private String email;
     private String image;
+    private Region region;
+    private String province;
     private int price;
     private boolean isBooked;
 }
