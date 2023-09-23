@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 public class PopularApartmentResponse {
+    private Long id;
     private List<String> images;
     private String title;
     private String description;

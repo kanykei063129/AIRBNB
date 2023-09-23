@@ -278,7 +278,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     public List<PopularHouseResponse> getPopularHouses() {
 
         String sql = """
-                SELECT 
+                SELECT a.id,
                        a.address,       
                        a.description, 
                        a.title,     
@@ -303,6 +303,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         log.info("Fetching popular houses.");
 
         List<PopularHouseResponse> popularHouses = jdbcTemplate.query(sql, (rs, rowNum) -> PopularHouseResponse.builder()
+                .id(rs.getLong("id"))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))
                 .images(Arrays.asList(rs.getString("images").split(",")))
@@ -317,7 +318,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public PopularApartmentResponse getPopularApartment() {
         String sql = """
-                SELECT 
+                SELECT    a.id ,
                           a.address,       
                           a.description, 
                           a.title,    
@@ -339,6 +340,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                     """;
         log.info("Fetching the most popular apartment.");
         PopularApartmentResponse popularApartment = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
+                .id(rs.getLong("id"))
                 .images(Arrays.asList(rs.getString("images").split(",")))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))
