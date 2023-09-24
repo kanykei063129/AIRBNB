@@ -41,7 +41,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        a.province,
                        a.region,
                        a.title,
-                       a.card
+                       a.card,
                        r.rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
