@@ -105,11 +105,15 @@ public class UserProfileViewMapper {
         UserBookingsResponse bookingsResponse = new UserBookingsResponse();
         bookingsResponse.setAnnouncementId(booking.getAnnouncement().getId());
         bookingsResponse.setImages(booking.getAnnouncement().getImages());
+        bookingsResponse.setHouseType(booking.getAnnouncement().getHouseType());
+        bookingsResponse.setPrice(booking.getAnnouncement().getPrice());
         bookingsResponse.setRegion(booking.getAnnouncement().getRegion());
         bookingsResponse.setRating(announcementViewMapper.calculateRating());
         bookingsResponse.setTitle(booking.getAnnouncement().getTitle());
+        bookingsResponse.setDescription(booking.getAnnouncement().getDescription());
         bookingsResponse.setAddress(booking.getAnnouncement().getAddress());
         bookingsResponse.setMaxGuests(booking.getAnnouncement().getMaxGuests());
+        bookingsResponse.setStatus(booking.getAnnouncement().getStatus());
         bookingsResponse.setCheckIn(booking.getCheckIn().format(DateTimeFormatter.ISO_LOCAL_DATE));
         bookingsResponse.setCheckOut(booking.getCheckOut().format(DateTimeFormatter.ISO_LOCAL_DATE));
 
