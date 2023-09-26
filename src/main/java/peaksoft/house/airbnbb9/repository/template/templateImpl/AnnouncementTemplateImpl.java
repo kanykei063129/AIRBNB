@@ -278,27 +278,27 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     public List<PopularHouseResponse> getPopularHouses() {
 
         String sql = """
-                SELECT a.id,
-                       a.address,       
-                       a.description, 
-                       a.title,     
-                       a.price,
-                       AVG(f.rating) AS rating,
-                           (SELECT string_agg(ai.images, ',')
-                           FROM announcement_images ai
-                           WHERE ai.announcement_id = a.id) AS images
-                FROM announcements a  
-                LEFT JOIN feedbacks f 
-                ON a.id = f.announcement_id 
-                WHERE a.house_type ='HOUSE' 
-                GROUP BY     
-                a.id,
-                a.address,
-                a.description,
-                a.title,
-                a.price 
-                ORDER BY rating 
-                DESC LIMIT 3;
+               SELECT a.id,
+                      a.address,
+                      a.description,
+                      a.title,
+                      a.price,
+                      AVG(f.rating)                                    AS rating,
+                      coalesce((SELECT string_agg(ai.images, ',')
+                                FROM announcement_images ai
+                                WHERE ai.announcement_id = a.id), 'null') AS images
+               FROM announcements a
+                        LEFT JOIN feedbacks f
+                                  ON a.id = f.announcement_id
+               WHERE a.house_type = 'HOUSE'
+               GROUP BY a.id,
+                        a.address,
+                        a.description,
+                        a.title,
+                        a.price
+               ORDER BY rating
+                       DESC
+               LIMIT 3;
                  """;
         log.info("Fetching popular houses.");
 
