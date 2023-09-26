@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.PriceType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 
@@ -17,7 +18,7 @@ public interface AnnouncementService {
 
     SimpleResponse deleteByIdAnnouncement(Long announcementId);
 
-    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price);
+    List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, PriceType price);
 
     PaginationAnnouncementResponse getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price,int currentPage, int pageSize);
 

@@ -97,15 +97,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price) {
-        List<AnnouncementResponse> allAnnouncements = announcementTemplate.getAllAnnouncementsFilter(status, houseType, rating, price);
-        for (AnnouncementResponse a : allAnnouncements) {
+    public List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, PriceType price) {
+        List<AnnouncementResponse> allAnnouncementss = announcementTemplate.getAllAnnouncementsFilter(status, houseType, rating, price);
+        for (AnnouncementResponse a : allAnnouncementss) {
             List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
             AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
             ai.setImages(announcementImages);
             a.setImages(ai);
         }
-        return allAnnouncements;
+        return allAnnouncementss;
     }
 
     @Override

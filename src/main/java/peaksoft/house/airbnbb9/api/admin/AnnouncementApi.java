@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import peaksoft.house.airbnbb9.dto.request.AnnouncementRequest;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.enums.HouseType;
+import peaksoft.house.airbnbb9.enums.PriceType;
 import peaksoft.house.airbnbb9.enums.Status;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 
@@ -56,7 +57,7 @@ public class AnnouncementApi {
             @RequestParam(required = false) Status status,
             @RequestParam(required = false) HouseType houseType,
             @RequestParam(required = false) String rating,
-            @RequestParam(required = false) String price) {
+            @RequestParam(required = false) PriceType price) {
         return announcementService.getAllAnnouncementsFilter(status, houseType, rating, price);
     }
 
