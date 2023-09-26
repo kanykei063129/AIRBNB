@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import peaksoft.house.airbnbb9.dto.response.*;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
@@ -15,7 +13,6 @@ import peaksoft.house.airbnbb9.entity.User;
 import peaksoft.house.airbnbb9.enums.*;
 import peaksoft.house.airbnbb9.exception.BadCredentialException;
 import peaksoft.house.airbnbb9.exception.NotFoundException;
-import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 
@@ -75,8 +72,6 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         } else if (price != null && !price.isEmpty()) {
             sql += "ORDER BY a.price " + (price.equalsIgnoreCase("asc") ? "ASC" : "DESC");
         }
-        log.info("Filtering announcements with SQL: " + sql);
-
         List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
                 .price(rs.getInt("price"))
@@ -90,11 +85,12 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .build(), params.toArray());
 
         log.info("Announcements filtered successfully!");
+
         return results;
     }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
+    public PaginationAnnouncementResponse getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price, int currentPage, int pageSize) {
         String sql = """
                                 SELECT a.id,
                                        a.price,
@@ -113,7 +109,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                      favorites f ON a.id = f.announcement_id
                                          LEFT JOIN
                                      feedbacks r ON a.id = r.announcement_id
-                                WHERE 1 = 1 AND a.position = 'ACCEPTED'
+                                WHERE a.position = 'ACCEPTED'
                 """;
         log.info("Starting to filter announcements for vendors.");
 
@@ -129,9 +125,9 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
             params.add(houseType.name());
         }
 
-        if (rating != null && !rating.isEmpty()) {
-            sql += "AND r.rating IS NOT NULL ";
-        }
+//        if (rating != null && !rating.isEmpty()) {
+//            sql += "AND r.rating IS NOT NULL ";
+//        }
 
         if (price != null && !price.isEmpty()) {
             sql += "AND a.price IS NOT NULL ";
@@ -140,10 +136,14 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         sql += "GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title, r.rating,a.house_type,is_favorite ";
 
         if (rating != null && !rating.isEmpty()) {
-            sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("asc") ? "ASC" : "DESC");
+            sql += "ORDER BY r.rating " + (rating.equalsIgnoreCase("Popular") ? "ASC" : "DESC");
         } else if (price != null && !price.isEmpty()) {
-            sql += "ORDER BY a.price " + (price.equalsIgnoreCase("asc") ? "ASC" : "DESC");
+            sql += "ORDER BY a.price " + (price.equalsIgnoreCase("Low to high") ? "ASC" : "DESC");
         }
+        int offset = (currentPage - 1) * pageSize;
+        sql += " LIMIT ? OFFSET ?";
+        params.add(pageSize);
+        params.add(offset);
         log.info("Filtering announcements for vendors with SQL: " + sql);
         List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
@@ -161,7 +161,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .build(), params.toArray());
 
         log.info("Announcements filtered successfully for vendors!");
-        return results;
+        return new PaginationAnnouncementResponse(results,currentPage,pageSize);
     }
 
 
@@ -375,7 +375,8 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                AVG(r.rating) as rating
                         FROM announcements a
                                  LEFT JOIN feedbacks r ON a.id = r.announcement_id
-                        WHERE (a.region ILIKE lower(concat('%', ?, '%'))
+                        WHERE a.position = 'ACCEPTED'  AND 
+                        (a.region ILIKE lower(concat('%', ?, '%'))
                                OR a.status ILIKE lower(concat('%', ?, '%'))
                                OR a.house_type ILIKE lower(concat('%', ?, '%'))
                                OR a.province ILIKE lower(concat('%', ?, '%')))
@@ -415,11 +416,11 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                        AVG(r.rating)   as rating
                 FROM announcements a
                          LEFT JOIN feedbacks r ON a.id = r.announcement_id
-                WHERE 
-                    a.region ILIKE lower(concat('%', ?, '%'))  
+                WHERE a.position = 'ACCEPTED' AND
+                  (  a.region ILIKE lower(concat('%', ?, '%'))  
                     OR a.status ILIKE lower(concat('%', ?, '%'))
                     OR a.house_type ILIKE lower(concat('%',?,'%'))
-                    OR a.province ILIKE lower(concat('%', ?, '%')) group by 
+                    OR a.province ILIKE lower(concat('%', ?, '%')) ) group by 
                     a.id ,a.price  ,
                     a.max_guests   ,
                     a.address      ,
@@ -531,6 +532,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     public List<AnnouncementResponse> getApplicationById(Long id) {
         String sql = """
                 SELECT a.id            as id,
+                a.house_type as house_type,
                        a.position      as position,
                        a.price         as price,
                        a.max_guests    as max_guests,
@@ -548,7 +550,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 FROM announcements a
                          LEFT JOIN users u ON a.user_id = u.id
                 WHERE a.id = ?
-                GROUP BY a.id, a.position, a.price, a.max_guests, a.address,
+                GROUP BY a.id,a.house_type, a.position, a.price, a.max_guests, a.address,
                          a.description, a.province, a.title,
                          u.id, u.full_name, u.email,u.role
                 """;
@@ -563,6 +565,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 }
                 return AnnouncementResponse.builder()
                         .id(rs.getLong("id"))
+                        .houseType(HouseType.valueOf(rs.getString("house_type")))
                         .price(rs.getInt("price"))
                         .maxGuests(rs.getInt("max_guests"))
                         .address(rs.getString("address"))

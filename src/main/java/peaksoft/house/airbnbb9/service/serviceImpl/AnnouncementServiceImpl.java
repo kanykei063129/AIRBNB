@@ -109,9 +109,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price) {
-        List<AnnouncementResponse> allAnnouncements = announcementTemplate.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
-        for (AnnouncementResponse a : allAnnouncements) {
+    public PaginationAnnouncementResponse getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price, int currentPage, int pageSize) {
+        PaginationAnnouncementResponse allAnnouncements = announcementTemplate.getAllAnnouncementsFilterVendor(region, houseType, rating, price, currentPage, pageSize);
+        for (AnnouncementResponse a : allAnnouncements.getAnnouncementResponses()) {
             List<String> announcementImages = announcementRepository.getAnnouncementImages(a.getId());
             AnnouncementImagesResponse ai = new AnnouncementImagesResponse();
             ai.setImages(announcementImages);

@@ -43,12 +43,14 @@ public class AnnouncementVendorApi {
             description = " Filter  announcements by region,house type,rating and price (Vendor part)")
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/announcements-filter")
-    public List<AnnouncementResponse> getAllAnnouncementsFilterAndSort(
+    public PaginationAnnouncementResponse getAllAnnouncementsFilterAndSort(
             @RequestParam(required = false) Region region,
             @RequestParam(required = false) HouseType houseType,
             @RequestParam(required = false) String rating,
-            @RequestParam(required = false) String price) {
-        return announcementService.getAllAnnouncementsFilterVendor(region, houseType, rating, price);
+            @RequestParam(required = false) String price,
+            @RequestParam int currentPage,
+            @RequestParam int pageSize) {
+        return announcementService.getAllAnnouncementsFilterVendor(region, houseType, rating, price,currentPage,pageSize);
     }
 
     @Operation(summary = "Global search",
