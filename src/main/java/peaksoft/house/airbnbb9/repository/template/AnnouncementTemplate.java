@@ -5,7 +5,6 @@ import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.GlobalSearchResponse;
 import peaksoft.house.airbnbb9.dto.response.PaginationAnnouncementResponse;
 import peaksoft.house.airbnbb9.enums.HouseType;
-import peaksoft.house.airbnbb9.enums.PriceType;
 import peaksoft.house.airbnbb9.enums.Region;
 import peaksoft.house.airbnbb9.enums.Status;
 
@@ -15,7 +14,7 @@ public interface AnnouncementTemplate {
 
     List<AnnouncementResponse> getAllAnnouncementsFilter(Status status, HouseType houseType, String rating, String price);
 
-    List<AnnouncementResponse> getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price);
+    PaginationAnnouncementResponse getAllAnnouncementsFilterVendor(Region region, HouseType houseType, String rating, String price,int currentPage, int pageSize);
 
     List<AnnouncementResponse> getAllAnnouncements();
 
