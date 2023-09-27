@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 public class LatestAnnouncementResponse {
+    private Long id;
     private List<String> images;
     private String title;
     private String description;
