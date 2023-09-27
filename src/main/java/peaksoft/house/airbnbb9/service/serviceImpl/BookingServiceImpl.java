@@ -92,9 +92,15 @@ public class BookingServiceImpl implements BookingService {
         booking.setDate(LocalDate.now());
         announcement.setStatus(Status.BOOKED);
         bookingRepository.save(booking);
+
+        String message = "Booking successful!";
+        if (charge != null && charge.getDescription() != null) {
+            message += charge.getDescription();
+        }
+
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
-                .message("Booking successful! Customer: " + charge.getCustomer())
+                .message(message)
                 .build();
     }
 
@@ -131,9 +137,14 @@ public class BookingServiceImpl implements BookingService {
         booking.setDate(LocalDate.now());
         bookingRepository.save(booking);
         announcementRepository.save(announcement);
+        String message = "The dates has been updated!!";
+        if (charge != null && charge.getDescription() != null) {
+            message += charge.getDescription();
+        }
+
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
-                .message("The dates has been updated! Customer: " + charge.getCustomer())
+                .message(message)
                 .build();
     }
     private void setUp(){

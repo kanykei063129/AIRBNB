@@ -15,6 +15,7 @@ import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -68,7 +69,7 @@ public class FavoriteTemplateImpl implements FavoriteTemplate {
 
         List<FavoriteAnnouncementsResponse> favoriteAnnouncements = jdbcTemplate.query(sql, (rs, rowNum) -> new FavoriteAnnouncementsResponse(
                 rs.getLong("id")
-                , rs.getString("images")
+                , Collections.singletonList(rs.getString("images"))
                 , rs.getInt("price")
                 , rs.getString("address")
                 , rs.getString("description")

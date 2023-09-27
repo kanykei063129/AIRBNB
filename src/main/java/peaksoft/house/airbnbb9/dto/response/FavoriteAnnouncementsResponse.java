@@ -7,12 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import peaksoft.house.airbnbb9.enums.Status;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class FavoriteAnnouncementsResponse {
     private Long id;
-    private String image;
+    private List<String> images;
     private int price;
     private String address;
     private String description;
