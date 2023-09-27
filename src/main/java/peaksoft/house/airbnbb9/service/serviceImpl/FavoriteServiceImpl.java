@@ -51,30 +51,33 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public SimpleResponse addOrRemoveFavorite(Long announcementId) {
-        boolean isTrue = false;
         Favorite favorite = new Favorite();
         User user = getAuthentication();
         log.info("Adding or removing favorite for user with email: {}", user.getEmail());
 
-        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " doesn't exist "));
+        Announcement announcement = announcementRepository.findById(announcementId)
+                .orElseThrow(() -> new NotFoundException("Announcement with id: " + announcementId + " doesn't exist"));
+
         for (Favorite f : user.getFavorites()) {
-            if (!Objects.equals(f.getAnnouncement().getId(), announcement.getId())) {
-                isTrue = true;
-            } else {
+            if (Objects.equals(f.getAnnouncement().getId(), announcement.getId())) {
                 favoriteRepository.delete(f);
                 log.info("Announcement with id: {} was deleted from favorites for user: {}", announcementId, user.getEmail());
-                return SimpleResponse.builder().httpStatus(HttpStatus.OK).message(String.format("Announcement with id: " + announcementId + " was deleted from your favorites.")).build();
+                return SimpleResponse.builder()
+                        .httpStatus(HttpStatus.OK)
+                        .message(String.format("Announcement with id: %d was deleted from your favorites.", announcementId))
+                        .build();
             }
         }
-        if (isTrue) {
-            favorite.setAnnouncement(announcement);
-            favorite.setUser(user);
-            favoriteRepository.save(favorite);
 
-            log.info("Announcement with id: {} was added to favorites for user: {}", announcementId, user.getEmail());
+        favorite.setAnnouncement(announcement);
+        favorite.setUser(user);
+        favoriteRepository.save(favorite);
 
-            return SimpleResponse.builder().httpStatus(HttpStatus.OK).message(String.format("Announcement with id: " + announcementId + " was added to your favorites!")).build();
-        }
-        return null;
+        log.info("Announcement with id: {} was added to favorites for user: {}", announcementId, user.getEmail());
+
+        return SimpleResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .message(String.format("Announcement with id: %d was added to your favorites!", announcementId))
+                .build();
     }
 }
