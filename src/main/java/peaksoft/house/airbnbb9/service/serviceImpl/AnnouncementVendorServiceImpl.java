@@ -125,6 +125,9 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
         for (Booking b : all) {
             if (b.getAnnouncement().getId().equals(announcementId) && b.getUser().equals(user)) {
                 announcement.setBooked(true);
+                if(b.getCheckOut().isBefore(LocalDate.now())){
+                    announcement.setLived(true);
+                }
                 log.info("Get announcement by id");
                 return announcement;
             }

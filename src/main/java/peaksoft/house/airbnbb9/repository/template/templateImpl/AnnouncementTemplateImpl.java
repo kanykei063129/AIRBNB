@@ -238,6 +238,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
 
         String sql = """
                 SELECT 
+                       a.id            AS id,
                        a.address       AS address,
                        a.description   AS description,
                        a.title         AS title,
@@ -252,6 +253,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         log.info("Fetching the latest announcement.");
 
         LatestAnnouncementResponse latestAnnouncement = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> LatestAnnouncementResponse.builder()
+                .id(rs.getLong("id"))
                 .images(Arrays.asList(rs.getString("images").split(",")))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))

@@ -47,6 +47,7 @@ public class FeedbackTemplateImpl implements FeedbackTemplate {
                f.create_date,
                f.like_count,
                f.dis_like_count
+     ORDER BY f.id desc 
     """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> FeedbackResponse

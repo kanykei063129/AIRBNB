@@ -27,4 +27,5 @@ public class GetAnnouncementResponse {
     private String province;
     private int price;
     private boolean isBooked;
+    private boolean isLived;
 }
