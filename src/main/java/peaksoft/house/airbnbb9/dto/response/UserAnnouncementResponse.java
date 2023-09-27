@@ -28,4 +28,5 @@ public class UserAnnouncementResponse {
     private Integer bookingsCountAnnouncement;
     private String messagesFromAdmin;
     private Region region;
+    private Boolean isBlocked;
 }
