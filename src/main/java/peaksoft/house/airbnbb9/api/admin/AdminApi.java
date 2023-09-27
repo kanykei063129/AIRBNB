@@ -60,7 +60,7 @@ public class AdminApi {
     @Operation(summary = "Blocking announcements",
             description = "Only admin can block announcements ")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/blockedAnnouncementsById")
+    @PostMapping("/blockedAnnouncementsById")
     public SimpleResponse blockedAnnouncementById(Long announcementId) {
         return announcementService.blockedAnnouncementById(announcementId);
     }

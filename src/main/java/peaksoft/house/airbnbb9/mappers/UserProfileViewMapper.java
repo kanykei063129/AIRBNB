@@ -26,9 +26,6 @@ public class UserProfileViewMapper {
         if (announcement == null) {
             return null;
         }
-        if (announcement.getPosition().equals(Position.ACCEPTED)) {
-
-        }
         log.info("Converting Announcement to UserAnnouncementResponse for announcement ID: " + announcement.getId());
 
         UserAnnouncementResponse announcementsResponse = new UserAnnouncementResponse();
@@ -44,6 +41,7 @@ public class UserProfileViewMapper {
         announcementsResponse.setStatus(announcement.getStatus());
         announcementsResponse.setRegion(announcement.getRegion());
         announcementsResponse.setMessagesFromAdmin(announcement.getMessageFromAdmin());
+        announcementsResponse.setIsBlocked(announcementViewMapper.isBlocked());
         announcementsResponse.setBookingsCountAnnouncement(announcement.getBookings().size());
 
         log.info("Converted Announcement to UserAnnouncementResponse successfully for announcement ID: " + announcement.getId());
@@ -56,7 +54,7 @@ public class UserProfileViewMapper {
         log.info("Converting a list of Announcements to UserAnnouncementResponses");
 
         for (Announcement announcement : announcements) {
-            if (announcement.getPosition() == Position.ACCEPTED) {
+            if (announcement.getPosition().equals(Position.ACCEPTED) || announcement.getPosition().equals(Position.BLOCK)) {
                 responses.add(announcementToAnnouncementsResponse(announcement));
             }
         }
@@ -139,7 +137,6 @@ public class UserProfileViewMapper {
         announcementsResponse.setAddress(announcement.getAddress());
         announcementsResponse.setMaxGuests(announcement.getMaxGuests());
         announcementsResponse.setStatus(announcement.getStatus());
-        announcementsResponse.setMessagesFromAdmin(announcement.getMessageFromAdmin());
 
         log.info("Converted Announcement to UserAnnouncementResponse successfully for announcement ID: " + announcement.getId());
         return announcementsResponse;

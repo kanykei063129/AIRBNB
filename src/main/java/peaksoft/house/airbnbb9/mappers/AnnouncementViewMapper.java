@@ -24,7 +24,7 @@ public class AnnouncementViewMapper {
         JOIN announcements a ON u.id = a.user_id
         JOIN feedbacks f ON a.id = f.announcement_id
         WHERE a.position =
-                'ACCEPTED' OR a.status = 'BOOKED'
+                'ACCEPTED' OR a.position = 'BLOCK'
         """;
 
         log.info("Calculating average rating for announcements");
@@ -46,13 +46,20 @@ public class AnnouncementViewMapper {
                  WHERE a.position = 'MODERATION'
                  """;
 
-        log.info("Calculating average rating for announcements with status 'MODERATION'");
+        log.info("Calculating average rating for announcements with position 'MODERATION'");
 
         Double averageRating = jdbcTemplate.queryForObject(sql, Double.class);
 
         log.info("Calculated average rating successfully: " + averageRating);
 
         return averageRating;
+    }
+    public boolean isBlocked() {
+        String sql = "SELECT CASE WHEN EXISTS (SELECT 1 FROM announcements WHERE position = 'BLOCK') THEN true ELSE false END as is_blocked";
+        log.info("Checking if announcement is blocked");
+        boolean isBlocked = jdbcTemplate.queryForObject(sql, Boolean.class);
+        log.info("Announcement is blocked: " + isBlocked);
+        return isBlocked;
     }
 
     private void dtoToEntityConverting(AnnouncementRequest request, Announcement announcement) {
