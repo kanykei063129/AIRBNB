@@ -19,5 +19,4 @@ public class FeedbackResponse {
     private Date createdAt;
     private Integer likeCount;
     private Integer disLikeCount;
-
 }

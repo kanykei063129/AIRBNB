@@ -71,7 +71,7 @@ public class FeedbackApi {
     @Operation(summary = "Count ratings",
             description = "Count ratings ")
     @GetMapping ("countRating/{announcementId}")
-    @PreAuthorize("hasAnyAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public RatingCountResponse countRating(@PathVariable Long announcementId) {
         return feedbackService.countRating(announcementId);
     }
