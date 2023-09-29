@@ -308,25 +308,24 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public PopularApartmentResponse getPopularApartment() {
         String sql = """
-                SELECT    a.id ,
-                          a.address,       
-                          a.description, 
-                          a.title,    
-                          AVG(f.rating) AS rating,   
-                          (SELECT string_agg(ai.images, ',')
-                           FROM announcement_images ai
-                           WHERE ai.announcement_id = a.id) AS images
-                   FROM announcements a  
-                   LEFT JOIN feedbacks f 
-                   ON a.id = f.announcement_id  
-                   WHERE a.house_type ='APARTMENT'
-                   GROUP BY     
-                   a.id,
-                   a.address,
-                   a.description,
-                   a.title
-                   ORDER BY rating 
-                   DESC LIMIT 1;
+                SELECT a.id,
+                       a.address,
+                       a.description,
+                       a.title,
+                       AVG(f.rating) AS rating,
+                       array_agg(ai.images) AS images
+                FROM announcements a
+                LEFT JOIN announcement_images ai ON a.id = ai.announcement_id
+                LEFT JOIN feedbacks f ON a.id = f.announcement_id
+                WHERE a.house_type = 'APARTMENT'
+                AND a.position ='ACCEPTED'
+                GROUP BY
+                    a.id,
+                    a.address,
+                    a.description,
+                    a.title
+                ORDER BY rating DESC
+                LIMIT 1
                     """;
         log.info("Fetching the most popular apartment.");
         PopularApartmentResponse popularApartment = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
