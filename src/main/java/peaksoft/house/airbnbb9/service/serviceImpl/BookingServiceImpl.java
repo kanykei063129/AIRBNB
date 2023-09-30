@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import peaksoft.house.airbnbb9.dto.request.BookRequest;
 import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
+import peaksoft.house.airbnbb9.dto.response.BookResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Booking;
@@ -58,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public SimpleResponse requestToBook(BookRequest request) throws StripeException {
+    public BookResponse requestToBook(BookRequest request) throws StripeException {
         User user = getAuthenticatedRoleUser();
         Announcement announcement = announcementRepository.findById(request.getAnnouncementId())
                 .orElseThrow(() -> new NotFoundException("Announcement with id " + request.getAnnouncementId() + " not found!"));
@@ -85,20 +86,24 @@ public class BookingServiceImpl implements BookingService {
 
         setUp();
         Map<String, Object> chargeParams = new HashMap<>();
-        chargeParams.put("amount", (int) (request.getAmount() * 100)); // Сумма в центах
+        chargeParams.put("amount", (int) (request.getAmount() * 100));
         chargeParams.put("currency", "USD");
         chargeParams.put("source", request.getToken());
         Charge charge = Charge.create(chargeParams);
         booking.setDate(LocalDate.now());
         announcement.setStatus(Status.BOOKED);
-        bookingRepository.save(booking);
+        Booking save = bookingRepository.save(booking);
 
         String message = "Booking successful!";
         if (charge != null && charge.getDescription() != null) {
             message += charge.getDescription();
         }
 
-        return SimpleResponse.builder()
+        return BookResponse.builder()
+                .id(save.getId())
+                .checkIn(booking.getCheckIn())
+                .checkOut(booking.getCheckOut())
+                .date(booking.getDate())
                 .httpStatus(HttpStatus.OK)
                 .message(message)
                 .build();

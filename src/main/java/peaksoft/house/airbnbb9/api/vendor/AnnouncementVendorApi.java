@@ -65,7 +65,7 @@ public class AnnouncementVendorApi {
             description = "Any registered user can submit a booking request.")
     @PreAuthorize("hasAnyAuthority('USER')")
     @PostMapping
-    public SimpleResponse sendRequestToBook(@RequestBody BookRequest request) throws StripeException{
+    public BookResponse sendRequestToBook(@RequestBody BookRequest request) throws StripeException{
         return bookingService.requestToBook(request);
     }
 
