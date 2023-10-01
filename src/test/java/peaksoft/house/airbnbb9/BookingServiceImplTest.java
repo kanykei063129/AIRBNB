@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import peaksoft.house.airbnbb9.dto.request.BookRequest;
 import peaksoft.house.airbnbb9.dto.request.UpdateBookRequest;
+import peaksoft.house.airbnbb9.dto.response.BookResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
 import peaksoft.house.airbnbb9.entity.Announcement;
 import peaksoft.house.airbnbb9.entity.Booking;
@@ -85,12 +86,12 @@ public class BookingServiceImplTest {
         bookRequest.setCheckIn(LocalDate.of(2023, 9, 15));
         bookRequest.setCheckOut(LocalDate.of(2023, 9, 16));
         bookRequest.setAmount(100.0);
-        bookRequest.setToken("tok_1Np9yLLAAx1GCzR7kKTO9HgE");
-        SimpleResponse response = bookingService.requestToBook(bookRequest);
+        bookRequest.setToken("tok_1NwS9vLAAx1GCzR7wjwwdrKF");
+        BookResponse response = bookingService.requestToBook(bookRequest);
         mockAnnouncement.setStatus(Status.BOOKED);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getHttpStatus());
-        assertEquals("Booking successful! Customer: null", response.getMessage());
+        assertEquals("Booking successful!", response.getMessage());
         verify(bookingRepository).save(any(Booking.class));
     }
     @Test
