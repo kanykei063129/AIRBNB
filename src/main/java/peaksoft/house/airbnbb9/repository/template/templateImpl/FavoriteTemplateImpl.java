@@ -15,6 +15,7 @@ import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.FavoriteTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,10 +50,8 @@ public class FavoriteTemplateImpl implements FavoriteTemplate {
         }
         String sql = """
                 select a.id,
-                       (select ai.images
-                        from announcement_images ai
-                        where ai.announcement_id = a.id
-                        limit 1),
+                       (SELECT ARRAY_AGG(ai.images) FROM announcement_images ai
+                    WHERE ai.announcement_id = a.id) as images,
                        a.price,
                        (select sum(f.rating) / count(f) from feedbacks f where f.announcement_id = a.id) as rating,
                        a.description,
@@ -69,7 +68,7 @@ public class FavoriteTemplateImpl implements FavoriteTemplate {
 
         List<FavoriteAnnouncementsResponse> favoriteAnnouncements = jdbcTemplate.query(sql, (rs, rowNum) -> new FavoriteAnnouncementsResponse(
                 rs.getLong("id")
-                , Collections.singletonList(rs.getString("images"))
+                , Arrays.asList((String[]) rs.getArray("images").getArray())
                 , rs.getInt("price")
                 , rs.getString("address")
                 , rs.getString("description")
