@@ -330,7 +330,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         log.info("Fetching the most popular apartment.");
         PopularApartmentResponse popularApartment = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> PopularApartmentResponse.builder()
                 .id(rs.getLong("id"))
-                .images(Arrays.asList(rs.getString("images").split(",")))
+                .images(Arrays.asList((String[]) rs.getArray("images").getArray()))
                 .title(rs.getString("title"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
