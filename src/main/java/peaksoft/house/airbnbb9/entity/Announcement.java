@@ -41,7 +41,7 @@ public class Announcement {
     private Region region;
     @Column(name = "address")
     private String address;
-    @Column(name = "description")
+    @Column(name = "description",length = 1500)
     private String description;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
