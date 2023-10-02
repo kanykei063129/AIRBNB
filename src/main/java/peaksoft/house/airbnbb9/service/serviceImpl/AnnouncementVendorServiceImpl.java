@@ -129,6 +129,8 @@ public class AnnouncementVendorServiceImpl implements AnnouncementVendorService 
                     announcement.setLived(true);
                 }
                 log.info("Get announcement by id");
+                announcement.setCheckIn(b.getCheckIn());
+                announcement.setCheckOut(b.getCheckOut());
                 return announcement;
             }
         }

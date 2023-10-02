@@ -44,4 +44,5 @@ public interface AnnouncementService {
 
     AnnouncementsResponseProfile getAnnouncementByIdAdmin(Long announcementId);
 
+    SimpleResponse blockAllAnnouncement(Long userId);
 }

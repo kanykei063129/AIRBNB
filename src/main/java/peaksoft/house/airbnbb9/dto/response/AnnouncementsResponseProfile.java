@@ -1,6 +1,7 @@
 package peaksoft.house.airbnbb9.dto.response;
 
 import lombok.*;
+import peaksoft.house.airbnbb9.enums.HouseType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +15,7 @@ public class AnnouncementsResponseProfile {
     private Long id;
     private String title;
     private List<String> images;
-    private String houseType;
+    private HouseType houseType;
     private int maxGuests;
     private String address;
     private String description;

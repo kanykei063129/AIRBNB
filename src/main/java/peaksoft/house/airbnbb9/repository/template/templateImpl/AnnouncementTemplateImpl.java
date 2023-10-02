@@ -149,7 +149,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 .build(), params.toArray());
 
         log.info("Announcements filtered successfully for vendors!");
-        return new PaginationAnnouncementResponse(results,currentPage,pageSize);
+        return new PaginationAnnouncementResponse(results, currentPage, pageSize);
     }
 
 
@@ -268,28 +268,28 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     public List<PopularHouseResponse> getPopularHouses() {
 
         String sql = """
-               SELECT a.id,
-                      a.address,
-                      a.description,
-                      a.title,
-                      a.price,
-                      AVG(f.rating)                                    AS rating,
-                      coalesce((SELECT string_agg(ai.images, ',')
-                                FROM announcement_images ai
-                                WHERE ai.announcement_id = a.id), 'null') AS images
-               FROM announcements a
-                        LEFT JOIN feedbacks f
-                                  ON a.id = f.announcement_id
-               WHERE a.house_type = 'HOUSE'
-               GROUP BY a.id,
-                        a.address,
-                        a.description,
-                        a.title,
-                        a.price
-               ORDER BY rating
-                       DESC
-               LIMIT 3;
-                 """;
+                SELECT a.id,
+                       a.address,
+                       a.description,
+                       a.title,
+                       a.price,
+                       AVG(f.rating)                                    AS rating,
+                       coalesce((SELECT string_agg(ai.images, ',')
+                                 FROM announcement_images ai
+                                 WHERE ai.announcement_id = a.id), 'null') AS images
+                FROM announcements a
+                         LEFT JOIN feedbacks f
+                                   ON a.id = f.announcement_id
+                WHERE a.house_type = 'HOUSE'
+                GROUP BY a.id,
+                         a.address,
+                         a.description,
+                         a.title,
+                         a.price
+                ORDER BY rating
+                        DESC
+                LIMIT 3;
+                  """;
         log.info("Fetching popular houses.");
 
         List<PopularHouseResponse> popularHouses = jdbcTemplate.query(sql, (rs, rowNum) -> PopularHouseResponse.builder()
@@ -353,6 +353,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                 double maxLong = longitude + longRange;
                 String query = """
                         SELECT a.id as id,
+                                a.house_type as houseType,
                                a.price as price,
                                a.max_guests as max_guests,
                                a.address as address,
@@ -371,11 +372,12 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                                OR a.province ILIKE lower(concat('%', ?, '%')))
                           AND a.latitude BETWEEN ? AND ?
                           AND a.longitude BETWEEN ? AND ?
-                        GROUP BY a.id, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title;
+                        GROUP BY a.id,a.house_type, a.price, a.max_guests, a.address, a.description, a.province, a.region, a.title;
                         """;
                 List<AnnouncementResponse> announcementResponses = jdbcTemplate.query(query, (rs, rowNum) -> AnnouncementResponse
                         .builder()
                         .id(rs.getLong("id"))
+                        .houseType(HouseType.valueOf(rs.getString("houseType")))
                         .price(rs.getInt("price"))
                         .maxGuests(rs.getInt("max_guests"))
                         .address(rs.getString("address"))
@@ -395,6 +397,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         }
         String sql = """
                 SELECT a.id            as id,
+                a.house_type as houseType,
                        a.price         as price,
                        a.max_guests    as max_guests,
                        a.address       as address,
@@ -410,7 +413,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
                     OR a.status ILIKE lower(concat('%', ?, '%'))
                     OR a.house_type ILIKE lower(concat('%',?,'%'))
                     OR a.province ILIKE lower(concat('%', ?, '%')) ) group by 
-                    a.id ,a.price  ,
+                    a.id,a.house_type ,a.price  ,
                     a.max_guests   ,
                     a.address      ,
                     a.description  ,
@@ -421,6 +424,7 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         log.info("Performing global search with keyword: " + word);
         List<AnnouncementResponse> results = jdbcTemplate.query(sql, (rs, rowNum) -> AnnouncementResponse.builder()
                 .id(rs.getLong("id"))
+                .houseType(HouseType.valueOf(rs.getString("houseType")))
                 .price(rs.getInt("price"))
                 .maxGuests(rs.getInt("max_guests"))
                 .address(rs.getString("address"))
@@ -620,52 +624,52 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
     @Override
     public AnnouncementsResponseProfile getAnnouncementByIdProfile(Long announcementId) {
         String query = """
-            SELECT a.id                                                       AS id,
-                   a.title                                                    AS title,
-                   ai.images                                                  AS images,
-                   a.house_type                                               AS houseType,
-                   a.max_guests                                               AS maxGuests,
-                   a.address                                                  AS address,
-                   a.description                                              AS description,
-                   u.full_name                                                AS fullName,
-                   u.email                                                    AS email,
-                   u.image                                                    AS image,
-                   STRING_AGG(DISTINCT u2.full_name, ', ')                    AS bookedByFullName,
-                   STRING_AGG(DISTINCT CAST(bu.price_per_day AS TEXT), ', ')  AS priceDay,
-                   STRING_AGG(DISTINCT CAST(bu.check_in AS TEXT), ', ')       AS checkIn,
-                   STRING_AGG(DISTINCT CAST(bu.check_out AS TEXT), ', ')      AS checkOut,
-                   STRING_AGG(DISTINCT u2.email, ', ')                        AS bookedByEmail,
-                   STRING_AGG(DISTINCT u3.full_name, ', ')                    AS favoriteByFullName,
-                   STRING_AGG(DISTINCT u3.email, ', ')                        AS favoriteByEmail,
-                   STRING_AGG(DISTINCT u4.full_name, ', ')                    AS bookedByUserFullName,
-                   STRING_AGG(DISTINCT u4.email, ', ')                        AS bookedByEmail,
-                   STRING_AGG(DISTINCT fb.comment, ', ')                      AS comments,
-                   STRING_AGG(DISTINCT CAST(fb.create_date AS text), ', ')    AS createDateFeedback,
-                   STRING_AGG(DISTINCT CAST(fb.rating AS text), ', ')         AS feedbackRating,
-                   STRING_AGG(DISTINCT CAST(fb.like_count AS text), ', ')     AS likeCount,
-                   STRING_AGG(DISTINCT CAST(fb.dis_like_count AS text), ', ') AS disLikeCount,
-                   STRING_AGG(DISTINCT u5.full_name, ', ')                    AS feedbacksUserName,
-                   STRING_AGG(DISTINCT u5.image, ', ')                        AS feedbacksImages
-            FROM announcements a
-                     JOIN users u ON a.user_id = u.id
-                     JOIN announcement_images ai ON a.id = ai.announcement_id
-                     LEFT JOIN bookings b ON a.id = b.announcement_id
-                     LEFT JOIN bookings bu ON u.id = bu.announcement_id
-                     LEFT JOIN users u2 ON b.user_id = u2.id
-                     LEFT JOIN favorites f ON a.id = f.announcement_id
-                     LEFT JOIN users u3 ON f.user_id = u3.id
-                     LEFT JOIN feedbacks fb ON a.id = fb.announcement_id
-                     LEFT JOIN users u4 ON f.user_id = u4.id
-                     LEFT JOIN users u5 ON fb.user_id = u5.id
-            WHERE a.id = ?
-            GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
-                                                  """;
+                SELECT a.id                                                       AS id,
+                       a.title                                                    AS title,
+                       ai.images                                                  AS images,
+                       a.house_type                                               AS houseType,
+                       a.max_guests                                               AS maxGuests,
+                       a.address                                                  AS address,
+                       a.description                                              AS description,
+                       u.full_name                                                AS fullName,
+                       u.email                                                    AS email,
+                       u.image                                                    AS image,
+                       STRING_AGG(DISTINCT u2.full_name, ', ')                    AS bookedByFullName,
+                       STRING_AGG(DISTINCT CAST(bu.price_per_day AS TEXT), ', ')  AS priceDay,
+                       STRING_AGG(DISTINCT CAST(bu.check_in AS TEXT), ', ')       AS checkIn,
+                       STRING_AGG(DISTINCT CAST(bu.check_out AS TEXT), ', ')      AS checkOut,
+                       STRING_AGG(DISTINCT u2.email, ', ')                        AS bookedByEmail,
+                       STRING_AGG(DISTINCT u3.full_name, ', ')                    AS favoriteByFullName,
+                       STRING_AGG(DISTINCT u3.email, ', ')                        AS favoriteByEmail,
+                       STRING_AGG(DISTINCT u4.full_name, ', ')                    AS bookedByUserFullName,
+                       STRING_AGG(DISTINCT u4.email, ', ')                        AS bookedByEmail,
+                       STRING_AGG(DISTINCT fb.comment, ', ')                      AS comments,
+                       STRING_AGG(DISTINCT CAST(fb.create_date AS text), ', ')    AS createDateFeedback,
+                       STRING_AGG(DISTINCT CAST(fb.rating AS text), ', ')         AS feedbackRating,
+                       STRING_AGG(DISTINCT CAST(fb.like_count AS text), ', ')     AS likeCount,
+                       STRING_AGG(DISTINCT CAST(fb.dis_like_count AS text), ', ') AS disLikeCount,
+                       STRING_AGG(DISTINCT u5.full_name, ', ')                    AS feedbacksUserName,
+                       STRING_AGG(DISTINCT u5.image, ', ')                        AS feedbacksImages
+                FROM announcements a
+                         JOIN users u ON a.user_id = u.id
+                         JOIN announcement_images ai ON a.id = ai.announcement_id
+                         LEFT JOIN bookings b ON a.id = b.announcement_id
+                         LEFT JOIN bookings bu ON u.id = bu.announcement_id
+                         LEFT JOIN users u2 ON b.user_id = u2.id
+                         LEFT JOIN favorites f ON a.id = f.announcement_id
+                         LEFT JOIN users u3 ON f.user_id = u3.id
+                         LEFT JOIN feedbacks fb ON a.id = fb.announcement_id
+                         LEFT JOIN users u4 ON f.user_id = u4.id
+                         LEFT JOIN users u5 ON fb.user_id = u5.id
+                WHERE a.id = ?
+                GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
+                                                      """;
         return jdbcTemplate.queryForObject(query, (rs, rowNum) -> {
             AnnouncementsResponseProfile.AnnouncementsResponseProfileBuilder builder = AnnouncementsResponseProfile.builder()
                     .id(rs.getLong("id"))
                     .title(rs.getString("title"))
                     .images(Collections.singletonList(rs.getString("images")))
-                    .houseType(rs.getString("houseType"))
+                    .houseType(HouseType.valueOf(rs.getString("houseType")))
                     .maxGuests(rs.getInt("maxGuests"))
                     .address(rs.getString("address"))
                     .description(rs.getString("description"))
@@ -704,25 +708,27 @@ public class AnnouncementTemplateImpl implements AnnouncementTemplate {
         String query = """
                 SELECT a.id          AS id,
                        a.title       AS title,
-                       ai.images     AS images,
                        a.house_type  AS houseType,
                        a.max_guests  AS maxGuests,
                        a.address     AS address,
                        a.description AS description,
                        u.full_name   AS fullName,
                        u.email       AS email,
-                       u.image       AS image
+                       u.image       AS image,
+                        (SELECT string_agg(ai.images, ',')
+                        FROM announcement_images ai
+                        WHERE ai.announcement_id = a.id) as images
                 FROM announcements a
                          JOIN users u ON a.user_id = u.id
                          JOIN announcement_images ai ON a.id = ai.announcement_id
                 WHERE a.id = ?
-                GROUP BY a.id, a.title, ai.images, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
+                GROUP BY a.id, a.title, a.house_type, a.max_guests, a.address, a.description, u.full_name, u.email, u.image;
                 """;
         return jdbcTemplate.queryForObject(query, (rs, rowNum) -> AnnouncementsResponseProfile.builder()
                 .id(rs.getLong("id"))
                 .title(rs.getString("title"))
-                .images(Collections.singletonList(rs.getString("images")))
-                .houseType(rs.getString("houseType"))
+                .images(Arrays.asList(rs.getString("images").split(",")))
+                .houseType(HouseType.valueOf(rs.getString("houseType")))
                 .maxGuests(rs.getInt("maxGuests"))
                 .address(rs.getString("address"))
                 .description(rs.getString("description"))
