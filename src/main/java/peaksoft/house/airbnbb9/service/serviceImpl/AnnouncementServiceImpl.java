@@ -19,6 +19,7 @@ import peaksoft.house.airbnbb9.mappers.AnnouncementViewMapper;
 import peaksoft.house.airbnbb9.repository.AnnouncementRepository;
 import peaksoft.house.airbnbb9.dto.response.AnnouncementResponse;
 import peaksoft.house.airbnbb9.dto.response.SimpleResponse;
+import peaksoft.house.airbnbb9.repository.UserRepository;
 import peaksoft.house.airbnbb9.repository.template.AnnouncementTemplate;
 import peaksoft.house.airbnbb9.service.AnnouncementService;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,6 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService {
+    private final UserRepository userRepository;
 
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementTemplate announcementTemplate;
@@ -265,5 +267,24 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public AnnouncementsResponseProfile getAnnouncementByIdAdmin(Long announcementId) {
         return announcementTemplate.getAnnouncementsByIdAdmin(announcementId);
+    }
+
+    @Override
+    public SimpleResponse blockAllAnnouncement(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new org.webjars.NotFoundException("User with id: " + userId + " doesn't exist!"));
+        log.info("Deleting user with id: {}", userId);
+        List<Announcement> announcements = announcementRepository.getAnnouncementByUserId(user.getId());
+        if (announcements.isEmpty()){
+            throw new NotFoundException("This user currently has no ads");
+        }
+        for (Announcement a:announcements) {
+            if (a.getPosition() == Position.ACCEPTED) {
+                a.setPosition(Position.BLOCK);
+            }
+        }
+        return SimpleResponse.builder().
+                message("All announcements are blocked!!!").httpStatus(HttpStatus.OK).
+                build();
     }
 }

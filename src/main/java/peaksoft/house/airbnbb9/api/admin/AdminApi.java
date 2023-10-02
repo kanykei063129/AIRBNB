@@ -64,4 +64,12 @@ public class AdminApi {
     public SimpleResponse blockedAnnouncementById(Long announcementId) {
         return announcementService.blockedAnnouncementById(announcementId);
     }
+
+    @Operation(summary = "Blocking all announcements",
+            description = "Only admin can block all user's announcements ")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/blockAllAds/{userId}")
+    public SimpleResponse blockAllAnnouncements(@PathVariable Long userId){
+        return announcementService.blockAllAnnouncement(userId);
+    }
 }

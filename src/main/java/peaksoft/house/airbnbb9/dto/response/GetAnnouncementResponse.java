@@ -4,6 +4,7 @@ import lombok.*;
 import peaksoft.house.airbnbb9.enums.HouseType;
 import peaksoft.house.airbnbb9.enums.Region;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -28,4 +29,6 @@ public class GetAnnouncementResponse {
     private int price;
     private boolean isBooked;
     private boolean isLived;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
 }
