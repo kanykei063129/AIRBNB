@@ -1,15 +1,15 @@
 insert into users (id, full_name, email, password, image, role)
-values (1, 'Jonne Jones', 'bones@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me',
+values (1, 'Manas Abdugani uulu', 'manas@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me',
         'photo with belt', 'USER'),
-       (2, 'Alister Overeem', 'alister@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me',
+       (2, 'Adilet Islambek uulu', 'adilet@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me',
         'photo with kick', 'USER'),
-       (3, 'Kyle Snyder', 'snyder@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me',
+       (3, 'Aizat Duisheeva', 'aizat@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me',
         'photo wrestling boots', 'USER'),
-       (4, 'Kyle Dike', 'dike@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me', 'photo 74',
+       (4, 'Kanykey Akjoltoi kyzy', 'kanykey@gmail.com', '$2a$12$lJjFABhAKU2bAf9D/A65R.ZFYll2CCkW6DWReT384CZzUXvuln3me', 'photo 74',
         'USER'),
-       (5, 'David Taylor', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy',
+       (5, '', 'admin@gmail.com', '$2a$12$ZDscdsNcu.jtmBFg.DAXo.fC/DAM12l.Z0Kz0nUw9ICb9GUriLXJy',
         'photo 86', 'ADMIN'),
-       (6, 'Rus', 'rusi.studio.kgz@gmail.com', '$2a$12$99Q6ccCQVhM.Rv6lbXza4uGUTiJLZkzBBDiLHopPN1niFwMVPsw8W',
+       (6, 'Gulzat Sadykova', 'gulzat@gmail.com', '$2a$12$99Q6ccCQVhM.Rv6lbXza4uGUTiJLZkzBBDiLHopPN1niFwMVPsw8W',
         'default image', 'USER');
 
 INSERT INTO announcements
